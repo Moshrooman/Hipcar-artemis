@@ -5,6 +5,25 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".Splash.SplashActivity"
-    tools:showIn="@layout/activity_splash">
+    tools:showIn="@layout/activity_splash"
+    >
+
+    <ImageView
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:src="@drawable/hipcarlogo"
+        android:layout_centerInParent="true"
+        android:id="@+id/hipCarLogoImageView"
+        />
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        app:lottie_fileName="Mobilo/A.json"
+        android:layout_below="@+id/hipCarLogoImageView"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="50dp"
+        android:id="@+id/testLottie"
+        />
 
 </RelativeLayout>
