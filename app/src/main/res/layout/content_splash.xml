@@ -16,14 +16,79 @@
         android:id="@+id/hipCarLogoImageView"
         />
 
-    <com.airbnb.lottie.LottieAnimationView
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        app:lottie_fileName="Mobilo/A.json"
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
         android:layout_below="@+id/hipCarLogoImageView"
-        android:layout_centerHorizontal="true"
         android:layout_marginTop="50dp"
-        android:id="@+id/testLottie"
-        />
+        android:orientation="horizontal"
+        >
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:lottie_fileName="Mobilo/A.json"
+            android:id="@+id/aLotte"
+            app:lottie_colorFilter="@color/red"
+            app:lottie_autoPlay="true"
+            />
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:lottie_fileName="Mobilo/R.json"
+            android:id="@+id/rLotte"
+            app:lottie_colorFilter="@color/red"
+            app:lottie_autoPlay="true"
+            />
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:lottie_fileName="Mobilo/T.json"
+            android:id="@+id/tLotte"
+            app:lottie_colorFilter="@color/red"
+            app:lottie_autoPlay="true"
+            />
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:lottie_fileName="Mobilo/E.json"
+            android:id="@+id/eLotte"
+            app:lottie_colorFilter="@color/red"
+            app:lottie_autoPlay="true"
+            />
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:lottie_fileName="Mobilo/M.json"
+            android:id="@+id/mLotte"
+            app:lottie_colorFilter="@color/red"
+            app:lottie_autoPlay="true"
+            />
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:lottie_fileName="Mobilo/I.json"
+            android:id="@+id/iLotte"
+            app:lottie_colorFilter="@color/red"
+            app:lottie_autoPlay="true"
+            />
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:lottie_fileName="Mobilo/S.json"
+            android:id="@+id/sLotte"
+            app:lottie_colorFilter="@color/red"
+            app:lottie_autoPlay="true"
+            />
+
+    </LinearLayout>
+
+
 
 </RelativeLayout>
