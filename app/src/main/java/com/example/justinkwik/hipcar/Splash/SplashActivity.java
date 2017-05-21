@@ -2,9 +2,6 @@ package com.example.justinkwik.hipcar.Splash;
 
 import android.animation.ValueAnimator;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffColorFilter;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
@@ -42,7 +39,7 @@ public class SplashActivity extends AppCompatActivity {
 
             final int finalI = i;
 
-            LottieComposition.Factory.fromAssetFileName(getApplicationContext(), "Mobilo/" + letterArray[i] + ".json",
+            LottieComposition.Factory.fromAssetFileName(getApplicationContext(), "AnimatedLetters/" + letterArray[i] + ".json",
                     new OnCompositionLoadedListener() {
                         @Override
                         public void onCompositionLoaded(LottieComposition composition) {

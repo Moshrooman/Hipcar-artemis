@@ -5,12 +5,27 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.example.justinkwik.hipcar.Login.LoginActivity"
-    tools:showIn="@layout/activity_login">
+    tools:showIn="@layout/activity_login"
+    >
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:lottie_fileName="Lottie/loading.json"
+        app:lottie_loop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/loginRelativeLayout"
+        android:layout_marginTop="20dp"
+        android:id="@+id/loadingAnimationView"
+        android:visibility="invisible"
+        />
 
     <RelativeLayout
         android:layout_width="300dp"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/loginRelativeLayout"
+        android:layout_marginTop="100dp"
         >
 
         <TextView

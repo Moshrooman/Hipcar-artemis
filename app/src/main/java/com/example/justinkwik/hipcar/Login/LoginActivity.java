@@ -1,7 +1,10 @@
 package com.example.justinkwik.hipcar.Login;
 
+import android.animation.ValueAnimator;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.text.InputType;
 import android.util.Log;
@@ -10,6 +13,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -17,9 +21,11 @@ import com.android.volley.RetryPolicy;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.example.justinkwik.hipcar.ConnectionManager;
+import com.example.justinkwik.hipcar.Main.MainActivity;
 import com.example.justinkwik.hipcar.R;
 import com.github.johnpersano.supertoasts.library.Style;
 import com.github.johnpersano.supertoasts.library.SuperToast;
+import com.google.gson.Gson;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -31,7 +37,9 @@ public class LoginActivity extends AppCompatActivity {
     private EditText usernameEditText;
     private EditText passwordEditText;
     private Button loginButton;
-    private final String loginUrl = "https://artemis-api.hipcar.com/login";
+    private final String loginUrl = "https://artemis-api-dev.hipcar.com/login";
+    private static UserCredentials userCredentials;
+    private LottieAnimationView loadingAnimationView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +50,7 @@ public class LoginActivity extends AppCompatActivity {
         passwordEditText = (EditText) findViewById(R.id.passwordEditText);
         passwordEditText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
         loginButton = (Button) findViewById(R.id.loginButton);
+        loadingAnimationView = (LottieAnimationView) findViewById(R.id.loadingAnimationView);
 
         loginButton.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -64,6 +73,9 @@ public class LoginActivity extends AppCompatActivity {
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                loadingAnimationView.setVisibility(View.VISIBLE);
+                loadingAnimationView.playAnimation();
 
                 String username = usernameEditText.getText().toString();
                 String password = passwordEditText.getText().toString();
@@ -95,12 +107,54 @@ public class LoginActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(String response) {
 
-                        Log.e("Response: ", response);
+                        loadingAnimationView.pauseAnimation();
+                        loadingAnimationView.setAnimation("Lottie/simple_check.json");
+                        loadingAnimationView.setProgress(0);
+                        loadingAnimationView.loop(false);
+
+                        loadingAnimationView.addAnimatorUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                            @Override
+                            public void onAnimationUpdate(ValueAnimator animation) {
+
+                                //TODO: FIX THIS ANIMATION ITS NOT GETTING THAT IT IS FINISHED
+                                if(animation.getCurrentPlayTime() >= animation.getDuration()) {
+
+                                    Runnable mainActivityRunnable = new Runnable() {
+                                        @Override
+                                        public void run() {
+
+                                            Intent mainActivityIntent = new Intent(LoginActivity.this, MainActivity.class);
+                                            startActivity(mainActivityIntent);
+                                            finish();
+
+                                        }
+                                    };
+
+                                    Handler mainActivityHandler = new Handler();
+                                    mainActivityHandler.postDelayed(mainActivityRunnable, 1000);
+
+                                }
+
+                            }
+                        });
+
+                        loadingAnimationView.playAnimation();
+
+                        userCredentials = new Gson().fromJson(response, UserCredentials.class);
+
+                        //TODO: put in sharedpreferences and in the splash screen check if there is in the shared preference
+                        //TODO: if there is then skip straight to main activity, otherwise go to login screen
+                        //TODO: remember that loging out should delete from shared preference.
+                        //TODO: give an option to skip splash screen in beginning
+                        //TODO: add a border around the login window
 
                     }
                 }, new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
+
+                        loadingAnimationView.pauseAnimation();
+                        loadingAnimationView.setVisibility(View.INVISIBLE);
 
                         SuperToast superToast = SuperToast.create(LoginActivity.this, "Invalid Username/Password", Style.DURATION_SHORT,
                                 Style.red()).setAnimations(Style.ANIMATIONS_POP);
@@ -124,6 +178,12 @@ public class LoginActivity extends AppCompatActivity {
 
             }
         });
+
+    }
+
+    public static UserCredentials getUserCredentials() {
+
+        return userCredentials;
 
     }
 

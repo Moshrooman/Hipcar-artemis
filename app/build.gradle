@@ -36,4 +36,5 @@ dependencies {
     compile 'com.airbnb.android:lottie:2.0.0-rc1'
     compile 'com.android.volley:volley:1.0.0'
     compile 'com.github.johnpersano:supertoasts:2.0'
+    compile 'com.google.code.gson:gson:2.8.0'
 }
