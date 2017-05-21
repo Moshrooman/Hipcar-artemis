@@ -2,6 +2,7 @@ package com.example.justinkwik.hipcar.Splash;
 
 import android.animation.ValueAnimator;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
@@ -13,7 +14,9 @@ import android.widget.LinearLayout;
 import com.airbnb.lottie.LottieAnimationView;
 import com.airbnb.lottie.LottieComposition;
 import com.airbnb.lottie.OnCompositionLoadedListener;
+import com.example.justinkwik.hipcar.HipCarApplication;
 import com.example.justinkwik.hipcar.Login.LoginActivity;
+import com.example.justinkwik.hipcar.Main.MainActivity;
 import com.example.justinkwik.hipcar.R;
 
 import java.util.ArrayList;
@@ -26,6 +29,8 @@ public class SplashActivity extends AppCompatActivity {
     private LinearLayout lettersLinearLayout;
     private String[] letterArray;
     private List<LottieAnimationView> viewList = new ArrayList<>();
+    private final SharedPreferences sharedPreferences = HipCarApplication.getSharedPreferences();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,23 +58,34 @@ public class SplashActivity extends AppCompatActivity {
                             lottieAnimationView.setComposition(composition);
                             lottieAnimationView.setColorFilter(getResources().getColor(R.color.red)); //TODO need to set color
 
-                            if(finalI == 6) {
+                            if (finalI == 6) {
 
                                 viewList.add(lottieAnimationView);
                                 viewList.get(viewList.size() - 1).addAnimatorUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
                                     @Override
                                     public void onAnimationUpdate(ValueAnimator animation) {
 
-                                        if(animation.getCurrentPlayTime() >= animation.getDuration()) {
+                                        if (animation.getCurrentPlayTime() >= animation.getDuration()) {
 
                                             Runnable moveToLoginScreen = new Runnable() {
                                                 @Override
                                                 public void run() {
 
-                                                    Intent loginIntent = new Intent(SplashActivity.this, LoginActivity.class);
-                                                    startActivity(loginIntent);
-                                                    overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-                                                    finish();
+                                                    if (sharedPreferences.getBoolean("loggedin", false)) {
+
+                                                        Intent mainActivityIntent = new Intent(SplashActivity.this, MainActivity.class);
+                                                        startActivity(mainActivityIntent);
+                                                        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+                                                        finish();
+
+                                                    } else {
+
+                                                        Intent loginIntent = new Intent(SplashActivity.this, LoginActivity.class);
+                                                        startActivity(loginIntent);
+                                                        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+                                                        finish();
+
+                                                    }
 
                                                 }
                                             };

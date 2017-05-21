@@ -3,6 +3,7 @@ package com.example.justinkwik.hipcar.Login;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
@@ -21,8 +22,10 @@ import com.android.volley.RetryPolicy;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.example.justinkwik.hipcar.ConnectionManager;
+import com.example.justinkwik.hipcar.HipCarApplication;
 import com.example.justinkwik.hipcar.Main.MainActivity;
 import com.example.justinkwik.hipcar.R;
+import com.example.justinkwik.hipcar.Splash.SplashActivity;
 import com.github.johnpersano.supertoasts.library.Style;
 import com.github.johnpersano.supertoasts.library.SuperToast;
 import com.google.gson.Gson;
@@ -40,6 +43,8 @@ public class LoginActivity extends AppCompatActivity {
     private final String loginUrl = "https://artemis-api-dev.hipcar.com/login";
     private static UserCredentials userCredentials;
     private LottieAnimationView loadingAnimationView;
+    private LottieAnimationView checkMarkAnimationView;
+    private final SharedPreferences sharedPreferences = HipCarApplication.getSharedPreferences();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +56,32 @@ public class LoginActivity extends AppCompatActivity {
         passwordEditText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
         loginButton = (Button) findViewById(R.id.loginButton);
         loadingAnimationView = (LottieAnimationView) findViewById(R.id.loadingAnimationView);
+        checkMarkAnimationView = (LottieAnimationView) findViewById(R.id.checkMarkAnimationView);
+
+        checkMarkAnimationView.addAnimatorUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+
+                if(animation.getCurrentPlayTime() >= animation.getDuration()) {
+
+                    Runnable mainActivityRunnable = new Runnable() {
+                        @Override
+                        public void run() {
+
+                            Intent mainActivityIntent = new Intent(LoginActivity.this, MainActivity.class);
+                            startActivity(mainActivityIntent);
+                            finish();
+
+                        }
+                    };
+
+                    Handler mainActivityHandler = new Handler();
+                    mainActivityHandler.postDelayed(mainActivityRunnable, 1000);
+
+                }
+
+            }
+        });
 
         loginButton.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -108,44 +139,19 @@ public class LoginActivity extends AppCompatActivity {
                     public void onResponse(String response) {
 
                         loadingAnimationView.pauseAnimation();
-                        loadingAnimationView.setAnimation("Lottie/simple_check.json");
-                        loadingAnimationView.setProgress(0);
-                        loadingAnimationView.loop(false);
+                        loadingAnimationView.setVisibility(View.INVISIBLE);
 
-                        loadingAnimationView.addAnimatorUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                            @Override
-                            public void onAnimationUpdate(ValueAnimator animation) {
+                        checkMarkAnimationView.setVisibility(View.VISIBLE);
 
-                                //TODO: FIX THIS ANIMATION ITS NOT GETTING THAT IT IS FINISHED
-                                if(animation.getCurrentPlayTime() >= animation.getDuration()) {
-
-                                    Runnable mainActivityRunnable = new Runnable() {
-                                        @Override
-                                        public void run() {
-
-                                            Intent mainActivityIntent = new Intent(LoginActivity.this, MainActivity.class);
-                                            startActivity(mainActivityIntent);
-                                            finish();
-
-                                        }
-                                    };
-
-                                    Handler mainActivityHandler = new Handler();
-                                    mainActivityHandler.postDelayed(mainActivityRunnable, 1000);
-
-                                }
-
-                            }
-                        });
-
-                        loadingAnimationView.playAnimation();
+                        checkMarkAnimationView.playAnimation();
 
                         userCredentials = new Gson().fromJson(response, UserCredentials.class);
 
-                        //TODO: put in sharedpreferences and in the splash screen check if there is in the shared preference
-                        //TODO: if there is then skip straight to main activity, otherwise go to login screen
-                        //TODO: remember that loging out should delete from shared preference.
-                        //TODO: give an option to skip splash screen in beginning
+                        SharedPreferences.Editor editor = sharedPreferences.edit();
+                        editor.putBoolean("loggedin", true);
+                        editor.putString("credentials", new Gson().toJson(userCredentials));
+                        editor.apply();
+
                         //TODO: add a border around the login window
 
                     }
