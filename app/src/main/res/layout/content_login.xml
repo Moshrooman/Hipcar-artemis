@@ -7,4 +7,58 @@
     tools:context="com.example.justinkwik.hipcar.Login.LoginActivity"
     tools:showIn="@layout/activity_login">
 
+    <RelativeLayout
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="30dp"
+            android:text="Login"
+            fontPath="fonts/Exo2-Bold.ttf"
+            android:textColor="@color/red"
+            android:layout_centerHorizontal="true"
+            android:id="@+id/loginTextView"
+            />
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/loginborder"
+            android:layout_below="@+id/loginTextView"
+            fontPath="fonts/Exo2-Regular.ttf"
+            android:hint="Username"
+            android:layout_marginTop="30dp"
+            android:id="@+id/userNameEditText"
+            />
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/loginborder"
+            android:layout_below="@+id/userNameEditText"
+            fontPath="fonts/Exo2-Regular.ttf"
+            android:hint="Password"
+            android:layout_marginTop="30dp"
+            android:id="@+id/passwordEditText"
+            />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:text="Login"
+            android:textColor="@color/white"
+            android:background="@drawable/loginbutton"
+            android:layout_below="@+id/passwordEditText"
+            android:layout_marginTop="30dp"
+            fontPath="fonts/Exo2-Regular.ttf"
+            android:id="@+id/loginButton"
+            />
+
+    </RelativeLayout>
+
+
 </RelativeLayout>
