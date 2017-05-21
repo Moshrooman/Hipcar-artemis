@@ -24,6 +24,10 @@
         <activity
             android:name=".LottieTest.FontActivity"
             android:label="@string/title_activity_font"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".Login.LoginActivity"
+            android:label="@string/title_activity_login"
             android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
