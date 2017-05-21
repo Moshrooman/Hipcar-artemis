@@ -28,8 +28,11 @@ public class MainActivity extends AppCompatActivity {
         userCredentials = new Gson().fromJson(sharedPreferences.getString("credentials", ""), UserCredentials.class);
         Log.e("Name: ", userCredentials.getName());
 
+
+
         //TODO: for logging out delete the credentials and set loggedin boolean to false (both in sharedPreference)
         //TODO: give an option to skip splash screen in beginning
+        //TODO: work on reservation.
 
     }
 

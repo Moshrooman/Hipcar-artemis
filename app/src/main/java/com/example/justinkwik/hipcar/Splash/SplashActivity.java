@@ -40,6 +40,9 @@ public class SplashActivity extends AppCompatActivity {
         lettersLinearLayout = (LinearLayout) findViewById(R.id.lettersLinearLayout);
         letterArray = new String[]{"A", "R", "T", "E", "M", "I", "S"};
 
+        //TODO: just add all of the animations in the xml but make the layout invisible
+        //TODO: then only make it visible after the animation of the hipcar logo is done.
+
         for (int i = 0; i < letterArray.length; i++) {
 
             final int finalI = i;
@@ -51,8 +54,8 @@ public class SplashActivity extends AppCompatActivity {
 
                             LottieAnimationView lottieAnimationView = new LottieAnimationView(getApplicationContext());
                             lottieAnimationView.setLayoutParams(new LinearLayout.LayoutParams(
-                                    ViewGroup.LayoutParams.WRAP_CONTENT,
-                                    ViewGroup.LayoutParams.WRAP_CONTENT
+                                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                                    LinearLayout.LayoutParams.WRAP_CONTENT
                             ));
 
                             lottieAnimationView.setComposition(composition);
