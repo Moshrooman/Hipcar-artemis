@@ -23,8 +23,91 @@
         android:layout_marginTop="50dp"
         android:orientation="horizontal"
         android:id="@+id/lettersLinearLayout"
+        android:gravity="center"
         >
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="A"
+            android:textSize="40dp"
+            fontPath="fonts/Exo2-Bold.ttf"
+            android:layout_marginRight="10dp"
+            android:textColor="@color/red"
+            android:id="@+id/A"
+            android:visibility="invisible"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="R"
+            android:textSize="40dp"
+            fontPath="fonts/Exo2-Bold.ttf"
+            android:layout_marginRight="10dp"
+            android:textColor="@color/red"
+            android:id="@+id/R"
+            android:visibility="invisible"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="T"
+            android:textSize="40dp"
+            fontPath="fonts/Exo2-Bold.ttf"
+            android:layout_marginRight="10dp"
+            android:textColor="@color/red"
+            android:id="@+id/T"
+            android:visibility="invisible"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="E"
+            android:textSize="40dp"
+            fontPath="fonts/Exo2-Bold.ttf"
+            android:layout_marginRight="10dp"
+            android:textColor="@color/red"
+            android:id="@+id/E"
+            android:visibility="invisible"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="M"
+            android:textSize="40dp"
+            fontPath="fonts/Exo2-Bold.ttf"
+            android:layout_marginRight="10dp"
+            android:textColor="@color/red"
+            android:id="@+id/M"
+            android:visibility="invisible"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="I"
+            android:textSize="40dp"
+            fontPath="fonts/Exo2-Bold.ttf"
+            android:layout_marginRight="10dp"
+            android:textColor="@color/red"
+            android:id="@+id/I"
+            android:visibility="invisible"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="S"
+            android:textSize="40dp"
+            fontPath="fonts/Exo2-Bold.ttf"
+            android:textColor="@color/red"
+            android:id="@+id/S"
+            android:visibility="invisible"
+            />
 
 
     </LinearLayout>

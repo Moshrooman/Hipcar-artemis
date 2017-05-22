@@ -7,4 +7,76 @@
     tools:context="com.example.justinkwik.hipcar.Main.MainActivity"
     tools:showIn="@layout/activity_main">
 
+    <!-- Start Of Toolbar Layout -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@color/red"
+        >
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:id="@+id/navBarButton"
+            app:lottie_fileName="Lottie/hamburger.json"
+            app:lottie_autoPlay="false"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="10dp"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="30dp"
+            android:layout_centerInParent="true"
+            android:id="@+id/mainActivityTitle"
+            fontPath="fonts/Exo2-Regular.ttf"
+            android:textColor="@color/white"
+            android:text="Dashboard"
+            />
+
+    </RelativeLayout>
+    <!-- End Of Toolbar Layout -->
+
+    <!-- Start Of Main Fragments -->
+    <com.example.justinkwik.hipcar.CustomViewPager.NonSwipeableViewPager
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="50dp"
+        android:id="@+id/mainActivityViewPager"
+        >
+
+    </com.example.justinkwik.hipcar.CustomViewPager.NonSwipeableViewPager>
+    <!-- End Of Main Fragments -->
+
+    <!-- Start Of Drawer Layout -->
+    <android.support.v4.widget.DrawerLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/drawerLayout"
+        android:layout_marginTop="50dp"
+        >
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/mainDrawerContent"
+            android:clickable="false"
+            >
+
+        </FrameLayout>
+
+        <ListView
+            android:layout_width="240dp"
+            android:layout_height="match_parent"
+            android:id="@+id/drawerListView"
+            android:layout_gravity="start"
+            android:background="@color/navBarGrey"
+            >
+        </ListView>
+
+    </android.support.v4.widget.DrawerLayout>
+    <!-- End Of Drawer Layout -->
+
 </RelativeLayout>

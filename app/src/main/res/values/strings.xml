@@ -8,4 +8,18 @@
     <string name="title_activity_font">FontActivity</string>
     <string name="title_activity_login">LoginActivity</string>
     <string name="title_activity_main">MainActivity</string>
+
+    <string-array name="navBarEntries">
+        <item>Dashboard</item>
+        <item>User</item>
+        <item>Reservation</item>
+        <item>Transaction</item>
+        <item>Monitoring</item>
+        <item>Partner</item>
+        <item>Voucher</item>
+        <item>Staff</item>
+        <item>Vehicle</item>
+        <item>Station</item>
+    </string-array>
+
 </resources>
