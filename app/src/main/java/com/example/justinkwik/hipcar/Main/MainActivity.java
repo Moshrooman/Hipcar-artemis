@@ -139,16 +139,27 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         viewPager.setAdapter(new ViewPagerAdapter(getSupportFragmentManager()));
 
-        //TODO: for logging out delete the credentials and set loggedin boolean to false (both in sharedPreference)
-        //TODO: give an option to skip splash screen in beginning
-        //TODO: put the app in background if they click back
-        //TODO: the log out should be in the special welcome nav bar entry as well as change password
-        //TODO: add a profile picture to the welcome nav bar from slack? pull from slack using slack api
-        //TODO: damage, add api in the backend
-        //TODO: when clicking another page while logout view is expanded, call the animation on the relative layout to collapse
+        //TODO: RESERVATION IMPLEMENTATION
+        //Begin creating the layout of reservation, following artemis's api
+
+        //TODO: LOG OUT AND CHANGE PASSWORD
+        //for logging out delete the credentials and set loggedin boolean to false (both in sharedPreference)
+        //when clicking another page while logout view is expanded, call the animation on the relative layout to collapse
             //also when the drawer closes, but we first have to check if it is expanded.
-        //TODO: put a border on the log out and change password textviews.
-        //TODO: implement reservation
+        //put a border on the log out and change password textviews.
+        //add an arrow on the welcome nav bar to indicate expanded and collapsed log out/change password (lottie?)
+
+        //TODO: MISCELLANEOUS
+        //give an option to skip splash screen in beginning
+        //put the app in background if they click back
+        //add a profile picture to the welcome nav bar from slack? pull from slack using slack api
+        //damage, add api in the backend
+        //in the gradle file, figure out how to delete the dev key words in the api endpoints
+        //make sure to recycle all views
+        //finish activity if clicking back
+        //remove fresco if not using
+        //remove placeholder fragment when all pages are implemented.
+        //add a border around the login window (???)
 
     }
 
@@ -277,7 +288,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         @Override
         public int getCount() {
-            return navBarEntries.length; //TODO: need to increase to add log out and change password under clicking the welcome
+            return navBarEntries.length;
         }
     }
 

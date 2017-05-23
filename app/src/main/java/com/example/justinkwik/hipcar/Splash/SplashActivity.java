@@ -158,11 +158,4 @@ public class SplashActivity extends AppCompatActivity {
         super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
     }
 
-    //TODO: Make sure to recycle all views
-    //TODO: finish if clicking back
-    //TODO: fix the padding for each letter (make closer together using after effects)
-    //TODO: just add all of the animations in the xml but make the layout invisible
-    //TODO: then only make it visible after the animation of the hipcar logo
-    //TODO: USE LOTTIEis done.
-
 }

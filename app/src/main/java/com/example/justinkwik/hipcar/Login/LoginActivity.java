@@ -152,8 +152,6 @@ public class LoginActivity extends AppCompatActivity {
                         editor.putString("credentials", new Gson().toJson(userCredentials));
                         editor.apply();
 
-                        //TODO: add a border around the login window
-
                     }
                 }, new Response.ErrorListener() {
                     @Override
