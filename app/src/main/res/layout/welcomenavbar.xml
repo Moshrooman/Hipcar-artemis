@@ -2,31 +2,85 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    >
 
-    <TextView
-        android:layout_width="wrap_content"
+    <RelativeLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Welcome,"
-        android:textSize="24dp"
-        android:gravity="center"
-        android:layout_marginLeft="10dp"
-        android:layout_marginTop="24dp"
-        fontPath="fonts/Exo2-Thin.ttf"
-        android:textColor="@color/navBarBlue"
-        />
+        android:id="@+id/welcomeRelativeLayout"
+        android:paddingTop="24dp"
+        android:paddingBottom="24dp"
+        >
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="24dp"
-        android:gravity="center"
-        android:layout_marginLeft="10dp"
-        android:layout_marginTop="5dp"
-        fontPath="fonts/Exo2-Thin.ttf"
-        android:textColor="@color/red"
-        android:id="@+id/nameTextView"
-        android:layout_marginBottom="24dp"
-        />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Welcome,"
+            android:textSize="24dp"
+            android:gravity="center"
+            android:layout_marginLeft="10dp"
+            fontPath="fonts/Exo2-Thin.ttf"
+            android:textColor="@color/navBarBlue"
+            android:id="@+id/welcomeTextView"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="24dp"
+            android:text="Hello"
+            android:gravity="center"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="5dp"
+            fontPath="fonts/Exo2-Thin.ttf"
+            android:textColor="@color/red"
+            android:id="@+id/nameTextView"
+            android:layout_below="@+id/welcomeTextView"
+            />
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:id="@+id/changePassLogOutLayout"
+        android:layout_below="@+id/welcomeRelativeLayout"
+        android:orientation="vertical"
+        android:layout_marginBottom="-100dp"
+        android:visibility="gone"
+        >
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:text="Change Password"
+            android:textColor="@color/navBarBlue"
+            fontPath="fonts/Exo2-Regular.ttf"
+            android:id="@+id/changePasswordTextView"
+            android:layout_marginStart="25dp"
+            android:layout_marginLeft="25dp"
+            android:textSize="15dp"
+            android:gravity="center_vertical"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:text="Logout"
+            android:textColor="@color/red"
+            fontPath="fonts/Exo2-Regular.ttf"
+            android:id="@+id/logoutTextView"
+            android:layout_marginStart="25dp"
+            android:layout_marginLeft="25dp"
+            android:textSize="15dp"
+            android:gravity="center_vertical"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            />
+
+    </LinearLayout>
 
 </LinearLayout>

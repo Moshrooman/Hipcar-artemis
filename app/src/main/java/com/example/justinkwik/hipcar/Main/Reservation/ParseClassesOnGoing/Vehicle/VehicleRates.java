@@ -1,16 +1,15 @@
-package com.example.justinkwik.hipcar.Main.Reservation;
+package com.example.justinkwik.hipcar.Main.Reservation.ParseClassesOnGoing.Vehicle;
 
 import com.google.gson.annotations.SerializedName;
-
-import org.json.JSONObject;
 
 /**
  * Created by Justin Kwik on 23/05/2017.
  */
 public class VehicleRates {
 
-    public VehicleRates(int id, JSONObject vehicle, int price, int km_limit, int day, int nominal) {
+    public VehicleRates(int id, VehicleRatesId vehicleRatesId, int price, int km_limit, int day, int nominal) {
         this.id = id;
+        this.vehicleRatesId = vehicleRatesId;
         this.price = price;
         this.km_limit = km_limit;
         this.day = day;
@@ -19,6 +18,9 @@ public class VehicleRates {
 
     @SerializedName("id")
     private int id;
+
+    @SerializedName("vehicle")
+    private VehicleRatesId vehicleRatesId;
 
     @SerializedName("price")
     private int price;
@@ -52,6 +54,10 @@ public class VehicleRates {
         return nominal;
     }
 
+    public VehicleRatesId getVehicleRatesId() {
+        return vehicleRatesId;
+    }
+
     public void setId(int id) {
         this.id = id;
     }
@@ -70,5 +76,9 @@ public class VehicleRates {
 
     public void setNominal(int nominal) {
         this.nominal = nominal;
+    }
+
+    public void setVehicleRatesId(VehicleRatesId vehicleRatesId) {
+        this.vehicleRatesId = vehicleRatesId;
     }
 }

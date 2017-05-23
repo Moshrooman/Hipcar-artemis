@@ -1,5 +1,11 @@
 package com.example.justinkwik.hipcar.Main.Reservation;
 
+import com.example.justinkwik.hipcar.Main.Reservation.ParseClassesOnGoing.Station.PickupStation;
+import com.example.justinkwik.hipcar.Main.Reservation.ParseClassesOnGoing.Price.Prices;
+import com.example.justinkwik.hipcar.Main.Reservation.ParseClassesOnGoing.Station.ReturnStation;
+import com.example.justinkwik.hipcar.Main.Reservation.ParseClassesOnGoing.User.User;
+import com.example.justinkwik.hipcar.Main.Reservation.ParseClassesOnGoing.Vehicle.Vehicle;
+import com.example.justinkwik.hipcar.Main.Reservation.ParseClassesOnGoing.Vehicle.VehicleRates;
 import com.google.gson.annotations.SerializedName;
 
 /**
@@ -7,7 +13,7 @@ import com.google.gson.annotations.SerializedName;
  */
 public class OnGoingReservation {
 
-    public OnGoingReservation(int id, String full_name, String email, String contact_number, String pickup_address, String pickup_date, String return_date, int total_amount, int payment_status, String actual_pickup_date, String actual_return_date, String i_token, String i_session_key, int actual_total_amount, int owed_amount, int pickup_km, int return_km, int excess_km_charge, int total_free_km, int km_limit, int km_nominal, boolean is_owner, VehicleRates[] vehicle_rates) {
+    public OnGoingReservation(int id, String full_name, String email, String contact_number, String pickup_address, String pickup_date, String return_date, int total_amount, int payment_status, String actual_pickup_date, String actual_return_date, String i_token, String i_session_key, int actual_total_amount, int owed_amount, int pickup_km, int return_km, int excess_km_charge, int total_free_km, int km_limit, int km_nominal, boolean is_owner, VehicleRates[] vehicle_rates, String created, String updated, String deleted, int user_id, int vehicle_id, int pickup_station_id, int return_station_id, User user, ReturnStation return_station, PickupStation pickup_station, Vehicle vehicle, int total_nominal, int total_basic_price, int total_used_km, int total_excess_km_charge, int total_price, Prices[] prices) {
         this.id = id;
         this.full_name = full_name;
         this.email = email;
@@ -31,6 +37,23 @@ public class OnGoingReservation {
         this.km_nominal = km_nominal;
         this.is_owner = is_owner;
         this.vehicle_rates = vehicle_rates;
+        this.created = created;
+        this.updated = updated;
+        this.deleted = deleted;
+        this.user_id = user_id;
+        this.vehicle_id = vehicle_id;
+        this.pickup_station_id = pickup_station_id;
+        this.return_station_id = return_station_id;
+        this.user = user;
+        this.return_station = return_station;
+        this.pickup_station = pickup_station;
+        this.vehicle = vehicle;
+        this.total_nominal = total_nominal;
+        this.total_basic_price = total_basic_price;
+        this.total_used_km = total_used_km;
+        this.total_excess_km_charge = total_excess_km_charge;
+        this.total_price = total_price;
+        this.prices = prices;
     }
 
     @SerializedName("id")
@@ -101,6 +124,57 @@ public class OnGoingReservation {
 
     @SerializedName("vehicle_rates")
     private VehicleRates[] vehicle_rates;
+
+    @SerializedName("created")
+    private String created;
+
+    @SerializedName("updated")
+    private String updated;
+
+    @SerializedName("deleted")
+    private String deleted;
+
+    @SerializedName("user_id")
+    private int user_id;
+
+    @SerializedName("vehicle_id")
+    private int vehicle_id;
+
+    @SerializedName("pickup_station_id")
+    private int pickup_station_id;
+
+    @SerializedName("return_station_id")
+    private int return_station_id;
+
+    @SerializedName("user")
+    private User user;
+
+    @SerializedName("return_station")
+    private ReturnStation return_station;
+
+    @SerializedName("pickup_station")
+    private PickupStation pickup_station;
+
+    @SerializedName("vehicle")
+    private Vehicle vehicle;
+
+    @SerializedName("total_nominal")
+    private int total_nominal;
+
+    @SerializedName("total_basic_price")
+    private int total_basic_price;
+
+    @SerializedName("total_used_km")
+    private int total_used_km;
+
+    @SerializedName("total_excess_km_charge")
+    private int total_excess_km_charge;
+
+    @SerializedName("total_price")
+    private int total_price;
+
+    @SerializedName("prices")
+    private Prices[] prices;
 
     public int getId() {
         return id;
@@ -194,6 +268,74 @@ public class OnGoingReservation {
         return vehicle_rates;
     }
 
+    public String getCreated() {
+        return created;
+    }
+
+    public String getUpdated() {
+        return updated;
+    }
+
+    public String getDeleted() {
+        return deleted;
+    }
+
+    public int getUser_id() {
+        return user_id;
+    }
+
+    public int getVehicle_id() {
+        return vehicle_id;
+    }
+
+    public int getPickup_station_id() {
+        return pickup_station_id;
+    }
+
+    public int getReturn_station_id() {
+        return return_station_id;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public ReturnStation getReturn_station() {
+        return return_station;
+    }
+
+    public PickupStation getPickup_station() {
+        return pickup_station;
+    }
+
+    public Vehicle getVehicle() {
+        return vehicle;
+    }
+
+    public int getTotal_nominal() {
+        return total_nominal;
+    }
+
+    public int getTotal_basic_price() {
+        return total_basic_price;
+    }
+
+    public int getTotal_used_km() {
+        return total_used_km;
+    }
+
+    public int getTotal_excess_km_charge() {
+        return total_excess_km_charge;
+    }
+
+    public int getTotal_price() {
+        return total_price;
+    }
+
+    public Prices[] getPrices() {
+        return prices;
+    }
+
     public void setId(int id) {
         this.id = id;
     }
@@ -284,5 +426,73 @@ public class OnGoingReservation {
 
     public void setVehicle_rates(VehicleRates[] vehicle_rates) {
         this.vehicle_rates = vehicle_rates;
+    }
+
+    public void setCreated(String created) {
+        this.created = created;
+    }
+
+    public void setUpdated(String updated) {
+        this.updated = updated;
+    }
+
+    public void setDeleted(String deleted) {
+        this.deleted = deleted;
+    }
+
+    public void setUser_id(int user_id) {
+        this.user_id = user_id;
+    }
+
+    public void setVehicle_id(int vehicle_id) {
+        this.vehicle_id = vehicle_id;
+    }
+
+    public void setPickup_station_id(int pickup_station_id) {
+        this.pickup_station_id = pickup_station_id;
+    }
+
+    public void setReturn_station_id(int return_station_id) {
+        this.return_station_id = return_station_id;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public void setReturn_station(ReturnStation return_station) {
+        this.return_station = return_station;
+    }
+
+    public void setPickup_station(PickupStation pickup_station) {
+        this.pickup_station = pickup_station;
+    }
+
+    public void setVehicle(Vehicle vehicle) {
+        this.vehicle = vehicle;
+    }
+
+    public void setTotal_nominal(int total_nominal) {
+        this.total_nominal = total_nominal;
+    }
+
+    public void setTotal_basic_price(int total_basic_price) {
+        this.total_basic_price = total_basic_price;
+    }
+
+    public void setTotal_used_km(int total_used_km) {
+        this.total_used_km = total_used_km;
+    }
+
+    public void setTotal_excess_km_charge(int total_excess_km_charge) {
+        this.total_excess_km_charge = total_excess_km_charge;
+    }
+
+    public void setTotal_price(int total_price) {
+        this.total_price = total_price;
+    }
+
+    public void setPrices(Prices[] prices) {
+        this.prices = prices;
     }
 }

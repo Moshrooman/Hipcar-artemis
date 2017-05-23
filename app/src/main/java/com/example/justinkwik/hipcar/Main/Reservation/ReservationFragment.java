@@ -39,15 +39,11 @@ public class ReservationFragment extends Fragment {
         userCredentials = LoginActivity.getUserCredentials();
         gson = new Gson();
 
-        Log.e("Token: ", userCredentials.getToken());
-
         StringRequest onGoingReservationRequest = new StringRequest(Request.Method.GET, onGoingReservationLink, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
 
                 onGoingReservation = gson.fromJson(response, OnGoingReservation[].class);
-
-                Log.e("Full Name: ", onGoingReservation[0].getFull_name());
 
             }
         }, new Response.ErrorListener() {
