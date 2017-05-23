@@ -20,11 +20,10 @@ import android.widget.TextView;
 import com.airbnb.lottie.LottieAnimationView;
 import com.example.justinkwik.hipcar.CustomViewPager.NonSwipeableViewPager;
 import com.example.justinkwik.hipcar.HipCarApplication;
+import com.example.justinkwik.hipcar.Login.LoginActivity;
 import com.example.justinkwik.hipcar.Login.UserCredentials;
-import com.example.justinkwik.hipcar.Main.Fragments.PlaceHolderFragment;
-import com.example.justinkwik.hipcar.Main.Fragments.ReservationFragment;
+import com.example.justinkwik.hipcar.Main.Reservation.ReservationFragment;
 import com.example.justinkwik.hipcar.R;
-import com.google.gson.Gson;
 
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
@@ -36,7 +35,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private ListView drawerListView;
     private boolean openDrawer;
     private String navBarEntries[];
-    private LottieAnimationView navBarButton;
+    private LottieAnimationView navBarButtonHtA;
+    private LottieAnimationView navBarButtonAtH;
+    private View navBarClickView;
     private TextView mainActivityTitle;
     private NonSwipeableViewPager viewPager;
 
@@ -45,12 +46,14 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        userCredentials = new Gson().fromJson(sharedPreferences.getString("credentials", ""), UserCredentials.class);
+        userCredentials = LoginActivity.getUserCredentials();
         drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
         drawerListView = (ListView) findViewById(R.id.drawerListView);
         openDrawer = true;
         navBarEntries = getResources().getStringArray(R.array.navBarEntries);
-        navBarButton = (LottieAnimationView) findViewById(R.id.navBarButton);
+        navBarButtonHtA = (LottieAnimationView) findViewById(R.id.navBarButtonHtA);
+        navBarButtonAtH = (LottieAnimationView) findViewById(R.id.navBarButtonAtH);
+        navBarClickView = findViewById(R.id.navBarClickView);
         mainActivityTitle = (TextView) findViewById(R.id.mainActivityTitle);
         viewPager = (NonSwipeableViewPager) findViewById(R.id.mainActivityViewPager);
 
@@ -74,8 +77,14 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             @Override
             public void onDrawerClosed(View drawerView) {
 
-                //Set the visibility so that the content underneath is clickable.
-                drawerLayout.setVisibility(View.GONE);
+                if (!openDrawer) {
+                    navBarButtonAtH.setVisibility(View.VISIBLE);
+                    navBarButtonHtA.setVisibility(View.INVISIBLE);
+                    navBarButtonAtH.playAnimation();
+                    drawerLayout.setVisibility(View.GONE);
+
+                    openDrawer = true;
+                }
 
             }
 
@@ -85,23 +94,35 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             }
         });
 
-        navBarButton.setOnClickListener(new View.OnClickListener() {
+        navBarClickView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                navBarButton.playAnimation();
+                if(openDrawer) {
 
-                if (openDrawer) {
+                    navBarButtonHtA.setVisibility(View.VISIBLE);
 
-                    openDrawer = false;
+                    navBarButtonAtH.setVisibility(View.INVISIBLE);
+
+                    navBarButtonHtA.playAnimation();
+
                     drawerLayout.setVisibility(View.VISIBLE);
                     drawerLayout.openDrawer(Gravity.LEFT);
                     drawerLayout.bringToFront();
 
+                    openDrawer = false;
+
                 } else {
 
-                    openDrawer = true;
+                    navBarButtonAtH.setVisibility(View.VISIBLE);
+
+                    navBarButtonHtA.setVisibility(View.INVISIBLE);
+
+                    navBarButtonAtH.playAnimation();
+
                     drawerLayout.closeDrawer(Gravity.LEFT);
+
+                    openDrawer = true;
 
                 }
 
@@ -116,6 +137,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         //TODO: put the app in background if they click back
         //TODO: the log out should be in the special welcome nav bar entry as well as change password
         //TODO: add a profile picture to the welcome nav bar from slack? pull from slack using slack api
+        //TODO: damage, add api
 
     }
 
@@ -176,8 +198,14 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         viewPager.setCurrentItem(position - 1, false); //TODO: see if want to use smooth scrolling
 
         mainActivityTitle.setText(navBarEntries[position - 1]);
-        drawerLayout.closeDrawer(Gravity.LEFT);
+
+        navBarButtonAtH.setVisibility(View.VISIBLE);
+        navBarButtonHtA.setVisibility(View.INVISIBLE);
+        navBarButtonAtH.playAnimation();
+
         openDrawer = true;
+
+        drawerLayout.closeDrawer(Gravity.LEFT);
 
     }
 

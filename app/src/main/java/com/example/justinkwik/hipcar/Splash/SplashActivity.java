@@ -1,23 +1,24 @@
 package com.example.justinkwik.hipcar.Splash;
 
-import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.airbnb.lottie.LottieComposition;
+import com.airbnb.lottie.OnCompositionLoadedListener;
 import com.example.justinkwik.hipcar.HipCarApplication;
 import com.example.justinkwik.hipcar.Login.LoginActivity;
 import com.example.justinkwik.hipcar.Main.MainActivity;
 import com.example.justinkwik.hipcar.R;
+import com.google.gson.Gson;
 
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
@@ -27,11 +28,23 @@ public class SplashActivity extends AppCompatActivity {
     private AlphaAnimation fadeInLogo;
     private final SharedPreferences sharedPreferences = HipCarApplication.getSharedPreferences();
     private TextView[] lettersTextViewArray;
+    private LottieComposition hamburgerArrowComposition;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
+
+        //Pre-load the composition so no lag in setting the animation in Main Activity
+        LottieComposition.Factory.fromAssetFileName(getApplicationContext(), "Lottie/hamburgerarrow.json",
+                new OnCompositionLoadedListener() {
+                    @Override
+                    public void onCompositionLoaded(LottieComposition composition) {
+
+                        hamburgerArrowComposition = composition;
+
+                    }
+                });
 
         hipCarLogoImageView = (ImageView) findViewById(R.id.hipCarLogoImageView);
         lettersTextViewArray = new TextView[]{(TextView) findViewById(R.id.A), (TextView) findViewById(R.id.R),
@@ -83,7 +96,7 @@ public class SplashActivity extends AppCompatActivity {
             };
 
             Handler startLetterHandler = new Handler();
-            startLetterHandler.postDelayed(startLetterRunnable, 130);
+            startLetterHandler.postDelayed(startLetterRunnable, 90);
 
         } else {
 

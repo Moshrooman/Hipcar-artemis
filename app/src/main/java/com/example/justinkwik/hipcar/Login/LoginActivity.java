@@ -44,7 +44,7 @@ public class LoginActivity extends AppCompatActivity {
     private static UserCredentials userCredentials;
     private LottieAnimationView loadingAnimationView;
     private LottieAnimationView checkMarkAnimationView;
-    private final SharedPreferences sharedPreferences = HipCarApplication.getSharedPreferences();
+    private static final SharedPreferences sharedPreferences = HipCarApplication.getSharedPreferences();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -189,7 +189,7 @@ public class LoginActivity extends AppCompatActivity {
 
     public static UserCredentials getUserCredentials() {
 
-        return userCredentials;
+        return new Gson().fromJson(sharedPreferences.getString("credentials", ""), UserCredentials.class);
 
     }
 

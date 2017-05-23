@@ -1,4 +1,4 @@
-package com.example.justinkwik.hipcar.Main.Fragments;
+package com.example.justinkwik.hipcar.Main;
 
 import android.content.Context;
 import android.net.Uri;
@@ -10,23 +10,25 @@ import android.view.ViewGroup;
 
 import com.example.justinkwik.hipcar.R;
 
-public class ReservationFragment extends Fragment {
+public class PlaceHolderFragment extends Fragment {
 
-    public ReservationFragment() {
+    public PlaceHolderFragment() {
         // Required empty public constructor
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_reservation, container, false);
-    }
 
+        View placeHolderFragment = inflater.inflate(R.layout.fragment_place_holder, container, false);
+
+        return placeHolderFragment;
+    }
 
 }
