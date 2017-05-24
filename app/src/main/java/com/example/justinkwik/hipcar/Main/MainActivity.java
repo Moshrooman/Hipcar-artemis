@@ -271,9 +271,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         @Override
         public Fragment getItem(int position) { //TODO; add here when adding submenus, count off from top, counting submenus as one.
 
-            //TODO: Fix this, for some reason when clicking transaction, it also brings up Reservation Fragment
-            //Play with the size of the drawer entries, play with the strings and only create a view for the listview
-            //when position is not x and x.
+            //TODO: switch to https://github.com/mikepenz/MaterialDrawer
 
             if(position == 3) {
 
