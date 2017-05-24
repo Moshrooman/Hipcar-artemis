@@ -1,4 +1,4 @@
-package com.example.justinkwik.hipcar.Main.Reservation;
+package com.example.justinkwik.hipcar.Main.Reservation.OnGoingFragmentClasses;
 
 import com.example.justinkwik.hipcar.Main.Reservation.ParseClassesOnGoing.Station.PickupStation;
 import com.example.justinkwik.hipcar.Main.Reservation.ParseClassesOnGoing.Price.Prices;

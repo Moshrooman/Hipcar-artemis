@@ -2,8 +2,92 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Main.Reservation.ReservationFragment">
+    tools:context=".Main.Reservation.OnGoingFragmentClasses.OnGoingReservationFragment">
 
+
+    <TableLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="fill_parent"
+        android:layout_height="50dp"
+        android:shrinkColumns="*"
+        android:stretchColumns="*"
+        >
+
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:background="@color/navBarGrey"
+            >
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.05"
+                android:layout_gravity="center"
+                android:id="@+id/expandedIndicatorImageView"
+                />
+
+            <com.example.justinkwik.hipcar.CustomAutoFitTextView.FontFitTextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:text="Full Name"
+                android:textSize="12dp"
+                android:textColor="@color/black"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:layout_weight="0.2375"
+                fontPath="fonts/Exo2-Bold.ttf"
+                />
+            <com.example.justinkwik.hipcar.CustomAutoFitTextView.FontFitTextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:text="Balance"
+                android:textSize="12dp"
+                android:textColor="@color/black"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:minLines="2"
+                android:layout_weight="0.2375"
+                fontPath="fonts/Exo2-Bold.ttf"
+                />
+            <com.example.justinkwik.hipcar.CustomAutoFitTextView.FontFitTextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:text="Price\nEstimates"
+                android:textSize="12dp"
+                android:textColor="@color/black"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:minLines="2"
+                android:layout_weight="0.2375"
+                fontPath="fonts/Exo2-Bold.ttf"
+                />
+
+            <com.example.justinkwik.hipcar.CustomAutoFitTextView.FontFitTextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:text="Plate\nNumber"
+                android:textSize="12dp"
+                android:textColor="@color/black"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:minLines="2"
+                android:layout_weight="0.2375"
+                fontPath="fonts/Exo2-Bold.ttf"
+                />
+
+        </TableRow>
+
+    </TableLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="50dp"
+        android:id="@+id/onGoingReservationRecyclerView"
+        >
+
+    </android.support.v7.widget.RecyclerView>
 
 
 </FrameLayout>

@@ -1,7 +1,10 @@
-package com.example.justinkwik.hipcar.Main.Reservation;
+package com.example.justinkwik.hipcar.Main.Reservation.OnGoingFragmentClasses;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,14 +24,15 @@ import com.google.gson.Gson;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ReservationFragment extends Fragment {
+public class OnGoingReservationFragment extends Fragment {
 
     private UserCredentials userCredentials;
     private final String onGoingReservationLink = "https://artemis-api-dev.hipcar.com/reservation/on-going";
     private OnGoingReservation[] onGoingReservation;
     private Gson gson;
+    private RecyclerView onGoingReservationRecyclerView;
 
-    public ReservationFragment() {
+    public OnGoingReservationFragment() {
 
     }
 
@@ -38,6 +42,8 @@ public class ReservationFragment extends Fragment {
 
         userCredentials = LoginActivity.getUserCredentials();
         gson = new Gson();
+
+        Log.e("Token: ", userCredentials.getToken()); //TODO: delete this token log.
 
         StringRequest onGoingReservationRequest = new StringRequest(Request.Method.GET, onGoingReservationLink, new Response.Listener<String>() {
             @Override
@@ -72,9 +78,11 @@ public class ReservationFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_reservation, container, false);
 
+        onGoingReservationRecyclerView = (RecyclerView) view.findViewById(R.id.onGoingReservationRecyclerView);
+        onGoingReservationRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        onGoingReservationRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity().getApplicationContext()));
 
         return view;
     }
-
 
 }

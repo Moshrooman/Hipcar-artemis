@@ -3,7 +3,6 @@ package com.example.justinkwik.hipcar.Main;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -18,7 +17,6 @@ import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.airbnb.lottie.LottieAnimationView;
@@ -27,7 +25,7 @@ import com.example.justinkwik.hipcar.ExpandAnimation.ExpandAnimation;
 import com.example.justinkwik.hipcar.HipCarApplication;
 import com.example.justinkwik.hipcar.Login.LoginActivity;
 import com.example.justinkwik.hipcar.Login.UserCredentials;
-import com.example.justinkwik.hipcar.Main.Reservation.ReservationFragment;
+import com.example.justinkwik.hipcar.Main.Reservation.OnGoingFragmentClasses.OnGoingReservationFragment;
 import com.example.justinkwik.hipcar.R;
 
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
@@ -48,6 +46,13 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private LinearLayout changePassLogOutLayout;
     private TextView logoutTextView;
     private TextView changePasswordTextView;
+    private LinearLayout reservationSubMenuLayout;
+    private TextView onGoingReservationTextView;
+    private TextView checkOutReservationTextView;
+    private LinearLayout vehicleSubMenuLayout;
+    private TextView vehicleTextView;
+    private TextView vehicleMakeTextView;
+    private TextView vehicleModelTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,12 +91,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             public void onDrawerClosed(View drawerView) {
 
                 if (!openDrawer) {
-                    navBarButtonAtH.setVisibility(View.VISIBLE);
-                    navBarButtonHtA.setVisibility(View.INVISIBLE);
-                    navBarButtonAtH.playAnimation();
-                    drawerLayout.setVisibility(View.GONE);
 
-                    openDrawer = true;
+                    arrowToHamburger();
+
                 }
 
             }
@@ -108,29 +110,11 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
                 if (openDrawer) {
 
-                    navBarButtonHtA.setVisibility(View.VISIBLE);
-
-                    navBarButtonAtH.setVisibility(View.INVISIBLE);
-
-                    navBarButtonHtA.playAnimation();
-
-                    drawerLayout.setVisibility(View.VISIBLE);
-                    drawerLayout.openDrawer(Gravity.LEFT);
-                    drawerLayout.bringToFront();
-
-                    openDrawer = false;
+                    openDrawer();
 
                 } else {
 
-                    navBarButtonAtH.setVisibility(View.VISIBLE);
-
-                    navBarButtonHtA.setVisibility(View.INVISIBLE);
-
-                    navBarButtonAtH.playAnimation();
-
-                    drawerLayout.closeDrawer(Gravity.LEFT);
-
-                    openDrawer = true;
+                    closeDrawer();
 
                 }
 
@@ -140,7 +124,11 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         viewPager.setAdapter(new ViewPagerAdapter(getSupportFragmentManager()));
 
         //TODO: RESERVATION IMPLEMENTATION
-        //Begin creating the layout of reservation, following artemis's api
+        //Add a loading thing to the reservation while retrieving the information.
+        //Add an arrow to the reservation tab for sub menu's to indicate collapse and expand.
+        //Add an arrow to each recycler view views in ongoing and check-out.
+        //Need to NOT change the title when clicking reservation, only change to either on-going or check-out reservation
+        //Add a search bar to both tabs?
 
         //TODO: LOG OUT AND CHANGE PASSWORD
         //for logging out delete the credentials and set loggedin boolean to false (both in sharedPreference)
@@ -148,6 +136,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             //also when the drawer closes, but we first have to check if it is expanded.
         //put a border on the log out and change password textviews.
         //add an arrow on the welcome nav bar to indicate expanded and collapsed log out/change password (lottie?)
+
+        //TODO: FOR VEHICLE TAB
+        //Add an arrow to signal expand/collapse and implement
 
         //TODO: MISCELLANEOUS
         //give an option to skip splash screen in beginning
@@ -194,25 +185,29 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     logoutTextView = (TextView) convertView.findViewById(R.id.logoutTextView);
                     changePasswordTextView = (TextView) convertView.findViewById(R.id.changePasswordTextView);
 
-                    logoutTextView.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
+                    setOnClickListenersLogoutChangePass();
 
-                            //TODO: implement log out
-                            Log.e("Clicked: ", "Logout");
+                } else if( position == 3) {
 
-                        }
-                    });
+                    convertView = layoutInflater.inflate(R.layout.rownavbarreservation, null);
 
-                    changePasswordTextView.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
+                    reservationSubMenuLayout = (LinearLayout) convertView.findViewById(R.id.reservationSubMenuLayout);
+                    checkOutReservationTextView = (TextView) convertView.findViewById(R.id.checkOutReservationTextView);
+                    onGoingReservationTextView = (TextView) convertView.findViewById(R.id.onGoingReservationTextView);
 
-                            //TODO: implement change password
-                            Log.e("Clicked: ", "Change Password");
+                    setOnClickListenersReservation();
 
-                        }
-                    });
+
+                } else if(position == 9) {
+
+                    convertView = layoutInflater.inflate(R.layout.rownavbarvehicle, null);
+                    vehicleSubMenuLayout = (LinearLayout) convertView.findViewById(R.id.vehicleSubMenuLayout);
+                    vehicleTextView = (TextView) convertView.findViewById(R.id.vehicleTextView);
+                    vehicleMakeTextView = (TextView) convertView.findViewById(R.id.vehicleMakeTextView);
+                    vehicleModelTextView = (TextView) convertView.findViewById(R.id.vehicleModelTextView);
+
+                    setOnClickListenersVehicle();
+
 
                 } else {
 
@@ -241,10 +236,17 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-        if(position == 0) {
+        if(position == 0) { //Welcome navbar
 
-            ExpandAnimation expandAnimation = new ExpandAnimation(changePassLogOutLayout, 390);
-            changePassLogOutLayout.startAnimation(expandAnimation);
+            expandCollapseSubMenus(changePassLogOutLayout);
+
+        } else if (position == 3) { //Reservation tab
+
+            expandCollapseSubMenus(reservationSubMenuLayout);
+
+        } else if (position == 9) {
+
+            expandCollapseSubMenus(vehicleSubMenuLayout);
 
         } else {
 
@@ -252,13 +254,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
             mainActivityTitle.setText(navBarEntries[position - 1]);
 
-            navBarButtonAtH.setVisibility(View.VISIBLE);
-            navBarButtonHtA.setVisibility(View.INVISIBLE);
-            navBarButtonAtH.playAnimation();
-
-            openDrawer = true;
-
-            drawerLayout.closeDrawer(Gravity.LEFT);
+            closeDrawer();
 
         }
 
@@ -272,11 +268,12 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
 
         @Override
-        public Fragment getItem(int position) {
+        public Fragment getItem(int position) { //TODO; add here when adding submenus, count off from top, counting submenus as one.
 
-            if(position == 2) {
+            if(position == 3) {
 
-                return new ReservationFragment();
+                closeDrawer();
+                return new OnGoingReservationFragment();
 
             } else {
 
@@ -284,12 +281,130 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
             }
 
+            //TODO: need to return new fragment for the check-out reservations
+            //TODO: need to return new fragment for the vehicle sub-menus.
+
         }
 
         @Override
         public int getCount() {
-            return navBarEntries.length;
+            return navBarEntries.length + 3; //TODO: added 2 for the reservation sub menus.
         }
+    }
+
+    public void closeDrawer() {
+
+        navBarButtonAtH.setVisibility(View.VISIBLE);
+        navBarButtonHtA.setVisibility(View.INVISIBLE);
+        navBarButtonAtH.playAnimation();
+
+        openDrawer = true;
+
+        drawerLayout.closeDrawer(Gravity.LEFT);
+
+    }
+
+    public void openDrawer() {
+
+        navBarButtonHtA.setVisibility(View.VISIBLE);
+
+        navBarButtonAtH.setVisibility(View.INVISIBLE);
+
+        navBarButtonHtA.playAnimation();
+
+        drawerLayout.setVisibility(View.VISIBLE);
+        drawerLayout.openDrawer(Gravity.LEFT);
+        drawerLayout.bringToFront();
+
+        openDrawer = false;
+
+    }
+
+    public void arrowToHamburger() {
+
+        navBarButtonAtH.setVisibility(View.VISIBLE);
+        navBarButtonHtA.setVisibility(View.INVISIBLE);
+        navBarButtonAtH.playAnimation();
+        drawerLayout.setVisibility(View.GONE);
+
+        openDrawer = true;
+
+    }
+
+    public void expandCollapseSubMenus(View view) {
+
+        ExpandAnimation expandAnimation = new ExpandAnimation(view, 390);
+        view.startAnimation(expandAnimation);
+
+    }
+
+    public void setOnClickListenersLogoutChangePass() {
+
+        logoutTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                //TODO: implement log out
+                Log.e("Clicked: ", "Logout");
+
+            }
+        });
+
+        changePasswordTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                //TODO: implement change password
+                Log.e("Clicked: ", "Change Password");
+
+            }
+        });
+
+    }
+
+    public void setOnClickListenersVehicle() {
+
+        vehicleTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //TODO set the view pager to the position and set to new fragment in adapter
+            }
+        });
+
+        vehicleMakeTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //TODO set the view pager to the position and set to new fragment in adapter
+            }
+        });
+
+        vehicleModelTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //TODO set the view pager to the position and set to new fragment in adapter
+            }
+        });
+    }
+
+    public void setOnClickListenersReservation() {
+
+        checkOutReservationTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //TODO: set the view pager to the checkout reservation fragment. follow below
+            }
+        });
+
+        onGoingReservationTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                viewPager.setCurrentItem(3, false); //Set to 3 starting from index 0, this submenu is position 3
+                expandCollapseSubMenus(reservationSubMenuLayout);
+                mainActivityTitle.setText("On-Going Reservation");
+                closeDrawer();
+            }
+        });
+
     }
 
     @Override

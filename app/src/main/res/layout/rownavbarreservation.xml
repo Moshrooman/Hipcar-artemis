@@ -6,58 +6,38 @@
     >
 
     <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/welcomeRelativeLayout"
-        android:paddingTop="24dp"
-        android:paddingBottom="24dp"
-        >
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
 
         <TextView
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Welcome,"
-            android:textSize="24dp"
-            android:gravity="center"
+            android:layout_height="45dp"
+            android:textSize="15dp"
+            android:layout_gravity="center_vertical"
             android:layout_marginLeft="10dp"
-            fontPath="fonts/Exo2-Thin.ttf"
+            android:id="@+id/navBarEntryTextView"
+            android:gravity="center"
             android:textColor="@color/navBarBlue"
-            android:id="@+id/welcomeTextView"
-            />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="24dp"
-            android:text="Hello"
-            android:gravity="center"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="5dp"
-            fontPath="fonts/Exo2-Thin.ttf"
-            android:textColor="@color/red"
-            android:id="@+id/nameTextView"
-            android:layout_below="@+id/welcomeTextView"
+            fontPath="fonts/Exo2-Regular.ttf"
             />
 
     </RelativeLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:id="@+id/changePassLogOutLayout"
-        android:layout_below="@+id/welcomeRelativeLayout"
+        android:layout_height="80dp"
+        android:id="@+id/reservationSubMenuLayout"
         android:orientation="vertical"
-        android:layout_marginBottom="-100dp"
+        android:layout_marginBottom="-80dp"
         android:visibility="gone"
         >
 
         <TextView
             android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:text="Change Password"
-            android:textColor="@color/navBarBlue"
+            android:layout_height="40dp"
+            android:textColor="@color/red"
             fontPath="fonts/Exo2-Regular.ttf"
-            android:id="@+id/changePasswordTextView"
+            android:id="@+id/onGoingReservationTextView"
             android:layout_marginStart="25dp"
             android:layout_marginLeft="25dp"
             android:textSize="15dp"
@@ -65,15 +45,15 @@
             android:focusable="false"
             android:focusableInTouchMode="false"
             android:background="@drawable/logoutborder"
+            android:text="On-Going Reservation"
             />
 
         <TextView
             android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:text="Logout"
+            android:layout_height="40dp"
             android:textColor="@color/red"
             fontPath="fonts/Exo2-Regular.ttf"
-            android:id="@+id/logoutTextView"
+            android:id="@+id/checkOutReservationTextView"
             android:layout_marginStart="25dp"
             android:layout_marginLeft="25dp"
             android:textSize="15dp"
@@ -81,8 +61,8 @@
             android:focusable="false"
             android:focusableInTouchMode="false"
             android:background="@drawable/logoutborder"
+            android:text="Checkout Reservation"
             />
 
     </LinearLayout>
-
 </LinearLayout>

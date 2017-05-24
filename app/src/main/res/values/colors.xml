@@ -8,4 +8,5 @@
     <color name="navBarGrey">#E8E8E8</color>
     <color name="mainactivitytoolbargrey">#b9b9b9</color>
     <color name="navBarBlue">#23527c</color>
+    <color name="black">#000000</color>
 </resources>
