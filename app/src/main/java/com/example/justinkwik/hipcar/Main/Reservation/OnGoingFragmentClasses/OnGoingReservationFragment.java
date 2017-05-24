@@ -28,7 +28,7 @@ public class OnGoingReservationFragment extends Fragment {
 
     private UserCredentials userCredentials;
     private final String onGoingReservationLink = "https://artemis-api-dev.hipcar.com/reservation/on-going";
-    private OnGoingReservation[] onGoingReservation;
+    private OnGoingReservation[] onGoingReservations;
     private Gson gson;
     private RecyclerView onGoingReservationRecyclerView;
 
@@ -49,7 +49,10 @@ public class OnGoingReservationFragment extends Fragment {
             @Override
             public void onResponse(String response) {
 
-                onGoingReservation = gson.fromJson(response, OnGoingReservation[].class);
+                onGoingReservations = gson.fromJson(response, OnGoingReservation[].class);
+
+                onGoingReservationRecyclerView.setAdapter(new OnGoingReservationAdapter(getActivity().getApplicationContext(),
+                        onGoingReservations));
 
             }
         }, new Response.ErrorListener() {

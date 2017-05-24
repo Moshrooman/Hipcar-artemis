@@ -61,6 +61,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         userCredentials = LoginActivity.getUserCredentials();
         drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
+
         drawerListView = (ListView) findViewById(R.id.drawerListView);
         openDrawer = true;
         navBarEntries = getResources().getStringArray(R.array.navBarEntries);
@@ -270,6 +271,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         @Override
         public Fragment getItem(int position) { //TODO; add here when adding submenus, count off from top, counting submenus as one.
 
+            //TODO: Fix this, for some reason when clicking transaction, it also brings up Reservation Fragment
+            //Play with the size of the drawer entries, play with the strings and only create a view for the listview
+            //when position is not x and x.
+
             if(position == 3) {
 
                 closeDrawer();
@@ -292,7 +297,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         }
     }
 
-    public void closeDrawer() {
+    private void closeDrawer() {
 
         navBarButtonAtH.setVisibility(View.VISIBLE);
         navBarButtonHtA.setVisibility(View.INVISIBLE);
@@ -304,7 +309,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     }
 
-    public void openDrawer() {
+    private void openDrawer() {
 
         navBarButtonHtA.setVisibility(View.VISIBLE);
 
@@ -314,13 +319,12 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         drawerLayout.setVisibility(View.VISIBLE);
         drawerLayout.openDrawer(Gravity.LEFT);
-        drawerLayout.bringToFront();
 
         openDrawer = false;
 
     }
 
-    public void arrowToHamburger() {
+    private void arrowToHamburger() {
 
         navBarButtonAtH.setVisibility(View.VISIBLE);
         navBarButtonHtA.setVisibility(View.INVISIBLE);
@@ -331,14 +335,14 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     }
 
-    public void expandCollapseSubMenus(View view) {
+    private void expandCollapseSubMenus(View view) {
 
         ExpandAnimation expandAnimation = new ExpandAnimation(view, 390);
         view.startAnimation(expandAnimation);
 
     }
 
-    public void setOnClickListenersLogoutChangePass() {
+    private void setOnClickListenersLogoutChangePass() {
 
         logoutTextView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -362,7 +366,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     }
 
-    public void setOnClickListenersVehicle() {
+    private void setOnClickListenersVehicle() {
 
         vehicleTextView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -386,7 +390,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         });
     }
 
-    public void setOnClickListenersReservation() {
+    private void setOnClickListenersReservation() {
 
         checkOutReservationTextView.setOnClickListener(new View.OnClickListener() {
             @Override

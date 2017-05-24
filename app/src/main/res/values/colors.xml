@@ -9,4 +9,5 @@
     <color name="mainactivitytoolbargrey">#b9b9b9</color>
     <color name="navBarBlue">#23527c</color>
     <color name="black">#000000</color>
+    <color name="logoutbordercolor">#B1BCBE</color>
 </resources>

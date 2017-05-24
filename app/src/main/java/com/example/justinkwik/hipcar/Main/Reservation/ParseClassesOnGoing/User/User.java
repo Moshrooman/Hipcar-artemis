@@ -7,7 +7,7 @@ import com.google.gson.annotations.SerializedName;
  */
 public class User {
 
-    public User(int id, String email, String first_name, String last_name, int contact_number, int balance, String installation_id, String activated_date, String suspended_date, String rejected_date, String reset_token, String birth_date, String gender, String created, String updated, String deleted) {
+    public User(int id, String email, String first_name, String last_name, String contact_number, int balance, String installation_id, String activated_date, String suspended_date, String rejected_date, String reset_token, String birth_date, String gender, String created, String updated, String deleted) {
         this.id = id;
         this.email = email;
         this.first_name = first_name;
@@ -39,7 +39,7 @@ public class User {
     private String last_name;
 
     @SerializedName("contact_number")
-    private int contact_number;
+    private String contact_number;
 
     @SerializedName("balance")
     private int balance;
@@ -90,7 +90,7 @@ public class User {
         return last_name;
     }
 
-    public int getContact_number() {
+    public String getContact_number() {
         return contact_number;
     }
 
@@ -154,7 +154,7 @@ public class User {
         this.last_name = last_name;
     }
 
-    public void setContact_number(int contact_number) {
+    public void setContact_number(String contact_number) {
         this.contact_number = contact_number;
     }
 

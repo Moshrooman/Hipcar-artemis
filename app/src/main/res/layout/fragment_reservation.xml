@@ -4,7 +4,6 @@
     android:layout_height="match_parent"
     tools:context=".Main.Reservation.OnGoingFragmentClasses.OnGoingReservationFragment">
 
-
     <TableLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="fill_parent"

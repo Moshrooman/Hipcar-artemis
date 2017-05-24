@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <TableLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:shrinkColumns="*"
+        android:stretchColumns="*"
+        android:background="@drawable/ongoingreservationborder"
+        android:id="@+id/onGoingReservationTableLayout"
+        android:clickable="true"
+        >
+
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            >
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.05"
+                android:layout_gravity="center"
+                >
+
+                <com.airbnb.lottie.LottieAnimationView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:id="@+id/lineToX"
+                    app:lottie_fileName="Lottie/linetox.json"
+                    app:lottie_autoPlay="false"
+                    android:clickable="false"
+                    />
+
+                <com.airbnb.lottie.LottieAnimationView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:id="@+id/xToLine"
+                    app:lottie_fileName="Lottie/xtoline.json"
+                    app:lottie_autoPlay="false"
+                    android:clickable="false"
+                    android:visibility="invisible"
+                    />
+
+            </RelativeLayout>
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/fullNameTextView"
+                android:textSize="12dp"
+                android:textColor="@color/black"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:layout_weight="0.2375"
+                fontPath="fonts/Exo2-Regular.ttf"
+                android:paddingTop="14dp"
+                android:paddingBottom="14dp"
+                />
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:id="@+id/balanceTextView"
+                android:textSize="12dp"
+                android:textColor="@color/black"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:minLines="2"
+                android:layout_weight="0.2375"
+                fontPath="fonts/Exo2-Regular.ttf"
+                android:paddingTop="14dp"
+                android:paddingBottom="14dp"
+                />
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:id="@+id/priceEstimatesTextView"
+                android:textSize="12dp"
+                android:textColor="@color/black"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:minLines="2"
+                android:layout_weight="0.2375"
+                fontPath="fonts/Exo2-Regular.ttf"
+                android:paddingTop="14dp"
+                android:paddingBottom="14dp"
+                />
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:id="@+id/plateNumberTextView"
+                android:textSize="12dp"
+                android:textColor="@color/black"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:minLines="2"
+                android:layout_weight="0.2375"
+                fontPath="fonts/Exo2-Regular.ttf"
+                android:paddingTop="14dp"
+                android:paddingBottom="14dp"
+                />
+
+        </TableRow>
+
+    </TableLayout>
+
+</LinearLayout>
