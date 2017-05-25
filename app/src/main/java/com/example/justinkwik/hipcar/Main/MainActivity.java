@@ -71,6 +71,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         mainActivityTitle = (TextView) findViewById(R.id.mainActivityTitle);
         viewPager = (NonSwipeableViewPager) findViewById(R.id.mainActivityViewPager);
 
+        //TODO: need to figure out how much and when to set the viewPager.setOffScreenPageLimit.
+
         drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
         drawerListView.setAdapter(new MyNavBarAdapter());
         drawerListView.setOnItemClickListener(this);
@@ -237,24 +239,43 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-        if(position == 0) { //Welcome navbar
+        switch (position) {
+            case 0:
+                expandCollapseSubMenus(changePassLogOutLayout);
+                break;
+            case 1:
+                viewPager.setCurrentItem(3, false);
+                break;
+            case 2:
+                viewPager.setCurrentItem(4, false);
+                break;
+            case 3:
+                expandCollapseSubMenus(reservationSubMenuLayout);
+                break;
+            case 4:
+                viewPager.setCurrentItem(8, false);
+                break;
+            case 5:
+                viewPager.setCurrentItem(9, false);
+                break;
+            case 6:
+                viewPager.setCurrentItem(10, false);
+                break;
+            case 7:
+                viewPager.setCurrentItem(11, false);
+                break;
+            case 8:
+                viewPager.setCurrentItem(12, false);
+                break;
+            case 9:
+                expandCollapseSubMenus(vehicleSubMenuLayout);
+                break;
 
-            expandCollapseSubMenus(changePassLogOutLayout);
+        }
 
-        } else if (position == 3) { //Reservation tab
-
-            expandCollapseSubMenus(reservationSubMenuLayout);
-
-        } else if (position == 9) {
-
-            expandCollapseSubMenus(vehicleSubMenuLayout);
-
-        } else {
-
-            viewPager.setCurrentItem(position - 1, false); //TODO: see if want to use smooth scrolling
+        if(position != 0 && position != 3 && position != 9) {
 
             mainActivityTitle.setText(navBarEntries[position - 1]);
-
             closeDrawer();
 
         }
@@ -269,29 +290,49 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
 
         @Override
-        public Fragment getItem(int position) { //TODO; add here when adding submenus, count off from top, counting submenus as one.
+        public Fragment getItem(int position) {
 
-            //TODO: switch to https://github.com/mikepenz/MaterialDrawer
+            closeDrawer();
 
-            if(position == 3) {
-
-                closeDrawer();
-                return new OnGoingReservationFragment();
-
-            } else {
-
-                return new PlaceHolderFragment();
+            switch (position) { //Skip 0, 5, 13 because these are expandable
+                case 1:
+                    return new PlaceHolderFragment();
+                case 2:
+                    return new PlaceHolderFragment();
+                case 3:
+                    return new PlaceHolderFragment();
+                case 4:
+                    return new PlaceHolderFragment();
+                case 6:
+                    return new OnGoingReservationFragment();
+                case 7:
+                    return new PlaceHolderFragment();
+                case 8:
+                    return new PlaceHolderFragment();
+                case 9:
+                    return new PlaceHolderFragment();
+                case 10:
+                    return new PlaceHolderFragment();
+                case 11:
+                    return new PlaceHolderFragment();
+                case 12:
+                    return new PlaceHolderFragment();
+                case 14:
+                    return new PlaceHolderFragment();
+                case 15:
+                    return new PlaceHolderFragment();
+                case 16:
+                    return new PlaceHolderFragment();
 
             }
 
-            //TODO: need to return new fragment for the check-out reservations
-            //TODO: need to return new fragment for the vehicle sub-menus.
+            return new PlaceHolderFragment();
 
         }
 
         @Override
         public int getCount() {
-            return navBarEntries.length + 3; //TODO: added 2 for the reservation sub menus.
+            return navBarEntries.length + 7; //TODO: added 2 for the reservation sub menus.
         }
     }
 
@@ -340,14 +381,13 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     }
 
+    //TODO implement these onitemclicks then getitem and onclick method.
+
     private void setOnClickListenersLogoutChangePass() {
 
         logoutTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                //TODO: implement log out
-                Log.e("Clicked: ", "Logout");
 
             }
         });
@@ -355,9 +395,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         changePasswordTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                //TODO: implement change password
-                Log.e("Clicked: ", "Change Password");
 
             }
         });
@@ -369,21 +406,21 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         vehicleTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO set the view pager to the position and set to new fragment in adapter
+
             }
         });
 
         vehicleMakeTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO set the view pager to the position and set to new fragment in adapter
+
             }
         });
 
         vehicleModelTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO set the view pager to the position and set to new fragment in adapter
+
             }
         });
     }
@@ -393,14 +430,13 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         checkOutReservationTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO: set the view pager to the checkout reservation fragment. follow below
             }
         });
 
         onGoingReservationTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                viewPager.setCurrentItem(3, false); //Set to 3 starting from index 0, this submenu is position 3
+                viewPager.setCurrentItem(6, false); //Set to 6 starting from index 0, this submenu is position 6
                 expandCollapseSubMenus(reservationSubMenuLayout);
                 mainActivityTitle.setText("On-Going Reservation");
                 closeDrawer();
