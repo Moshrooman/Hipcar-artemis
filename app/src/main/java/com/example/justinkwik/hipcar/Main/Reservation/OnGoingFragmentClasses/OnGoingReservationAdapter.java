@@ -1,6 +1,7 @@
 package com.example.justinkwik.hipcar.Main.Reservation.OnGoingFragmentClasses;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Gravity;
@@ -38,8 +39,10 @@ public class OnGoingReservationAdapter extends RecyclerView.Adapter<OnGoingReser
     @Override
     public OnGoingReservationViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
-        return new OnGoingReservationViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.ongoingreservationrow,
-                parent, false));
+        View onGoingReservationRow = LayoutInflater.from(parent.getContext()).inflate(R.layout.ongoingreservationrow,
+                parent, false);
+
+        return new OnGoingReservationViewHolder(onGoingReservationRow);
 
     }
 
@@ -48,6 +51,8 @@ public class OnGoingReservationAdapter extends RecyclerView.Adapter<OnGoingReser
 
         OnGoingReservation onGoingReservation = onGoingReservations[position];
 
+        //Need to add a boolean in each onGoingReservation object if it is expanded, and expand it if the boolean is true.
+
         holder.fullNameTextView.setText(onGoingReservation.getFull_name());
         holder.balanceTextView.setText("Rp. " +
                 String.valueOf(decimalFormat.format(onGoingReservation.getUser().getBalance())));
@@ -55,16 +60,7 @@ public class OnGoingReservationAdapter extends RecyclerView.Adapter<OnGoingReser
                 String.valueOf(decimalFormat.format(onGoingReservation.getTotal_price())));
         holder.plateNumberTextView.setText(onGoingReservation.getVehicle().getPlate_number());
 
-//        setExpandIndicatorClickListener(holder.lineToX, holder.xToLine, holder.onGoingReservationTableLayout);
-
-        holder.onGoingReservationTableLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.e("Clicked: ", "True");
-            }
-        });
-
-
+        setExpandIndicatorClickListener(holder.lineToX, holder.xToLine, holder.onGoingReservationTableLayout);
     }
 
     @Override
@@ -94,7 +90,6 @@ public class OnGoingReservationAdapter extends RecyclerView.Adapter<OnGoingReser
             xToLine = (LottieAnimationView) itemView.findViewById(R.id.xToLine);
 
         }
-
     }
 
     private void setExpandIndicatorClickListener(final LottieAnimationView lineToX, final LottieAnimationView xToLine,

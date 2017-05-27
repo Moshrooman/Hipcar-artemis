@@ -84,17 +84,6 @@
     </RelativeLayout>
     <!-- End Of Toolbar Layout -->
 
-    <!-- Start Of Main Fragments -->
-    <com.example.justinkwik.hipcar.CustomViewPager.NonSwipeableViewPager
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="50dp"
-        android:id="@+id/mainActivityViewPager"
-        >
-
-    </com.example.justinkwik.hipcar.CustomViewPager.NonSwipeableViewPager>
-    <!-- End Of Main Fragments -->
-
     <!-- Start Of Drawer Layout -->
     <android.support.v4.widget.DrawerLayout
         android:layout_width="match_parent"
@@ -108,7 +97,19 @@
             android:layout_height="match_parent"
             android:id="@+id/mainDrawerContent"
             android:clickable="false"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
             >
+
+            <!-- Start Of Main Fragments -->
+            <com.example.justinkwik.hipcar.CustomViewPager.NonSwipeableViewPager
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/mainActivityViewPager"
+                >
+
+            </com.example.justinkwik.hipcar.CustomViewPager.NonSwipeableViewPager>
+            <!-- End Of Main Fragments -->
 
         </FrameLayout>
 

@@ -1,5 +1,6 @@
 package com.example.justinkwik.hipcar.Main.Reservation.OnGoingFragmentClasses;
 
+import android.media.Image;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -7,8 +8,11 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -53,6 +57,8 @@ public class OnGoingReservationFragment extends Fragment {
 
                 onGoingReservationRecyclerView.setAdapter(new OnGoingReservationAdapter(getActivity().getApplicationContext(),
                         onGoingReservations));
+
+                //TODO: get progress of string request somehow and create progress bar.
 
             }
         }, new Response.ErrorListener() {

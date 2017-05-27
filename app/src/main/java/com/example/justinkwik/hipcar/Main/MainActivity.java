@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -77,8 +78,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         drawerListView.setAdapter(new MyNavBarAdapter());
         drawerListView.setOnItemClickListener(this);
 
-        drawerListView.setItemChecked(0, true);
-
         drawerLayout.addDrawerListener(new DrawerLayout.DrawerListener() {
             @Override
             public void onDrawerSlide(View drawerView, float slideOffset) {
@@ -125,6 +124,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         });
 
         viewPager.setAdapter(new ViewPagerAdapter(getSupportFragmentManager()));
+        viewPager.setCurrentItem(1, false);
 
         //TODO: RESERVATION IMPLEMENTATION
         //Add a loading thing to the reservation while retrieving the information.
@@ -332,7 +332,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         @Override
         public int getCount() {
-            return navBarEntries.length + 7; //TODO: added 2 for the reservation sub menus.
+            return navBarEntries.length + 7;
         }
     }
 
