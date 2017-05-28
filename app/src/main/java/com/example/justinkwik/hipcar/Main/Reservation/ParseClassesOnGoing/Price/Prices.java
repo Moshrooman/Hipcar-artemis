@@ -51,10 +51,24 @@ public class Prices {
     }
 
     public String getStart_date() {
+
+        if(start_date == null) {
+
+            return "null";
+
+        }
+
         return start_date;
     }
 
     public String getEnd_date() {
+
+        if(end_date == null) {
+
+            return "null";
+
+        }
+
         return end_date;
     }
 

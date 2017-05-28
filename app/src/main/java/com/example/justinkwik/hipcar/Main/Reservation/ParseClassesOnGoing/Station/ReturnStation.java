@@ -51,18 +51,46 @@ public class ReturnStation {
     }
 
     public String getName() {
+
+        if(name == null) {
+
+            return "null";
+
+        }
+
         return name;
     }
 
     public String getAddress() {
+
+        if(address == null) {
+
+            return "null";
+
+        }
+
         return address;
     }
 
     public String getLatitude() {
+
+        if(latitude == null) {
+
+            return "null";
+
+        }
+
         return latitude;
     }
 
     public String getLongitude() {
+
+        if(longitude == null) {
+
+            return "null";
+
+        }
+
         return longitude;
     }
 
@@ -71,14 +99,35 @@ public class ReturnStation {
     }
 
     public String getCreated() {
+
+        if(created == null) {
+
+            return "null";
+
+        }
+
         return created;
     }
 
     public String getUpdated() {
+
+        if(updated == null) {
+
+            return "null";
+
+        }
+
         return updated;
     }
 
     public String getDeleted() {
+
+        if(deleted == null) {
+
+            return "null";
+
+        }
+
         return deleted;
     }
 

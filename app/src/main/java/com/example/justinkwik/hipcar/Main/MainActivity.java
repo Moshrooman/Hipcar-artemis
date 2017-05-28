@@ -130,8 +130,11 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         //Add a loading thing to the reservation while retrieving the information.
         //Add an arrow to the reservation tab for sub menu's to indicate collapse and expand.
         //Add an arrow to each recycler view views in ongoing and check-out.
-        //Need to NOT change the title when clicking reservation, only change to either on-going or check-out reservation
-        //Add a search bar to both tabs?
+        //Add a search bar to both tabs or filter?
+        //Finish the empty rows for the grace period and etc.
+        //Finish the layout for the row, make the text smaller, color background?
+        //Finish selecting the right font to use.
+        //Add the action button.
 
         //TODO: LOG OUT AND CHANGE PASSWORD
         //for logging out delete the credentials and set loggedin boolean to false (both in sharedPreference)

@@ -181,26 +181,68 @@ public class OnGoingReservation {
     }
 
     public String getFull_name() {
+
+        if(full_name == null) {
+
+            return "null";
+
+        }
+
         return full_name;
     }
 
     public String getEmail() {
+
+        if(email == null) {
+
+            return "null";
+
+        }
+
         return email;
     }
 
     public String getContact_number() {
+
+        if(contact_number == null) {
+
+            return "null";
+
+        }
+
         return contact_number;
     }
 
     public String getPickup_address() {
+
+        if(pickup_address == null) {
+
+            return "null";
+
+        }
+
         return pickup_address;
     }
 
     public String getPickup_date() {
+
+        if(pickup_date == null) {
+
+            return "null";
+
+        }
+
         return pickup_date;
     }
 
     public String getReturn_date() {
+
+        if(return_date == null) {
+
+            return "null";
+
+        }
+
         return return_date;
     }
 
@@ -213,18 +255,46 @@ public class OnGoingReservation {
     }
 
     public String getActual_pickup_date() {
+
+        if(actual_pickup_date == null) {
+
+            return "null";
+
+        }
+
         return actual_pickup_date;
     }
 
     public String getActual_return_date() {
+
+        if(actual_return_date == null) {
+
+            return "null";
+
+        }
+
         return actual_return_date;
     }
 
     public String getI_token() {
+
+        if(i_token == null) {
+
+            return "null";
+
+        }
+
         return i_token;
     }
 
     public String getI_session_key() {
+
+        if(i_session_key == null) {
+
+            return "null";
+
+        }
+
         return i_session_key;
     }
 
@@ -269,14 +339,35 @@ public class OnGoingReservation {
     }
 
     public String getCreated() {
+
+        if(created == null) {
+
+            return "null";
+
+        }
+
         return created;
     }
 
     public String getUpdated() {
+
+        if(updated == null) {
+
+            return "null";
+
+        }
+
         return updated;
     }
 
     public String getDeleted() {
+
+        if(deleted == null) {
+
+            return "null";
+
+        }
+
         return deleted;
     }
 

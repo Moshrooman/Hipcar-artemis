@@ -12,6 +12,7 @@ import android.widget.TableLayout;
 import android.widget.TextView;
 
 import com.airbnb.lottie.LottieAnimationView;
+import com.example.justinkwik.hipcar.ExpandAnimation.ExpandAnimation;
 import com.example.justinkwik.hipcar.R;
 
 import java.text.DecimalFormat;
@@ -56,7 +57,7 @@ public class OnGoingReservationAdapter extends RecyclerView.Adapter<OnGoingReser
     }
 
     @Override
-    public void onBindViewHolder(OnGoingReservationViewHolder holder, int position) {
+    public void onBindViewHolder(final OnGoingReservationViewHolder holder, int position) {
 
         OnGoingReservation onGoingReservation = onGoingReservations[position];
 
@@ -82,11 +83,10 @@ public class OnGoingReservationAdapter extends RecyclerView.Adapter<OnGoingReser
         setSplitTextViewFonts("Pick-Up Station", onGoingReservation.getPickup_station().getName(), holder.pickUpStationTextView);
         setSplitTextViewFonts("Return Station", onGoingReservation.getReturn_station().getName(), holder.returnStationTextView);
         setSplitTextViewFonts("Return Station", onGoingReservation.getReturn_station().getName(), holder.returnStationTextView);
-        //setSplitTextViewFonts("Duration", onGoingReservation.getD, holder.durationTextView); //TODO: end date - start date
+        //setSplitTextViewFonts("Duration", onGoingReservation.getD, holder.durationTextView); //TODO: end date - start date?
 
-//        private TextView durationTextView;
-
-        setExpandIndicatorClickListener(holder.lineToX, holder.xToLine, holder.onGoingReservationTableLayout);
+        setExpandIndicatorClickListener(holder.lineToX, holder.xToLine, holder.onGoingReservationTableLayout,
+                holder.expandableOnGoingReservation);
     }
 
     @Override
@@ -147,13 +147,13 @@ public class OnGoingReservationAdapter extends RecyclerView.Adapter<OnGoingReser
     }
 
     private void setExpandIndicatorClickListener(final LottieAnimationView lineToX, final LottieAnimationView xToLine,
-                                                 TableLayout onGoingReservationTableLayout) {
+                                                 TableLayout onGoingReservationTableLayout, final LinearLayout expandableOnGoingReservation) {
 
         onGoingReservationTableLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                if(expandList) {
+                if (expandList) {
 
                     lineToX.setVisibility(View.VISIBLE);
 
@@ -172,6 +172,8 @@ public class OnGoingReservationAdapter extends RecyclerView.Adapter<OnGoingReser
                     expandList = true;
                 }
 
+                expandCollapseSubMenus(expandableOnGoingReservation);
+
             }
         });
 
@@ -180,7 +182,9 @@ public class OnGoingReservationAdapter extends RecyclerView.Adapter<OnGoingReser
     private void setSplitTextViewFonts(String header, String value, TextView textView) {
 
         SpannableStringBuilder expandableOnGoingText = new SpannableStringBuilder();
+
         expandableOnGoingText.append(header + "\n").append(value);
+
         expandableOnGoingText.setSpan(Exo2Medium, 0, header.length() + 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         expandableOnGoingText.setSpan(Exo2Regular, header.length() + 1, header.length() + value.length() + 1
                 , Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -188,5 +192,13 @@ public class OnGoingReservationAdapter extends RecyclerView.Adapter<OnGoingReser
         textView.setText(expandableOnGoingText, TextView.BufferType.SPANNABLE);
 
     }
+
+    private void expandCollapseSubMenus(View view) {
+
+        ExpandAnimation expandAnimation = new ExpandAnimation(view, 390);
+        view.startAnimation(expandAnimation);
+
+    }
+
 
 }

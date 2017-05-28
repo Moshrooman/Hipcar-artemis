@@ -39,6 +39,13 @@ public class VehicleModel {
     }
 
     public String getName() {
+
+        if(name == null) {
+
+            return "null";
+
+        }
+
         return name;
     }
 
@@ -51,6 +58,13 @@ public class VehicleModel {
     }
 
     public String getImage_url() {
+
+        if(image_url == null) {
+
+            return "null";
+
+        }
+
         return image_url;
     }
 

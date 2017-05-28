@@ -79,18 +79,46 @@ public class User {
     }
 
     public String getEmail() {
+
+        if(email == null) {
+
+            return "null";
+
+        }
+
         return email;
     }
 
     public String getFirst_name() {
+
+        if(first_name == null) {
+
+            return "null";
+
+        }
+
         return first_name;
     }
 
     public String getLast_name() {
+
+        if(last_name == null) {
+
+            return "null";
+
+        }
+
         return last_name;
     }
 
     public String getContact_number() {
+
+        if(contact_number == null) {
+
+            return "null";
+
+        }
+
         return contact_number;
     }
 
@@ -99,42 +127,112 @@ public class User {
     }
 
     public String getInstallation_id() {
+
+        if(installation_id == null) {
+
+            return "null";
+
+        }
+
         return installation_id;
     }
 
     public String getActivated_date() {
+
+        if(activated_date == null) {
+
+            return "null";
+
+        }
+
         return activated_date;
     }
 
     public String getSuspended_date() {
+
+        if(suspended_date == null) {
+
+            return "null";
+
+        }
+
         return suspended_date;
     }
 
     public String getRejected_date() {
+
+        if(rejected_date == null) {
+
+            return "null";
+
+        }
+
         return rejected_date;
     }
 
     public String getReset_token() {
+
+        if(reset_token == null) {
+
+            return "null";
+
+        }
+
         return reset_token;
     }
 
     public String getBirth_date() {
+
+        if(birth_date == null) {
+
+            return "null";
+
+        }
+
         return birth_date;
     }
 
     public String getGender() {
+
+        if(gender == null) {
+
+            return "null";
+
+        }
+
         return gender;
     }
 
     public String getCreated() {
+
+        if(created == null) {
+
+            return "null";
+
+        }
+
         return created;
     }
 
     public String getUpdated() {
+
+        if(updated == null) {
+
+            return "null";
+
+        }
+
         return updated;
     }
 
     public String getDeleted() {
+
+        if(deleted == null) {
+
+            return "null";
+
+        }
+
         return deleted;
     }
 

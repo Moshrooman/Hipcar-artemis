@@ -27,6 +27,13 @@ public class VehicleMake {
     }
 
     public String getName() {
+
+        if(name == null) {
+
+            return "null";
+
+        }
+
         return name;
     }
 

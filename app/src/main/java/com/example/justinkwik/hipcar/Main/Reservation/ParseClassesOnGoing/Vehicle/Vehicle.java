@@ -83,10 +83,24 @@ public class Vehicle {
     }
 
     public String getPlate_number() {
+
+        if(plate_number == null) {
+
+            return "null";
+
+        }
+
         return plate_number;
     }
 
     public String getColor() {
+
+        if(color == null) {
+
+            return "null";
+
+        }
+
         return color;
     }
 
@@ -107,6 +121,13 @@ public class Vehicle {
     }
 
     public String getQnr() {
+
+        if(qnr == null) {
+
+            return "null";
+
+        }
+
         return qnr;
     }
 
@@ -119,14 +140,35 @@ public class Vehicle {
     }
 
     public String getCreated() {
+
+        if(created == null) {
+
+            return "null";
+
+        }
+
         return created;
     }
 
     public String getUpdated() {
+
+        if(updated == null) {
+
+            return "null";
+
+        }
+
         return updated;
     }
 
     public String getDeleted() {
+
+        if(deleted == null) {
+
+            return "null";
+
+        }
+
         return deleted;
     }
 
