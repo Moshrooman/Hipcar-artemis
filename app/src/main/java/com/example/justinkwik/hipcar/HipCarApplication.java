@@ -6,6 +6,8 @@ import android.preference.PreferenceManager;
 
 import com.facebook.drawee.backends.pipeline.Fresco;
 
+import net.danlew.android.joda.JodaTimeAndroid;
+
 /**
  * Created by Justin Kwik on 19/05/2017.
  */
@@ -17,6 +19,7 @@ public class HipCarApplication extends Application {
     public void onCreate() {
         super.onCreate();
         Fresco.initialize(this);
+        JodaTimeAndroid.init(this);
 
         if (sharedPreferences == null) {
             sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());

@@ -47,8 +47,6 @@ public class OnGoingReservationFragment extends Fragment {
         userCredentials = LoginActivity.getUserCredentials();
         gson = new Gson();
 
-        Log.e("Token: ", userCredentials.getToken()); //TODO: delete this token log.
-
         StringRequest onGoingReservationRequest = new StringRequest(Request.Method.GET, onGoingReservationLink, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {

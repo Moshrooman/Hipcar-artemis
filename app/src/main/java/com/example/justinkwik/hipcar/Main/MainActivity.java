@@ -63,6 +63,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         userCredentials = LoginActivity.getUserCredentials();
         drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
 
+        Log.e("Token: ", userCredentials.getToken()); //TODO: delete this token log.
+
         drawerListView = (ListView) findViewById(R.id.drawerListView);
         openDrawer = true;
         navBarEntries = getResources().getStringArray(R.array.navBarEntries);
@@ -132,9 +134,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         //Add an arrow to each recycler view views in ongoing and check-out.
         //Add a search bar to both tabs or filter?
         //Finish the empty rows for the grace period and etc.
-        //Finish the layout for the row, make the text smaller, color background?
-        //Finish selecting the right font to use.
+        //Finish the layout for the row, make borders for each row
         //Add the action button.
+        //Add progress bar to ongoingreservation
 
         //TODO: LOG OUT AND CHANGE PASSWORD
         //for logging out delete the credentials and set loggedin boolean to false (both in sharedPreference)

@@ -15,7 +15,19 @@ import com.airbnb.lottie.LottieAnimationView;
 import com.example.justinkwik.hipcar.ExpandAnimation.ExpandAnimation;
 import com.example.justinkwik.hipcar.R;
 
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+import org.joda.time.LocalDate;
+import org.joda.time.LocalDateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.DateTimeFormatterBuilder;
+import org.joda.time.format.DateTimePrinter;
+
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.TimeZone;
 
 import uk.co.chrisjenx.calligraphy.CalligraphyTypefaceSpan;
 import uk.co.chrisjenx.calligraphy.TypefaceUtils;
@@ -30,9 +42,8 @@ public class OnGoingReservationAdapter extends RecyclerView.Adapter<OnGoingReser
     private OnGoingReservation[] onGoingReservations;
     private DecimalFormat decimalFormat;
     private boolean expandList;
-    private CalligraphyTypefaceSpan Exo2Medium;
+    private CalligraphyTypefaceSpan Exo2Bold;
     private CalligraphyTypefaceSpan Exo2Regular;
-
 
     public OnGoingReservationAdapter(Context context, OnGoingReservation[] onGoingReservations) {
 
@@ -41,7 +52,7 @@ public class OnGoingReservationAdapter extends RecyclerView.Adapter<OnGoingReser
         this.decimalFormat = new DecimalFormat();
         this.expandList = true;
 
-        Exo2Medium = new CalligraphyTypefaceSpan(TypefaceUtils.load(this.context.getAssets(), "fonts/Exo2-Medium.ttf"));
+        Exo2Bold = new CalligraphyTypefaceSpan(TypefaceUtils.load(this.context.getAssets(), "fonts/Exo2-Bold.ttf"));
         Exo2Regular = new CalligraphyTypefaceSpan(TypefaceUtils.load(this.context.getAssets(), "fonts/Exo2-Regular.ttf"));
 
     }
@@ -75,13 +86,12 @@ public class OnGoingReservationAdapter extends RecyclerView.Adapter<OnGoingReser
         setSplitTextViewFonts("Contact #", onGoingReservation.getContact_number(), holder.contactNumberTextView);
         setSplitTextViewFonts("Pickup Km", String.valueOf(onGoingReservation.getPickup_km()), holder.pickUpKmTextView);
         setSplitTextViewFonts("Vehicle Model", onGoingReservation.getVehicle().getVehicle_model().getName(), holder.vehicleModelTextView);
-        setSplitTextViewFonts("Pick Up Date", onGoingReservation.getPickup_date(), holder.pickUpDateTextView);
+        setSplitTextViewFonts("Pick Up Date", formatDateString(onGoingReservation.getPickup_date()), holder.pickUpDateTextView);
         //setSplitTextViewFonts("Grace Period Expire", onGoingReservation., holder.gracePeriodExpireTextView); //TODO: ask how to calculate
-        setSplitTextViewFonts("Check-In Date", onGoingReservation.getActual_pickup_date(), holder.checkInDateTextView);
-        setSplitTextViewFonts("Check-Out Date", onGoingReservation.getActual_return_date(), holder.checkOutDateTextView);
+
+        setSplitTextViewFonts("Check-In Date", formatDateString(onGoingReservation.getActual_pickup_date()), holder.checkInDateTextView);
+        setSplitTextViewFonts("Check-Out Date", formatDateString(onGoingReservation.getActual_return_date()), holder.checkOutDateTextView);
         setSplitTextViewFonts("Pick-Up Station", onGoingReservation.getPickup_station().getName(), holder.pickUpStationTextView);
-        setSplitTextViewFonts("Pick-Up Station", onGoingReservation.getPickup_station().getName(), holder.pickUpStationTextView);
-        setSplitTextViewFonts("Return Station", onGoingReservation.getReturn_station().getName(), holder.returnStationTextView);
         setSplitTextViewFonts("Return Station", onGoingReservation.getReturn_station().getName(), holder.returnStationTextView);
         //setSplitTextViewFonts("Duration", onGoingReservation.getD, holder.durationTextView); //TODO: end date - start date?
 
@@ -185,7 +195,7 @@ public class OnGoingReservationAdapter extends RecyclerView.Adapter<OnGoingReser
 
         expandableOnGoingText.append(header + "\n").append(value);
 
-        expandableOnGoingText.setSpan(Exo2Medium, 0, header.length() + 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        expandableOnGoingText.setSpan(Exo2Bold, 0, header.length() + 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         expandableOnGoingText.setSpan(Exo2Regular, header.length() + 1, header.length() + value.length() + 1
                 , Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
@@ -197,6 +207,22 @@ public class OnGoingReservationAdapter extends RecyclerView.Adapter<OnGoingReser
 
         ExpandAnimation expandAnimation = new ExpandAnimation(view, 390);
         view.startAnimation(expandAnimation);
+
+    }
+
+    private String formatDateString(String date) {
+
+        if(date.equals("null")) {
+
+            return date;
+
+        }
+
+        DateTime formatDateTime = new DateTime(date, DateTimeZone.forTimeZone(TimeZone.getTimeZone("Asia/Bangkok")));
+
+        String formattedString = formatDateTime.toString("dd MMM yyyy HH:mm");
+
+        return formattedString;
 
     }
 
