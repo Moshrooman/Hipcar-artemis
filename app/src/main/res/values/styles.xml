@@ -17,4 +17,9 @@
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
+    <style name="PopUpWindowAnimation">
+        <item name="android:windowEnterAnimation">@anim/pull_in</item>
+        <item name="android:windowExitAnimation">@anim/pull_out</item>
+    </style>
+
 </resources>

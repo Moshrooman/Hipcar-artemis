@@ -45,14 +45,14 @@
 
     </LinearLayout>
 
-    <android.support.v4.view.ViewPager
+    <com.example.justinkwik.hipcar.CustomViewPager.FragmentViewPager
         android:layout_width="match_parent"
         android:layout_height="380dp"
         android:layout_below="@+id/popUpTitleLinearLayout"
         android:id="@+id/googleMapAndInfoViewPager"
         >
 
-    </android.support.v4.view.ViewPager>
+    </com.example.justinkwik.hipcar.CustomViewPager.FragmentViewPager>
 
     <android.support.v4.view.ViewPager
         android:layout_width="match_parent"

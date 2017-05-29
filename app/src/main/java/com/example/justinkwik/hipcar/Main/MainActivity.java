@@ -137,7 +137,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         //Add progress bar to ongoingreservation
         //get progress of string request in onGoingReservationFragment and checkedout fragment somehow and create progress bar.
         //IF THE STRINGREQUEST COMES BACK EMPTY, THEN DISPLAY TEXTVIEWS SAYING NO ONGOING OR NO CHECKED OUT.
-        //Set animation for popupwindow in ongoingreservation
+        //Show the pop-up window first with a loading view on it, then load the information into the window when loaded.
 
         //TODO: LOG OUT AND CHANGE PASSWORD
         //for logging out delete the credentials and set loggedin boolean to false (both in sharedPreference)

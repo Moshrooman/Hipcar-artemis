@@ -7,6 +7,9 @@ import android.graphics.drawable.ColorDrawable;
 import android.media.Image;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -33,8 +36,10 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.example.justinkwik.hipcar.ConnectionManager;
+import com.example.justinkwik.hipcar.CustomViewPager.FragmentViewPager;
 import com.example.justinkwik.hipcar.Login.LoginActivity;
 import com.example.justinkwik.hipcar.Login.UserCredentials;
+import com.example.justinkwik.hipcar.Main.PlaceHolderFragment;
 import com.example.justinkwik.hipcar.Main.Reservation.ParseClassesOnGoing.VehicleStatus.VehicleStatus;
 import com.example.justinkwik.hipcar.R;
 import com.google.gson.Gson;
@@ -56,6 +61,7 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
     Start of popupwindow variables
      */
     //Used only to measure the size of the pop-up window.
+    private OnGoingReservation onGoingReservation;
     private View popUpWindowMeasuredView;
     private FrameLayout onGoingReservationFrameLayout;
     private PopupWindow viewActionPopUpWindow;
@@ -64,7 +70,7 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
     private WindowManager windowManager;
     private TextView exitTextView;
     //Viewpagers for the popupwindow.
-    private ViewPager googleMapAndInfoViewPager;
+    private FragmentViewPager googleMapAndInfoViewPager;
     private ViewPager buttonViewPager;
 
     public OnGoingReservationFragment() {
@@ -96,6 +102,21 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
 
         onGoingReservationFrameLayout = (FrameLayout) view.findViewById(R.id.onGoingReservationFrameLayout);
         popUpWindowMeasuredView = view.findViewById(R.id.popUpWindowMeasuredView);
+
+        //TODO: fix this set adapter thing, stack overflow:
+        //https://stackoverflow.com/questions/19888539/illegalargumentexception-no-view-found-for-id-for-fragment-viewpager-in-vie
+        //1. Made FragmentViewPager
+        //2. Changed ViewPager to FragmentViewPager in XML
+        //3. In this class changed Viewpager to FragmentViewPager
+        //4. called storeAdapter instead of setAdapter.
+        //TODO: work on making the view for the information fragment, and ask go for the google map api key
+        //Also work on the buttonviewpager, figure out if there is a way to not hae a fragment for each button.
+
+        viewActionPopUpContainer = (ViewGroup) layoutInflater.inflate(R.layout.viewactionpopup, null);
+        googleMapAndInfoViewPager = (FragmentViewPager) viewActionPopUpContainer.findViewById(R.id.googleMapAndInfoViewPager);
+        buttonViewPager = (ViewPager) viewActionPopUpContainer.findViewById(R.id.buttonViewPager);
+//        googleMapAndInfoViewPager.storeAdapter(new GoogleMapInfoAdapter(getActivity().getSupportFragmentManager()));
+
 
         return view;
     }
@@ -135,6 +156,8 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
     @Override
     public void showVehicleStatusPopup(final OnGoingReservation onGoingReservation) {
 
+        this.onGoingReservation = onGoingReservation;
+
         String modifiedVehicleStatusLink = vehicleStatusLink.replace(":id", String.valueOf(onGoingReservation.getVehicle_id()));
 
         StringRequest vehicleStatusRequest = new StringRequest(Request.Method.GET, modifiedVehicleStatusLink, new Response.Listener<String>() {
@@ -170,10 +193,10 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
 
     private void displayPopUpWindow() {
 
-        viewActionPopUpContainer = (ViewGroup) layoutInflater.inflate(R.layout.viewactionpopup, null);
-
         viewActionPopUpWindow = new PopupWindow(viewActionPopUpContainer, popUpWindowMeasuredView.getWidth(),
                 popUpWindowMeasuredView.getHeight(), true);
+
+        viewActionPopUpWindow.setAnimationStyle(R.style.PopUpWindowAnimation);
 
         setPopUpClickListeners(viewActionPopUpContainer, viewActionPopUpWindow);
 
@@ -216,4 +239,35 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
         });
 
     }
+
+    public class GoogleMapInfoAdapter extends FragmentPagerAdapter {
+
+        public GoogleMapInfoAdapter(FragmentManager fm) {
+
+            super(fm);
+
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+
+            switch (position) {
+
+                case 0:
+                    return new PlaceHolderFragment();
+                case 1:
+                    return new InformationFragment(onGoingReservation, vehicleStatus);
+
+            }
+
+            return new PlaceHolderFragment();
+
+        }
+
+        @Override
+        public int getCount() {
+            return 2;
+        }
+    }
+
 }
