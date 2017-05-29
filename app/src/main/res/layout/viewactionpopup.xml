@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="500dp"
+    android:background="@drawable/ongoingreservationpopupborder"
+    android:layout_gravity="center"
+    android:weightSum="1"
+    >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:id="@+id/popUpTitleLinearLayout"
+        android:background="@drawable/bottomborder"
+        >
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.9"
+            android:text="Reservation Detail"
+            android:textSize="14dp"
+            android:gravity="center_vertical"
+            fontPath="fonts/Exo2-Regular.ttf"
+            android:textColor="@color/black"
+            android:id="@+id/reservationDetailTextView"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:layout_gravity="center_vertical"
+            />
+
+        <com.example.justinkwik.hipcar.CustomAutoFitTextView.FontFitTextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.1"
+            android:text="X"
+            android:gravity="center"
+            android:textSize="30dp"
+            android:layout_toRightOf="@+id/reservationDetailTextView"
+            fontPath="fonts/Exo2-Regular.ttf"
+            android:textColor="@color/navBarGrey"
+            android:id="@+id/exitTextView"
+            />
+
+    </LinearLayout>
+
+    <android.support.v4.view.ViewPager
+        android:layout_width="match_parent"
+        android:layout_height="380dp"
+        android:layout_below="@+id/popUpTitleLinearLayout"
+        android:id="@+id/googleMapAndInfoViewPager"
+        >
+
+    </android.support.v4.view.ViewPager>
+
+    <android.support.v4.view.ViewPager
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/googleMapViewPager"
+        android:id="@+id/buttonViewPager"
+        >
+
+    </android.support.v4.view.ViewPager>
+
+</LinearLayout>

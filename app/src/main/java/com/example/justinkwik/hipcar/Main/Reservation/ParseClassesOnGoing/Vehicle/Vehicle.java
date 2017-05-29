@@ -86,7 +86,7 @@ public class Vehicle {
 
         if(plate_number == null) {
 
-            return "null";
+            return "-";
 
         }
 
@@ -97,7 +97,7 @@ public class Vehicle {
 
         if(color == null) {
 
-            return "null";
+            return "-";
 
         }
 
@@ -124,7 +124,7 @@ public class Vehicle {
 
         if(qnr == null) {
 
-            return "null";
+            return "-";
 
         }
 
@@ -143,7 +143,7 @@ public class Vehicle {
 
         if(created == null) {
 
-            return "null";
+            return "-";
 
         }
 
@@ -154,7 +154,7 @@ public class Vehicle {
 
         if(updated == null) {
 
-            return "null";
+            return "-";
 
         }
 
@@ -165,7 +165,7 @@ public class Vehicle {
 
         if(deleted == null) {
 
-            return "null";
+            return "-";
 
         }
 

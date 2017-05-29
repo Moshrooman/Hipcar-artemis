@@ -115,8 +115,8 @@
         android:layout_height="wrap_content"
         android:id="@+id/expandableOnGoingReservation"
         android:background="@drawable/ongoingreservationborder"
-        android:layout_marginBottom="-150dp"
         android:visibility="gone"
+        android:layout_marginBottom="-200dp"
         >
 
         <TableLayout
@@ -313,6 +313,27 @@
                     fontPath="fonts/Exo2-Regular.ttf"
                     android:paddingTop="14dp"
                     android:paddingBottom="14dp"
+                    />
+
+            </TableRow>
+
+            <TableRow
+                android:layout_width="fill_parent"
+                android:layout_height="50dp"
+                >
+
+                <Button
+                    android:layout_width="0dp"
+                    android:layout_height="fill_parent"
+                    android:layout_weight="1"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginStart="10dp"
+                    android:background="@drawable/blueactionviewbutton"
+                    android:textColor="@color/white"
+                    android:text="View"
+                    android:id="@+id/viewActionButton"
                     />
 
             </TableRow>

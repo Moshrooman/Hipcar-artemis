@@ -131,12 +131,13 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         //TODO: RESERVATION IMPLEMENTATION
         //Add a loading thing to the reservation while retrieving the information.
         //Add an arrow to the reservation tab for sub menu's to indicate collapse and expand.
-        //Add an arrow to each recycler view views in ongoing and check-out.
         //Add a search bar to both tabs or filter?
-        //Finish the empty rows for the grace period and etc.
         //Finish the layout for the row, make borders for each row
         //Add the action button.
         //Add progress bar to ongoingreservation
+        //get progress of string request in onGoingReservationFragment and checkedout fragment somehow and create progress bar.
+        //IF THE STRINGREQUEST COMES BACK EMPTY, THEN DISPLAY TEXTVIEWS SAYING NO ONGOING OR NO CHECKED OUT.
+        //Set animation for popupwindow in ongoingreservation
 
         //TODO: LOG OUT AND CHANGE PASSWORD
         //for logging out delete the credentials and set loggedin boolean to false (both in sharedPreference)

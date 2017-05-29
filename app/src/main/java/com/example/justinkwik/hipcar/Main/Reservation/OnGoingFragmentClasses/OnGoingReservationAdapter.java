@@ -4,10 +4,14 @@ import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.TableLayout;
 import android.widget.TextView;
 
@@ -17,8 +21,12 @@ import com.example.justinkwik.hipcar.R;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
+import org.joda.time.Days;
+import org.joda.time.Hours;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
+import org.joda.time.Minutes;
+import org.joda.time.Period;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.DateTimeFormatterBuilder;
@@ -27,6 +35,7 @@ import org.joda.time.format.DateTimePrinter;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.TimeZone;
 
 import uk.co.chrisjenx.calligraphy.CalligraphyTypefaceSpan;
@@ -44,13 +53,15 @@ public class OnGoingReservationAdapter extends RecyclerView.Adapter<OnGoingReser
     private boolean expandList;
     private CalligraphyTypefaceSpan Exo2Bold;
     private CalligraphyTypefaceSpan Exo2Regular;
+    private VehicleStatusInterface vehicleStatusInterface;
 
-    public OnGoingReservationAdapter(Context context, OnGoingReservation[] onGoingReservations) {
+    public OnGoingReservationAdapter(Context context, OnGoingReservation[] onGoingReservations, VehicleStatusInterface vehicleStatusInterface) {
 
         this.context = context;
         this.onGoingReservations = onGoingReservations;
         this.decimalFormat = new DecimalFormat();
         this.expandList = true;
+        this.vehicleStatusInterface = vehicleStatusInterface;
 
         Exo2Bold = new CalligraphyTypefaceSpan(TypefaceUtils.load(this.context.getAssets(), "fonts/Exo2-Bold.ttf"));
         Exo2Regular = new CalligraphyTypefaceSpan(TypefaceUtils.load(this.context.getAssets(), "fonts/Exo2-Regular.ttf"));
@@ -72,8 +83,6 @@ public class OnGoingReservationAdapter extends RecyclerView.Adapter<OnGoingReser
 
         OnGoingReservation onGoingReservation = onGoingReservations[position];
 
-        //Need to add a boolean in each onGoingReservation object if it is expanded, and expand it if the boolean is true.
-
         holder.fullNameTextView.setText(onGoingReservation.getFull_name());
         holder.balanceTextView.setText("Rp. " +
                 String.valueOf(decimalFormat.format(onGoingReservation.getUser().getBalance())));
@@ -85,18 +94,26 @@ public class OnGoingReservationAdapter extends RecyclerView.Adapter<OnGoingReser
         setSplitTextViewFonts("Email", onGoingReservation.getEmail(), holder.emailTextView);
         setSplitTextViewFonts("Contact #", onGoingReservation.getContact_number(), holder.contactNumberTextView);
         setSplitTextViewFonts("Pickup Km", String.valueOf(onGoingReservation.getPickup_km()), holder.pickUpKmTextView);
-        setSplitTextViewFonts("Vehicle Model", onGoingReservation.getVehicle().getVehicle_model().getName(), holder.vehicleModelTextView);
-        setSplitTextViewFonts("Pick Up Date", formatDateString(onGoingReservation.getPickup_date()), holder.pickUpDateTextView);
-        //setSplitTextViewFonts("Grace Period Expire", onGoingReservation., holder.gracePeriodExpireTextView); //TODO: ask how to calculate
+        setSplitTextViewFonts("Vehicle Model", onGoingReservation.getVehicle().getVehicle_model().getName(),
+                holder.vehicleModelTextView);
+        setSplitTextViewFonts("Pick Up Date", formatDateString(onGoingReservation.getPickup_date(), false),
+                holder.pickUpDateTextView);
+        setSplitTextViewFonts("Grace Period Expire", formatDateString(onGoingReservation.getReturn_date(), false),
+                holder.gracePeriodExpireTextView);
 
-        setSplitTextViewFonts("Check-In Date", formatDateString(onGoingReservation.getActual_pickup_date()), holder.checkInDateTextView);
-        setSplitTextViewFonts("Check-Out Date", formatDateString(onGoingReservation.getActual_return_date()), holder.checkOutDateTextView);
+        setSplitTextViewFonts("Check-In Date", formatDateString(onGoingReservation.getActual_pickup_date(), false),
+                holder.checkInDateTextView);
+        setSplitTextViewFonts("Check-Out Date", formatDateString(onGoingReservation.getActual_return_date(), false),
+                holder.checkOutDateTextView);
         setSplitTextViewFonts("Pick-Up Station", onGoingReservation.getPickup_station().getName(), holder.pickUpStationTextView);
         setSplitTextViewFonts("Return Station", onGoingReservation.getReturn_station().getName(), holder.returnStationTextView);
-        //setSplitTextViewFonts("Duration", onGoingReservation.getD, holder.durationTextView); //TODO: end date - start date?
+        setSplitTextViewFonts("Duration", formatDateString(onGoingReservation.getReturn_date(), true), holder.durationTextView);
 
         setExpandIndicatorClickListener(holder.lineToX, holder.xToLine, holder.onGoingReservationTableLayout,
                 holder.expandableOnGoingReservation);
+
+        setViewActionButtonClickListener(holder.viewActionButton, onGoingReservation);
+
     }
 
     @Override
@@ -127,6 +144,7 @@ public class OnGoingReservationAdapter extends RecyclerView.Adapter<OnGoingReser
         private TextView pickUpStationTextView;
         private TextView returnStationTextView;
         private TextView durationTextView;
+        private Button viewActionButton;
 
         public OnGoingReservationViewHolder(View itemView) {
             super(itemView);
@@ -152,6 +170,7 @@ public class OnGoingReservationAdapter extends RecyclerView.Adapter<OnGoingReser
             pickUpStationTextView = (TextView) itemView.findViewById(R.id.pickUpStationTextView);
             returnStationTextView = (TextView) itemView.findViewById(R.id.returnStationTextView);
             durationTextView = (TextView) itemView.findViewById(R.id.durationTextView);
+            viewActionButton = (Button) itemView.findViewById(R.id.viewActionButton);
 
         }
     }
@@ -210,21 +229,75 @@ public class OnGoingReservationAdapter extends RecyclerView.Adapter<OnGoingReser
 
     }
 
-    private String formatDateString(String date) {
+    private String formatDateString(String date, boolean duration) {
 
-        if(date.equals("null")) {
+        if(date.equals("-")) {
 
             return date;
 
         }
 
         DateTime formatDateTime = new DateTime(date, DateTimeZone.forTimeZone(TimeZone.getTimeZone("Asia/Bangkok")));
+        String formattedString;
 
-        String formattedString = formatDateTime.toString("dd MMM yyyy HH:mm");
+        if(duration) {
+
+            //TODO: need to change this to LocalDateTime because depends on where they rented from.
+            DateTime localDateTime = new DateTime(DateTimeZone.forTimeZone(TimeZone.getTimeZone("Asia/Bangkok")));
+
+            Period differencePeriod = new Period(formatDateTime, localDateTime);
+
+            formattedString = "" + differencePeriod.getDays() + "days " + differencePeriod.getHours() + "hours " +
+                    differencePeriod.getMinutes() + "minutes";
+
+        } else {
+
+            formattedString = formatDateTime.toString("dd MMM yyyy HH:mm");
+
+        }
 
         return formattedString;
 
     }
+
+    private void setViewActionButtonClickListener(Button viewActionButton, final OnGoingReservation onGoingReservation) {
+
+        viewActionButton.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+
+                if(event.getAction() == MotionEvent.ACTION_DOWN) {
+
+                    v.setBackgroundResource(R.drawable.blueactionviewbuttonpressed);
+
+                } else {
+
+                    v.setBackgroundResource(R.drawable.blueactionviewbutton);
+
+                }
+
+                return false;
+
+            }
+        });
+
+        viewActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                vehicleStatusInterface.showVehicleStatusPopup(onGoingReservation);
+
+            }
+        });
+
+    }
+
+    public interface VehicleStatusInterface {
+
+        public void showVehicleStatusPopup(OnGoingReservation onGoingReservation);
+
+    }
+
 
 
 }

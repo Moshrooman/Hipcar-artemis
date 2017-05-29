@@ -2,7 +2,17 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Main.Reservation.OnGoingFragmentClasses.OnGoingReservationFragment">
+    tools:context=".Main.Reservation.OnGoingFragmentClasses.OnGoingReservationFragment"
+    android:id="@+id/onGoingReservationFrameLayout"
+    >
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="500dp"
+        android:id="@+id/popUpWindowMeasuredView"
+        android:layout_gravity="center"
+        android:visibility="invisible"
+        />
 
     <TableLayout
         xmlns:android="http://schemas.android.com/apk/res/android"

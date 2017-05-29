@@ -54,7 +54,7 @@ public class ReturnStation {
 
         if(name == null) {
 
-            return "null";
+            return "-";
 
         }
 
@@ -65,7 +65,7 @@ public class ReturnStation {
 
         if(address == null) {
 
-            return "null";
+            return "-";
 
         }
 
@@ -76,7 +76,7 @@ public class ReturnStation {
 
         if(latitude == null) {
 
-            return "null";
+            return "-";
 
         }
 
@@ -87,7 +87,7 @@ public class ReturnStation {
 
         if(longitude == null) {
 
-            return "null";
+            return "-";
 
         }
 
@@ -102,7 +102,7 @@ public class ReturnStation {
 
         if(created == null) {
 
-            return "null";
+            return "-";
 
         }
 
@@ -113,7 +113,7 @@ public class ReturnStation {
 
         if(updated == null) {
 
-            return "null";
+            return "-";
 
         }
 
@@ -124,7 +124,7 @@ public class ReturnStation {
 
         if(deleted == null) {
 
-            return "null";
+            return "-";
 
         }
 

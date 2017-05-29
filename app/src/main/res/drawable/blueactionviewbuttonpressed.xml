@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <stroke android:width="3dp"
+        android:color="#46b8da" />
+
+    <gradient
+        android:centerColor="@color/blueactionviewbuttonpressed"
+        android:endColor="@color/blueactionviewbuttonpressed"
+        android:startColor="@color/blueactionviewbuttonpressed" />
+
+    <corners
+        android:radius="7dp"
+        />
+
+    <padding
+        android:bottom="8dp"
+        android:top="8dp"
+        android:right="8dp"
+        android:left="8dp"
+        />
+
+</shape>

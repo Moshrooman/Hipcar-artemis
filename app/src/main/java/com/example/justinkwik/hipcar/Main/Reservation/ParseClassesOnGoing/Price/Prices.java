@@ -54,7 +54,7 @@ public class Prices {
 
         if(start_date == null) {
 
-            return "null";
+            return "-";
 
         }
 
@@ -65,7 +65,7 @@ public class Prices {
 
         if(end_date == null) {
 
-            return "null";
+            return "-";
 
         }
 

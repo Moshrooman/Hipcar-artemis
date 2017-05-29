@@ -42,7 +42,7 @@ public class VehicleModel {
 
         if(name == null) {
 
-            return "null";
+            return "-";
 
         }
 
@@ -61,7 +61,7 @@ public class VehicleModel {
 
         if(image_url == null) {
 
-            return "null";
+            return "-";
 
         }
 

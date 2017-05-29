@@ -82,7 +82,7 @@ public class User {
 
         if(email == null) {
 
-            return "null";
+            return "-";
 
         }
 
@@ -93,7 +93,7 @@ public class User {
 
         if(first_name == null) {
 
-            return "null";
+            return "-";
 
         }
 
@@ -104,7 +104,7 @@ public class User {
 
         if(last_name == null) {
 
-            return "null";
+            return "-";
 
         }
 
@@ -115,7 +115,7 @@ public class User {
 
         if(contact_number == null) {
 
-            return "null";
+            return "-";
 
         }
 
@@ -130,7 +130,7 @@ public class User {
 
         if(installation_id == null) {
 
-            return "null";
+            return "-";
 
         }
 
@@ -141,7 +141,7 @@ public class User {
 
         if(activated_date == null) {
 
-            return "null";
+            return "-";
 
         }
 
@@ -152,7 +152,7 @@ public class User {
 
         if(suspended_date == null) {
 
-            return "null";
+            return "-";
 
         }
 
@@ -163,7 +163,7 @@ public class User {
 
         if(rejected_date == null) {
 
-            return "null";
+            return "-";
 
         }
 
@@ -174,7 +174,7 @@ public class User {
 
         if(reset_token == null) {
 
-            return "null";
+            return "-";
 
         }
 
@@ -185,7 +185,7 @@ public class User {
 
         if(birth_date == null) {
 
-            return "null";
+            return "-";
 
         }
 
@@ -196,7 +196,7 @@ public class User {
 
         if(gender == null) {
 
-            return "null";
+            return "-";
 
         }
 
@@ -207,7 +207,7 @@ public class User {
 
         if(created == null) {
 
-            return "null";
+            return "-";
 
         }
 
@@ -218,7 +218,7 @@ public class User {
 
         if(updated == null) {
 
-            return "null";
+            return "-";
 
         }
 
@@ -229,7 +229,7 @@ public class User {
 
         if(deleted == null) {
 
-            return "null";
+            return "-";
 
         }
 

@@ -184,7 +184,7 @@ public class OnGoingReservation {
 
         if(full_name == null) {
 
-            return "null";
+            return "-";
 
         }
 
@@ -195,7 +195,7 @@ public class OnGoingReservation {
 
         if(email == null) {
 
-            return "null";
+            return "-";
 
         }
 
@@ -206,7 +206,7 @@ public class OnGoingReservation {
 
         if(contact_number == null) {
 
-            return "null";
+            return "-";
 
         }
 
@@ -217,7 +217,7 @@ public class OnGoingReservation {
 
         if(pickup_address == null) {
 
-            return "null";
+            return "-";
 
         }
 
@@ -228,7 +228,7 @@ public class OnGoingReservation {
 
         if(pickup_date == null) {
 
-            return "null";
+            return "-";
 
         }
 
@@ -239,7 +239,7 @@ public class OnGoingReservation {
 
         if(return_date == null) {
 
-            return "null";
+            return "-";
 
         }
 
@@ -258,7 +258,7 @@ public class OnGoingReservation {
 
         if(actual_pickup_date == null) {
 
-            return "null";
+            return "-";
 
         }
 
@@ -269,7 +269,7 @@ public class OnGoingReservation {
 
         if(actual_return_date == null) {
 
-            return "null";
+            return "-";
 
         }
 
@@ -280,7 +280,7 @@ public class OnGoingReservation {
 
         if(i_token == null) {
 
-            return "null";
+            return "-";
 
         }
 
@@ -291,7 +291,7 @@ public class OnGoingReservation {
 
         if(i_session_key == null) {
 
-            return "null";
+            return "-";
 
         }
 
@@ -342,7 +342,7 @@ public class OnGoingReservation {
 
         if(created == null) {
 
-            return "null";
+            return "-";
 
         }
 
@@ -353,7 +353,7 @@ public class OnGoingReservation {
 
         if(updated == null) {
 
-            return "null";
+            return "-";
 
         }
 
@@ -364,7 +364,7 @@ public class OnGoingReservation {
 
         if(deleted == null) {
 
-            return "null";
+            return "-";
 
         }
 

@@ -10,4 +10,7 @@
     <color name="navBarBlue">#23527c</color>
     <color name="black">#000000</color>
     <color name="logoutbordercolor">#B1BCBE</color>
+    <color name="blueactionviewbutton">#5bc0de</color>
+    <color name="blueactionviewbuttonpressed">#3f869b</color>
+    <color name="greyborder">#e5e5e5</color>
 </resources>

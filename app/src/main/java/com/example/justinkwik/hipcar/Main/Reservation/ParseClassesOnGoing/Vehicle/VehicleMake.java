@@ -30,7 +30,7 @@ public class VehicleMake {
 
         if(name == null) {
 
-            return "null";
+            return "-";
 
         }
 
