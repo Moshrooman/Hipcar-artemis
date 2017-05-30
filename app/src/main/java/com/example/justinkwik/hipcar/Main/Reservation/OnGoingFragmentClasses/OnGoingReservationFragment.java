@@ -1,21 +1,14 @@
 package com.example.justinkwik.hipcar.Main.Reservation.OnGoingFragmentClasses;
 
 import android.content.Context;
-import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.ColorDrawable;
-import android.media.Image;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.Layout;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -24,9 +17,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ListPopupWindow;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
@@ -36,14 +26,13 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.example.justinkwik.hipcar.ConnectionManager;
-import com.example.justinkwik.hipcar.CustomViewPager.FragmentViewPager;
 import com.example.justinkwik.hipcar.Login.LoginActivity;
 import com.example.justinkwik.hipcar.Login.UserCredentials;
-import com.example.justinkwik.hipcar.Main.PlaceHolderFragment;
 import com.example.justinkwik.hipcar.Main.Reservation.ParseClassesOnGoing.VehicleStatus.VehicleStatus;
 import com.example.justinkwik.hipcar.R;
 import com.google.gson.Gson;
 
+import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -70,8 +59,9 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
     private WindowManager windowManager;
     private TextView exitTextView;
     //Viewpagers for the popupwindow.
-    private FragmentViewPager googleMapAndInfoViewPager;
+    private ViewPager googleMapAndInfoViewPager;
     private ViewPager buttonViewPager;
+    private int googleMapAndInfoPosition;
 
     public OnGoingReservationFragment() {
 
@@ -103,20 +93,31 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
         onGoingReservationFrameLayout = (FrameLayout) view.findViewById(R.id.onGoingReservationFrameLayout);
         popUpWindowMeasuredView = view.findViewById(R.id.popUpWindowMeasuredView);
 
-        //TODO: fix this set adapter thing, stack overflow:
-        //https://stackoverflow.com/questions/19888539/illegalargumentexception-no-view-found-for-id-for-fragment-viewpager-in-vie
-        //1. Made FragmentViewPager
-        //2. Changed ViewPager to FragmentViewPager in XML
-        //3. In this class changed Viewpager to FragmentViewPager
-        //4. called storeAdapter instead of setAdapter.
-        //TODO: work on making the view for the information fragment, and ask go for the google map api key
-        //Also work on the buttonviewpager, figure out if there is a way to not hae a fragment for each button.
-
+        //Below start of assigning variables for popup view.
         viewActionPopUpContainer = (ViewGroup) layoutInflater.inflate(R.layout.viewactionpopup, null);
-        googleMapAndInfoViewPager = (FragmentViewPager) viewActionPopUpContainer.findViewById(R.id.googleMapAndInfoViewPager);
         buttonViewPager = (ViewPager) viewActionPopUpContainer.findViewById(R.id.buttonViewPager);
-//        googleMapAndInfoViewPager.storeAdapter(new GoogleMapInfoAdapter(getActivity().getSupportFragmentManager()));
+        googleMapAndInfoViewPager = (ViewPager) viewActionPopUpContainer.findViewById(R.id.googleMapAndInfoViewPager);
 
+        //Page change listener so while stuff is loading and information is succesfully loaded, it stays on the same page.
+        googleMapAndInfoViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+
+                googleMapAndInfoPosition = position;
+                Log.e("Slider Position: ", String.valueOf(googleMapAndInfoPosition));
+
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
 
         return view;
     }
@@ -156,6 +157,12 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
     @Override
     public void showVehicleStatusPopup(final OnGoingReservation onGoingReservation) {
 
+        //TODO: add a loading progress bar while the informatin loads and always set to the first item, but while loading
+        //allow to scroll, so maybe try and display the old information so atleast they can read that. (override save state?)
+
+        //We want to display the popup immediately while we let the information load in the background
+        showPopUpAndSetExitClickListener(viewActionPopUpContainer);
+
         this.onGoingReservation = onGoingReservation;
 
         String modifiedVehicleStatusLink = vehicleStatusLink.replace(":id", String.valueOf(onGoingReservation.getVehicle_id()));
@@ -168,7 +175,7 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
 
                 vehicleStatus = gson.fromJson(response, VehicleStatus.class);
 
-                displayPopUpWindow();
+                setPopUpViewPagerAdapters();
 
             }
         }, new Response.ErrorListener() {
@@ -191,14 +198,24 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
 
     }
 
-    private void displayPopUpWindow() {
+    private void setPopUpViewPagerAdapters() {
+
+        googleMapAndInfoViewPager.setAdapter(new GoogleMapInfoAdapter(layoutInflater, onGoingReservation, vehicleStatus));
+        googleMapAndInfoViewPager.setCurrentItem(googleMapAndInfoPosition, false);
+
+    }
+
+
+
+    private void showPopUpAndSetExitClickListener(ViewGroup viewActionPopUpContainer) {
+
+        //Set the infoview pager to the first item every time opened. So first thing they see is map.
+        googleMapAndInfoViewPager.setCurrentItem(0, false);
 
         viewActionPopUpWindow = new PopupWindow(viewActionPopUpContainer, popUpWindowMeasuredView.getWidth(),
                 popUpWindowMeasuredView.getHeight(), true);
 
         viewActionPopUpWindow.setAnimationStyle(R.style.PopUpWindowAnimation);
-
-        setPopUpClickListeners(viewActionPopUpContainer, viewActionPopUpWindow);
 
         viewActionPopUpWindow.showAtLocation(onGoingReservationFrameLayout, Gravity.CENTER, 0, 0);
 
@@ -206,10 +223,6 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
         layoutParams.flags = WindowManager.LayoutParams.FLAG_DIM_BEHIND;
         layoutParams.dimAmount = 0.3f;
         windowManager.updateViewLayout(viewActionPopUpContainer, layoutParams);
-
-    }
-
-    private void setPopUpClickListeners(ViewGroup viewActionPopUpContainer, final PopupWindow viewActionPopUpWindow) {
 
         exitTextView = (TextView) viewActionPopUpContainer.findViewById(R.id.exitTextView);
 
@@ -240,27 +253,17 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
 
     }
 
-    public class GoogleMapInfoAdapter extends FragmentPagerAdapter {
+    public class GoogleMapInfoAdapter extends PagerAdapter {
 
-        public GoogleMapInfoAdapter(FragmentManager fm) {
+        private LayoutInflater inflater;
+        private OnGoingReservation onGoingReservation;
+        private VehicleStatus vehicleStatus;
 
-            super(fm);
+        public GoogleMapInfoAdapter(LayoutInflater inflater, OnGoingReservation onGoingReservation, VehicleStatus vehicleStatus) {
 
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-
-            switch (position) {
-
-                case 0:
-                    return new PlaceHolderFragment();
-                case 1:
-                    return new InformationFragment(onGoingReservation, vehicleStatus);
-
-            }
-
-            return new PlaceHolderFragment();
+            this.inflater = inflater;
+            this.onGoingReservation = onGoingReservation;
+            this.vehicleStatus = vehicleStatus;
 
         }
 
@@ -268,6 +271,69 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
         public int getCount() {
             return 2;
         }
+
+        @Override
+        public Object instantiateItem(ViewGroup container, int position) {
+
+            View layoutView;
+
+            if(position == 0) {
+
+                layoutView = inflater.inflate(R.layout.fragment_place_holder, null);
+
+            } else {
+
+                layoutView = inflater.inflate(R.layout.fragment_information, null);
+
+                //Instantiate and assign all values in here so variables aren't created for both views.
+                DecimalFormat decimalFormat = new DecimalFormat();
+                TextView informationNameTextView = (TextView) layoutView.findViewById(R.id.informationNameTextView);
+                TextView informationContactNumberTextView = (TextView) layoutView.findViewById(R.id.informationContactNumberTextView);
+                TextView informationEmailTextView = (TextView) layoutView.findViewById(R.id.informationEmailTextView);
+                TextView informationDurationTextView = (TextView) layoutView.findViewById(R.id.informationDurationTextView);
+                TextView informationBalanceTextView = (TextView) layoutView.findViewById(R.id.informationBalanceTextView);
+                TextView informationPriceEstimateTextView = (TextView) layoutView.findViewById(R.id.informationPriceEstimateTextView);
+                TextView informationPlateNumberTextView = (TextView) layoutView.findViewById(R.id.informationPlateNumberTextView);
+                TextView informationImmobilizerTextView = (TextView) layoutView.findViewById(R.id.informationImmobilizerTextView);
+                TextView informationIgnitionTextView = (TextView) layoutView.findViewById(R.id.informationIgnitionTextView);
+                TextView informationCentralLockTextView = (TextView) layoutView.findViewById(R.id.informationCentralLockTextView);
+                TextView informationMileageTextView = (TextView) layoutView.findViewById(R.id.informationMileageTextView);
+                TextView informationSpeedTextView = (TextView) layoutView.findViewById(R.id.informationSpeedTextView);
+
+                informationNameTextView.setText(onGoingReservation.getFull_name());
+                informationContactNumberTextView.setText(onGoingReservation.getContact_number());
+                informationEmailTextView.setText(onGoingReservation.getEmail());
+                informationDurationTextView.setText(new OnGoingReservationAdapter().formatDateString(
+                        onGoingReservation.getReturn_date(), true));
+                informationBalanceTextView.setText("Rp. " +
+                        String.valueOf(decimalFormat.format(onGoingReservation.getUser().getBalance())));
+                informationPriceEstimateTextView.setText("Rp. " +
+                        String.valueOf(decimalFormat.format(onGoingReservation.getTotal_price())));
+                informationPlateNumberTextView.setText(onGoingReservation.getVehicle().getPlate_number());
+                informationImmobilizerTextView.setText(vehicleStatus.getImmobilizer());
+                informationIgnitionTextView.setText(vehicleStatus.getIgnition());
+                informationCentralLockTextView.setText(vehicleStatus.getCentral_lock());
+                informationMileageTextView.setText(String.valueOf(vehicleStatus.getMileage()));
+                informationSpeedTextView.setText(String.valueOf(vehicleStatus.getPosition().getSpeed_over_ground()));
+
+            }
+
+            container.addView(layoutView);
+
+            return layoutView;
+
+        }
+
+        @Override
+        public void destroyItem(ViewGroup container, int position, Object object) {
+            container.removeView((View) object);
+        }
+
+        @Override
+        public boolean isViewFromObject(View view, Object object) {
+            return view == object;
+        }
+
     }
 
 }

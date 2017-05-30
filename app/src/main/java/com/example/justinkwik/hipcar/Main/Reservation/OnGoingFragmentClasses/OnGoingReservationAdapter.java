@@ -55,6 +55,11 @@ public class OnGoingReservationAdapter extends RecyclerView.Adapter<OnGoingReser
     private CalligraphyTypefaceSpan Exo2Regular;
     private VehicleStatusInterface vehicleStatusInterface;
 
+    //Empty construtor to allow access to the formatDateString method.
+    public OnGoingReservationAdapter() {
+
+    }
+
     public OnGoingReservationAdapter(Context context, OnGoingReservation[] onGoingReservations, VehicleStatusInterface vehicleStatusInterface) {
 
         this.context = context;
@@ -229,7 +234,7 @@ public class OnGoingReservationAdapter extends RecyclerView.Adapter<OnGoingReser
 
     }
 
-    private String formatDateString(String date, boolean duration) {
+    public String formatDateString(String date, boolean duration) {
 
         if(date.equals("-")) {
 

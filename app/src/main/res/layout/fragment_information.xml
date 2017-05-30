@@ -2,14 +2,336 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="380dp"
+    android:paddingLeft="25dp"
+    android:paddingRight="25dp"
     tools:context="com.example.justinkwik.hipcar.Main.Reservation.OnGoingFragmentClasses.InformationFragment">
 
-    <TextView
+    <TableLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="TESTESTESTEST"
-        android:textSize="60dp"
-        android:gravity="center"
-        />
+        android:shrinkColumns="*"
+        android:stretchColumns="1"
+        android:layout_gravity="center"
+        >
+
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="31dp"
+                android:textSize="15dp"
+                android:gravity="left|center_vertical"
+                android:text="Name: "
+                fontPath="fonts/Exo2-Bold.ttf"
+                />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="31dp"
+                android:textSize="15dp"
+                android:gravity="right|center_vertical"
+                fontPath="fonts/Exo2-Regular.ttf"
+                android:id="@+id/informationNameTextView"
+            />
+
+        </TableRow>
+
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="31dp"
+                android:textSize="15dp"
+                android:gravity="left|center_vertical"
+                android:text="Contact Number: "
+                fontPath="fonts/Exo2-Bold.ttf"
+                />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="31dp"
+                android:textSize="15dp"
+                android:gravity="right|center_vertical"
+                fontPath="fonts/Exo2-Regular.ttf"
+                android:id="@+id/informationContactNumberTextView"
+                />
+
+        </TableRow>
+
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="31dp"
+                android:textSize="15dp"
+                android:gravity="left|center_vertical"
+                android:text="Email: "
+                fontPath="fonts/Exo2-Bold.ttf"
+                />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="31dp"
+                android:textSize="15dp"
+                android:gravity="right|center_vertical"
+                fontPath="fonts/Exo2-Regular.ttf"
+                android:id="@+id/informationEmailTextView"
+                />
+
+        </TableRow>
+
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="31dp"
+                android:textSize="15dp"
+                android:gravity="left|center_vertical"
+                android:text="Duration: "
+                fontPath="fonts/Exo2-Bold.ttf"
+                />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="31dp"
+                android:textSize="15dp"
+                android:gravity="right|center_vertical"
+                fontPath="fonts/Exo2-Regular.ttf"
+                android:id="@+id/informationDurationTextView"
+                />
+
+        </TableRow>
+
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="31dp"
+                android:textSize="15dp"
+                android:gravity="left|center_vertical"
+                android:text="Balance: "
+                fontPath="fonts/Exo2-Bold.ttf"
+                />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="31dp"
+                android:textSize="15dp"
+                android:gravity="right|center_vertical"
+                fontPath="fonts/Exo2-Regular.ttf"
+                android:id="@+id/informationBalanceTextView"
+                />
+
+        </TableRow>
+
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="31dp"
+                android:textSize="15dp"
+                android:gravity="left|center_vertical"
+                android:text="Price Estimate: "
+                fontPath="fonts/Exo2-Bold.ttf"
+                />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="31dp"
+                android:textSize="15dp"
+                android:gravity="right|center_vertical"
+                fontPath="fonts/Exo2-Regular.ttf"
+                android:id="@+id/informationPriceEstimateTextView"
+                />
+
+        </TableRow>
+
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="31dp"
+                android:textSize="15dp"
+                android:gravity="left|center_vertical"
+                android:text="Plate Number: "
+                fontPath="fonts/Exo2-Bold.ttf"
+                />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="31dp"
+                android:textSize="15dp"
+                android:gravity="right|center_vertical"
+                fontPath="fonts/Exo2-Regular.ttf"
+                android:id="@+id/informationPlateNumberTextView"
+                />
+
+        </TableRow>
+
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="31dp"
+                android:textSize="15dp"
+                android:gravity="left|center_vertical"
+                android:text="Immobilizer: "
+                fontPath="fonts/Exo2-Bold.ttf"
+                />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="31dp"
+                android:textSize="15dp"
+                android:gravity="right|center_vertical"
+                fontPath="fonts/Exo2-Regular.ttf"
+                android:id="@+id/informationImmobilizerTextView"
+                />
+
+        </TableRow>
+
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="31dp"
+                android:textSize="15dp"
+                android:gravity="left|center_vertical"
+                android:text="Ignition: "
+                fontPath="fonts/Exo2-Bold.ttf"
+                />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="31dp"
+                android:textSize="15dp"
+                android:gravity="right|center_vertical"
+                fontPath="fonts/Exo2-Regular.ttf"
+                android:id="@+id/informationIgnitionTextView"
+                />
+
+        </TableRow>
+
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="31dp"
+                android:textSize="15dp"
+                android:gravity="left|center_vertical"
+                android:text="Central Lock: "
+                fontPath="fonts/Exo2-Bold.ttf"
+                />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="31dp"
+                android:textSize="15dp"
+                android:gravity="right|center_vertical"
+                fontPath="fonts/Exo2-Regular.ttf"
+                android:id="@+id/informationCentralLockTextView"
+                />
+
+        </TableRow>
+
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="31dp"
+                android:textSize="15dp"
+                android:gravity="left|center_vertical"
+                android:text="Mileage: "
+                fontPath="fonts/Exo2-Bold.ttf"
+                />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="31dp"
+                android:textSize="15dp"
+                android:gravity="right|center_vertical"
+                fontPath="fonts/Exo2-Regular.ttf"
+                android:id="@+id/informationMileageTextView"
+                />
+
+        </TableRow>
+
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="31dp"
+                android:textSize="15dp"
+                android:gravity="left|center_vertical"
+                android:text="Speed: "
+                fontPath="fonts/Exo2-Bold.ttf"
+                />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="31dp"
+                android:textSize="15dp"
+                android:gravity="right|center_vertical"
+                fontPath="fonts/Exo2-Regular.ttf"
+                android:id="@+id/informationSpeedTextView"
+                />
+
+        </TableRow>
+
+    </TableLayout>
+
+    <!--
+
+    Name :  abi manyu
+Contact Number:  +62812960060651
+Email :  apoernomo@hipcar.com
+Duration :  22 hours 44 minutes
+Balance :  Rp. 100,000
+Price Estimate :  Rp. 450,000
+Plate Number :  B 1875 POK
+Immobilizer :  locked
+Ignition :  off
+Central Lock :  locked
+Mileage :  1223
+Speed :  0
+
+    -->
 
 </FrameLayout>

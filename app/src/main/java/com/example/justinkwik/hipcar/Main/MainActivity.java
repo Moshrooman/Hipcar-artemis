@@ -137,7 +137,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         //Add progress bar to ongoingreservation
         //get progress of string request in onGoingReservationFragment and checkedout fragment somehow and create progress bar.
         //IF THE STRINGREQUEST COMES BACK EMPTY, THEN DISPLAY TEXTVIEWS SAYING NO ONGOING OR NO CHECKED OUT.
-        //Show the pop-up window first with a loading view on it, then load the information into the window when loaded.
+        //REFRESH ONGOING INFORMATION WHEN: clicking on going reservation tab, clicking get status tab, view.
+        //REFrESH POP UP INFORMATION WHEN: only clicking view and get status
 
         //TODO: LOG OUT AND CHANGE PASSWORD
         //for logging out delete the credentials and set loggedin boolean to false (both in sharedPreference)
@@ -160,6 +161,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         //remove fresco if not using
         //remove placeholder fragment when all pages are implemented.
         //add a border around the login window (???)
+        //design login like https://sourcey.com/beautiful-android-logn-and-signup-screens-with-material-design/screenshot-signup.png
 
     }
 
