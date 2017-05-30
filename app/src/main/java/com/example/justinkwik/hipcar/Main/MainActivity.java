@@ -137,8 +137,12 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         //Add progress bar to ongoingreservation
         //get progress of string request in onGoingReservationFragment and checkedout fragment somehow and create progress bar.
         //IF THE STRINGREQUEST COMES BACK EMPTY, THEN DISPLAY TEXTVIEWS SAYING NO ONGOING OR NO CHECKED OUT.
-        //REFRESH ONGOING INFORMATION WHEN: clicking on going reservation tab, clicking get status tab, view.
+        //REFRESH ONGOING INFORMATION WHEN: clicking on going reservation tab (reset recycler view), clicking get status tab, view.
         //REFrESH POP UP INFORMATION WHEN: only clicking view and get status
+        //Give indicator to swipe from google maps to information fragment
+        //add a loading progress bar while the informatin loads and always set to the first item, but while loading
+        //allow to scroll, so maybe try and display the old information so atleast they can read that. (override save state of
+        //either fragment or view pager?)
 
         //TODO: LOG OUT AND CHANGE PASSWORD
         //for logging out delete the credentials and set loggedin boolean to false (both in sharedPreference)

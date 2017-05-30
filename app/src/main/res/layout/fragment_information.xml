@@ -3,8 +3,10 @@
     android:layout_width="match_parent"
     android:layout_height="380dp"
     android:paddingLeft="25dp"
+    android:paddingStart="25dp"
     android:paddingRight="25dp"
-    tools:context="com.example.justinkwik.hipcar.Main.Reservation.OnGoingFragmentClasses.InformationFragment">
+    android:paddingEnd="25dp"
+    >
 
     <TableLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
