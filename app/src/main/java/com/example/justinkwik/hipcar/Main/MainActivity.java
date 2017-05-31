@@ -11,6 +11,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -461,6 +462,22 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 closeDrawer();
             }
         });
+
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+
+        switch(keyCode) {
+
+            case KeyEvent.KEYCODE_BACK:
+
+                moveTaskToBack(true);
+                return true;
+
+        }
+
+        return false;
 
     }
 

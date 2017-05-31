@@ -554,10 +554,10 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
             onGoingReservationStringRequest(thisFragment);
             showOrHideLoadingScreen(false);
         }
-
     }
 
     //TODO: implement the onclick listeners of each button.
+    //TODO: implement google maps to only scroll with 2 fingers.
     //TODO: WHEN CLICKING EVERY BUTTON EXCEPT GENERATE VOUCHER AND CHECKIN/CHECKOUT WE CALL onGoingReservationStringRequest and
     //showorhideloadingscreen.
     //AND WE ALSO RE-CALL THE VEHICLE STATUS STRING REQUEST AND SET ALL THE VIEWS.
