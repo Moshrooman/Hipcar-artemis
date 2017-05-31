@@ -136,20 +136,13 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         viewPager.setCurrentItem(1, false);
 
         //TODO: RESERVATION IMPLEMENTATION
-        //Add a loading thing to the reservation while retrieving the information.
         //Add an arrow to the reservation tab for sub menu's to indicate collapse and expand.
         //Add a search bar to both tabs or filter?
         //Finish the layout for the row, make borders for each row
-        //Add the action button.
-        //Add progress bar to ongoingreservation
         //get progress of string request in onGoingReservationFragment and checkedout fragment somehow and create progress bar.
         //IF THE STRINGREQUEST COMES BACK EMPTY, THEN DISPLAY TEXTVIEWS SAYING NO ONGOING OR NO CHECKED OUT.
-        //REFRESH ONGOING INFORMATION WHEN: clicking on going reservation tab (reset recycler view), clicking get status tab, view.
-        //REFrESH POP UP INFORMATION WHEN: only clicking view and get status
         //Give indicator to swipe from google maps to information fragment
-        //add a loading progress bar while the informatin loads and always set to the first item, but while loading
-        //allow to scroll, so maybe try and display the old information so atleast they can read that. (override save state of
-        //either fragment or view pager?)
+        //handle back button in mainactivity so that if a boolean is true, to dismiss the pop-up in the ongoingreservationfragment.
 
         //TODO: LOG OUT AND CHANGE PASSWORD
         //for logging out delete the credentials and set loggedin boolean to false (both in sharedPreference)

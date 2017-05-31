@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
     android:layout_height="500dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@drawable/ongoingreservationpopupborder"
     android:layout_gravity="center"
     android:weightSum="1"
-    android:id="@+id/popUpLinearLayout"
-    >
+    android:id="@+id/popUpLinearLayout">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -14,6 +14,7 @@
         android:orientation="horizontal"
         android:id="@+id/popUpTitleLinearLayout"
         android:background="@drawable/bottomborder"
+        android:layout_alignParentTop="true"
         >
 
         <TextView
@@ -46,6 +47,26 @@
 
     </LinearLayout>
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="380dp"
+        android:background="@color/greyScreenLoading"
+        android:alpha="0.8"
+        android:id="@+id/popUpGreyScreenLoading"
+        android:layout_below="@+id/popUpTitleLinearLayout"
+        >
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:lottie_fileName="Lottie/loading.json"
+            app:lottie_loop="true"
+            android:layout_centerInParent="true"
+            android:id="@+id/popUpLoadingLottieView"
+            />
+
+    </RelativeLayout>
+
     <android.support.v4.view.ViewPager
         android:layout_width="match_parent"
         android:layout_height="380dp"
@@ -56,13 +77,158 @@
 
     </android.support.v4.view.ViewPager>
 
-    <android.support.v4.view.ViewPager
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/googleMapViewPager"
-        android:id="@+id/buttonViewPager"
+        android:layout_below="@+id/googleMapAndInfoViewPager"
+        android:id="@+id/buttonScrollView"
+        android:paddingTop="5dp"
         >
 
-    </android.support.v4.view.ViewPager>
+        <TableLayout
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:shrinkColumns="*"
+            android:stretchColumns="*"
+            >
 
-</LinearLayout>
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                >
+
+                <Button
+                    android:layout_width="0dp"
+                    android:layout_height="35dp"
+                    android:layout_weight="0.5"
+                    android:background="@drawable/blueactionviewbutton"
+                    android:layout_marginRight="25dp"
+                    android:layout_marginEnd="25dp"
+                    android:textColor="@color/white"
+                    android:text="Unlock Engine"
+                    fontPath="fonts/Exo2-Regular.ttf"
+                    android:id="@+id/unlockEngineButton"
+                    />
+
+                <Button
+                    android:layout_width="0dp"
+                    android:layout_height="35dp"
+                    android:layout_weight="0.5"
+                    android:background="@drawable/blueactionviewbutton"
+                    android:textColor="@color/white"
+                    android:text="Lock Engine"
+                    fontPath="fonts/Exo2-Regular.ttf"
+                    android:id="@+id/lockEngineButton"
+                    />
+
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                >
+
+                <Button
+                    android:layout_width="0dp"
+                    android:layout_height="35dp"
+                    android:layout_weight="0.5"
+                    android:background="@drawable/blueactionviewbutton"
+                    android:layout_marginRight="25dp"
+                    android:layout_marginEnd="25dp"
+                    android:textColor="@color/white"
+                    android:text="Unlock Door"
+                    fontPath="fonts/Exo2-Regular.ttf"
+                    android:id="@+id/unlockDoorButton"
+                    />
+
+                <Button
+                    android:layout_width="0dp"
+                    android:layout_height="35dp"
+                    android:layout_weight="0.5"
+                    android:background="@drawable/blueactionviewbutton"
+                    android:textColor="@color/white"
+                    android:text="Lock Door"
+                    fontPath="fonts/Exo2-Regular.ttf"
+                    android:id="@+id/lockDoorButton"
+                    />
+
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                >
+
+                <Button
+                    android:layout_width="0dp"
+                    android:layout_height="35dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/blueactionviewbutton"
+                    android:textColor="@color/white"
+                    android:text="Get Status"
+                    fontPath="fonts/Exo2-Regular.ttf"
+                    android:id="@+id/getStatusButton"
+                    />
+
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                >
+
+                <Button
+                    android:layout_width="0dp"
+                    android:layout_height="35dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/blueactionviewbutton"
+                    android:textColor="@color/white"
+                    android:text="Generate Voucher"
+                    fontPath="fonts/Exo2-Regular.ttf"
+                    android:id="@+id/generateVoucherButton"
+                    />
+
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                >
+
+                <Button
+                    android:layout_width="0dp"
+                    android:layout_height="35dp"
+                    android:layout_weight="0.5"
+                    android:background="@drawable/redactionviewbutton"
+                    android:layout_marginRight="25dp"
+                    android:layout_marginEnd="25dp"
+                    android:textColor="@color/white"
+                    android:text="Check In"
+                    fontPath="fonts/Exo2-Regular.ttf"
+                    android:id="@+id/checkInButton"
+
+                    />
+
+                <Button
+                    android:layout_width="0dp"
+                    android:layout_height="35dp"
+                    android:layout_weight="0.5"
+                    android:background="@drawable/redactionviewbutton"
+                    android:textColor="@color/white"
+                    android:text="Check Out"
+                    fontPath="fonts/Exo2-Regular.ttf"
+                    android:id="@+id/checkOutButton"
+                    />
+
+            </TableRow>
+
+        </TableLayout>
+
+    </ScrollView>
+
+</RelativeLayout>

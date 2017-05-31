@@ -9,6 +9,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -17,9 +18,11 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.airbnb.lottie.LottieAnimationView;
@@ -80,7 +83,7 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
     private TextView exitTextView;
     //Viewpagers for the popupwindow.
     private ViewPager googleMapAndInfoViewPager;
-    private ViewPager buttonViewPager;
+    private ScrollView buttonScrollView;
     private int googleMapAndInfoPosition;
     private Bundle savedInstanceState;
     private BitmapDescriptor carIcon;
@@ -92,6 +95,9 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
     private OnGoingReservationFragment thisFragment;
     private boolean pulledToRefresh;
     private boolean firstTimeClickedTab;
+    private RelativeLayout popUpGreyScreenLoading;
+    private LottieAnimationView popUpLoadingLottieView;
+    private Button[] popUpActionButtonArray;
 
     public OnGoingReservationFragment() {
 
@@ -144,12 +150,25 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
 
         initializePullToRefreshLayout();
 
-        showLoadingScreen();
+        showOrHideLoadingScreen(false);
 
         //Below start of assigning variables for popup view.
         viewActionPopUpContainer = (ViewGroup) layoutInflater.inflate(R.layout.viewactionpopup, null);
-        buttonViewPager = (ViewPager) viewActionPopUpContainer.findViewById(R.id.buttonViewPager);
+        buttonScrollView = (ScrollView) viewActionPopUpContainer.findViewById(R.id.buttonScrollView);
         googleMapAndInfoViewPager = (ViewPager) viewActionPopUpContainer.findViewById(R.id.googleMapAndInfoViewPager);
+        popUpGreyScreenLoading = (RelativeLayout) viewActionPopUpContainer.findViewById(R.id.popUpGreyScreenLoading);
+        popUpLoadingLottieView = (LottieAnimationView) viewActionPopUpContainer.findViewById(R.id.popUpLoadingLottieView);
+        popUpActionButtonArray = new Button[]{
+                (Button) viewActionPopUpContainer.findViewById(R.id.unlockEngineButton),
+                (Button) viewActionPopUpContainer.findViewById(R.id.lockEngineButton),
+                (Button) viewActionPopUpContainer.findViewById(R.id.unlockDoorButton),
+                (Button) viewActionPopUpContainer.findViewById(R.id.lockDoorButton),
+                (Button) viewActionPopUpContainer.findViewById(R.id.getStatusButton),
+                (Button) viewActionPopUpContainer.findViewById(R.id.generateVoucherButton),
+                (Button) viewActionPopUpContainer.findViewById(R.id.checkInButton),
+                (Button) viewActionPopUpContainer.findViewById(R.id.checkOutButton),
+        };
+
         //So only if they stay within the tab the google maps will stay there.
         googleMapAndInfoViewPager.setOffscreenPageLimit(1);
 
@@ -219,7 +238,7 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
 
                 if(!pulledToRefresh) {
 
-                    dismissLoadingScreen();
+                    dismissLoadingScreen(false);
 
                 }
 
@@ -265,6 +284,8 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
                 vehicleStatus = gson.fromJson(response, VehicleStatus.class);
 
                 setPopUpViewPagerAdapters();
+                dismissLoadingScreen(true);
+                enablePopUpButtons();
 
             }
         }, new Response.ErrorListener() {
@@ -307,6 +328,10 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
 
         viewActionPopUpWindow.showAtLocation(onGoingReservationFrameLayout, Gravity.CENTER, 0, 0);
 
+        showOrHideLoadingScreen(true);
+        disablePopUpButtons();
+
+        //Code to dim background.
         WindowManager.LayoutParams layoutParams = (WindowManager.LayoutParams) viewActionPopUpContainer.getLayoutParams();
         layoutParams.flags = WindowManager.LayoutParams.FLAG_DIM_BEHIND;
         layoutParams.dimAmount = 0.3f;
@@ -341,24 +366,73 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
 
     }
 
-    private void dismissLoadingScreen() {
+    private void dismissLoadingScreen(boolean popUp) {
 
-        reservationGreyScreenLoading.setVisibility(View.GONE);
-        reservationGreyScreenLoading.startAnimation(loadingScreenFadeOut);
-        reservationLoadingLottieView.pauseAnimation();
+        //If it is not the popup, we handle the reservation loading screen.
+        if(!popUp) {
+            reservationGreyScreenLoading.setVisibility(View.GONE);
+            reservationGreyScreenLoading.startAnimation(loadingScreenFadeOut);
+            reservationLoadingLottieView.pauseAnimation();
+        } else {
+            popUpGreyScreenLoading.setVisibility(View.GONE);
+            popUpGreyScreenLoading.startAnimation(loadingScreenFadeOut);
+            popUpLoadingLottieView.pauseAnimation();
+        }
 
     }
 
-    private void showLoadingScreen() {
+    private void showOrHideLoadingScreen(boolean popUp) {
 
-        reservationGreyScreenLoading.setVisibility(View.VISIBLE);
-        reservationGreyScreenLoading.bringToFront();
-        reservationLoadingLottieView.playAnimation();
+        if (!popUp) {
+            reservationGreyScreenLoading.setVisibility(View.VISIBLE);
+            reservationGreyScreenLoading.bringToFront();
+            reservationLoadingLottieView.playAnimation();
+        } else {
+            popUpGreyScreenLoading.setVisibility(View.VISIBLE);
+            popUpGreyScreenLoading.bringToFront();
+            popUpLoadingLottieView.playAnimation();
+        }
+
+
 
     }
 
     private int dPToPx(final Context context, final float dp) {
         return (int)(dp * context.getResources().getDisplayMetrics().density);
+    }
+
+    private void disablePopUpButtons() {
+
+        for (int i = 0; i < popUpActionButtonArray.length; i++) {
+
+            popUpActionButtonArray[i].setBackgroundResource(R.drawable.disabledactionviewbutton);
+            popUpActionButtonArray[i].setEnabled(false);
+
+        }
+
+    }
+
+    private void enablePopUpButtons() {
+
+        for (int i = 0; i < popUpActionButtonArray.length; i++) {
+
+            Button popUpActionButton = popUpActionButtonArray[i];
+
+            if (popUpActionButton.getText().toString().contains("Check")) {
+
+                popUpActionButtonArray[i].setBackgroundResource(R.drawable.redactionviewbutton);
+
+            } else {
+
+                popUpActionButtonArray[i].setBackgroundResource(R.drawable.blueactionviewbutton);
+
+            }
+
+
+            popUpActionButtonArray[i].setEnabled(true);
+
+        }
+
     }
 
     public class GoogleMapInfoAdapter extends PagerAdapter {
@@ -478,8 +552,13 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
         if (!firstTimeClickedTab) {
             //Everytime the tab is selected, load the information again.
             onGoingReservationStringRequest(thisFragment);
-            showLoadingScreen();
+            showOrHideLoadingScreen(false);
         }
 
     }
+
+    //TODO: implement the onclick listeners of each button.
+    //TODO: WHEN CLICKING EVERY BUTTON EXCEPT GENERATE VOUCHER AND CHECKIN/CHECKOUT WE CALL ABOVE ONRESUME
+    //AND WE ALSO RE-CALL THE VEHICLE STATUS STRING REQUEST AND SET ALL THE VIEWS.
+    //TODO: if click lock door, then lock door and unlock door become inactive, same with the other ones.
 }
