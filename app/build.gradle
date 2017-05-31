@@ -39,4 +39,5 @@ dependencies {
     compile 'com.google.code.gson:gson:2.8.0'
     compile 'net.danlew:android.joda:2.9.9'
     compile 'com.google.android.gms:play-services-maps:10.2.6'
+    compile 'in.srain.cube:ultra-ptr:1.0.11'
 }

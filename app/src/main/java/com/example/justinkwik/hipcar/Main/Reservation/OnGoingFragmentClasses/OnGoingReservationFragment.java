@@ -1,6 +1,8 @@
 package com.example.justinkwik.hipcar.Main.Reservation.OnGoingFragmentClasses;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.icu.text.LocaleDisplayNames;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
@@ -16,10 +18,14 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
 import android.widget.PopupWindow;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -28,23 +34,36 @@ import com.android.volley.toolbox.StringRequest;
 import com.example.justinkwik.hipcar.ConnectionManager;
 import com.example.justinkwik.hipcar.Login.LoginActivity;
 import com.example.justinkwik.hipcar.Login.UserCredentials;
-import com.example.justinkwik.hipcar.Main.PlaceHolderFragment;
 import com.example.justinkwik.hipcar.Main.Reservation.ParseClassesOnGoing.VehicleStatus.VehicleStatus;
 import com.example.justinkwik.hipcar.R;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.gson.Gson;
 
 import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Map;
 
+import in.srain.cube.views.ptr.PtrClassicFrameLayout;
+import in.srain.cube.views.ptr.PtrDefaultHandler;
+import in.srain.cube.views.ptr.PtrFrameLayout;
+import in.srain.cube.views.ptr.header.StoreHouseHeader;
+
 public class OnGoingReservationFragment extends Fragment implements OnGoingReservationAdapter.VehicleStatusInterface{
 
     private final String onGoingReservationLink = "https://artemis-api-dev.hipcar.com/reservation/on-going";
     private final String vehicleStatusLink = "https://artemis-api-dev.hipcar.com/vehicle/:id/status";
+    private int red;
+    private int black;
+    private int navBarGrey;
+
     private UserCredentials userCredentials;
     private OnGoingReservation[] onGoingReservations;
     private Gson gson;
@@ -67,6 +86,17 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
     private ViewPager googleMapAndInfoViewPager;
     private ViewPager buttonViewPager;
     private int googleMapAndInfoPosition;
+    private Bundle savedInstanceState;
+    private BitmapDescriptor carIcon;
+    private RelativeLayout reservationGreyScreenLoading;
+    private Animation loadingScreenFadeOut;
+    private Context context;
+    private LottieAnimationView reservationLoadingLottieView;
+    private PtrFrameLayout pullToRefreshLayout;
+    private OnGoingReservationFragment thisFragment;
+    private boolean pulledToRefresh;
+
+    //TODO: Make the header bigger and the text bigger.
 
     public OnGoingReservationFragment() {
 
@@ -76,27 +106,49 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        //This is for the google maps.
+        this.savedInstanceState = savedInstanceState;
+        this.thisFragment = this;
+
+        this.context = getContext().getApplicationContext();
         userCredentials = LoginActivity.getUserCredentials();
         gson = new Gson();
         layoutInflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         windowManager = (WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE);
+        MapsInitializer.initialize(context);
+        carIcon = BitmapDescriptorFactory.fromResource(R.drawable.caricon);
+        loadingScreenFadeOut = AnimationUtils.loadAnimation(context, R.anim.fade_out_loading);
+        pulledToRefresh = false;
 
-        onGoingReservationStringRequest(this);
+        red = ContextCompat.getColor(getContext(), R.color.red);
+        black = ContextCompat.getColor(getContext(), R.color.black);
+        navBarGrey = ContextCompat.getColor(getContext(), R.color.navBarGrey);
+
+        onGoingReservationStringRequest(thisFragment);
 
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+                             final Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_reservation, container, false);
 
         onGoingReservationRecyclerView = (RecyclerView) view.findViewById(R.id.onGoingReservationRecyclerView);
         onGoingReservationRecyclerView.setItemAnimator(new DefaultItemAnimator());
-        onGoingReservationRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity().getApplicationContext()));
+        onGoingReservationRecyclerView.setLayoutManager(new LinearLayoutManager(context));
 
         onGoingReservationFrameLayout = (FrameLayout) view.findViewById(R.id.onGoingReservationFrameLayout);
         popUpWindowMeasuredView = view.findViewById(R.id.popUpWindowMeasuredView);
+
+        reservationGreyScreenLoading = (RelativeLayout) view.findViewById(R.id.reservationGreyScreenLoading);
+        reservationLoadingLottieView = (LottieAnimationView) view.findViewById(R.id.reservationLoadingLottieView);
+
+        pullToRefreshLayout = (PtrFrameLayout) view.findViewById(R.id.pullToRefreshLayout);
+
+        initializePullToRefreshLayout();
+
+        showLoadingScreen();
 
         //Below start of assigning variables for popup view.
         viewActionPopUpContainer = (ViewGroup) layoutInflater.inflate(R.layout.viewactionpopup, null);
@@ -126,6 +178,34 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
         return view;
     }
 
+    private void initializePullToRefreshLayout() {
+
+        StoreHouseHeader storeHouseHeader = new StoreHouseHeader(context);
+        storeHouseHeader.setPadding(5, 5, 5, 5);
+        storeHouseHeader.setTextColor(red);
+        storeHouseHeader.initWithString("Hipcar");
+
+        pullToRefreshLayout.setHeaderView(storeHouseHeader);
+        pullToRefreshLayout.addPtrUIHandler(storeHouseHeader);
+
+        pullToRefreshLayout.setPtrHandler(new PtrDefaultHandler() {
+
+            @Override
+            public boolean checkCanDoRefresh(PtrFrameLayout frame, View content, View header) {
+                return PtrDefaultHandler.checkContentCanBePulledDown(pullToRefreshLayout, content, header);
+            }
+
+            @Override
+            public void onRefreshBegin(PtrFrameLayout frame) {
+
+                pulledToRefresh = true;
+                onGoingReservationStringRequest(thisFragment);
+
+            }
+        });
+
+    }
+
     private void onGoingReservationStringRequest(final OnGoingReservationFragment onGoingReservationFragment) {
 
         StringRequest onGoingReservationRequest = new StringRequest(Request.Method.GET, onGoingReservationLink, new Response.Listener<String>() {
@@ -136,6 +216,16 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
 
                 onGoingReservationRecyclerView.setAdapter(new OnGoingReservationAdapter(getActivity(),
                         onGoingReservations, onGoingReservationFragment));
+
+                if(!pulledToRefresh) {
+
+                    dismissLoadingScreen();
+
+                }
+
+                pullToRefreshLayout.refreshComplete();
+
+                pulledToRefresh = false;
 
             }
         }, new Response.ErrorListener() {
@@ -154,7 +244,7 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
             }
         };
 
-        ConnectionManager.getInstance(getActivity().getApplicationContext()).add(onGoingReservationRequest);
+        ConnectionManager.getInstance(context).add(onGoingReservationRequest);
 
     }
 
@@ -195,7 +285,7 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
             }
         };
 
-        ConnectionManager.getInstance(getActivity().getApplicationContext()).add(vehicleStatusRequest);
+        ConnectionManager.getInstance(context).add(vehicleStatusRequest);
 
     }
 
@@ -231,13 +321,13 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
             @Override
             public boolean onTouch(View v, MotionEvent event) {
 
-                if(event.getAction() == MotionEvent.ACTION_DOWN) {
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
 
-                    exitTextView.setTextColor(ContextCompat.getColor(getContext(), R.color.black));
+                    exitTextView.setTextColor(black);
 
                 } else {
 
-                    exitTextView.setTextColor(ContextCompat.getColor(getContext(), R.color.navBarGrey));
+                    exitTextView.setTextColor(navBarGrey);
 
                 }
 
@@ -254,7 +344,23 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
 
     }
 
-    public class GoogleMapInfoAdapter extends PagerAdapter implements OnMapReadyCallback{
+    private void dismissLoadingScreen() {
+
+        reservationGreyScreenLoading.setVisibility(View.GONE);
+        reservationGreyScreenLoading.startAnimation(loadingScreenFadeOut);
+        reservationLoadingLottieView.pauseAnimation();
+
+    }
+
+    private void showLoadingScreen() {
+
+        reservationGreyScreenLoading.setVisibility(View.VISIBLE);
+        reservationGreyScreenLoading.bringToFront();
+        reservationLoadingLottieView.playAnimation();
+
+    }
+
+    public class GoogleMapInfoAdapter extends PagerAdapter {
 
         private LayoutInflater inflater;
         private OnGoingReservation onGoingReservation;
@@ -276,63 +382,76 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
         @Override
         public Object instantiateItem(ViewGroup container, int position) {
 
-//            View layoutView;
-//
-//            if(position == 0) {
-//
-//                layoutView = inflater.inflate(R.layout.fragment_map, null);
-//
-//                SupportMapFragment hipCarMap = (SupportMapFragment) getChildFragmentManager()
-//                        .findFragmentById(R.id.hipCarMap);
-//
-//                hipCarMap.getMapAsync(this);
-//
-//            } else {
-//
-//                layoutView = inflater.inflate(R.layout.fragment_information, null);
-//
-//                //Instantiate and assign all values in here so variables aren't created for both views.
-//                DecimalFormat decimalFormat = new DecimalFormat();
-//                TextView informationNameTextView = (TextView) layoutView.findViewById(R.id.informationNameTextView);
-//                TextView informationContactNumberTextView = (TextView) layoutView.findViewById(R.id.informationContactNumberTextView);
-//                TextView informationEmailTextView = (TextView) layoutView.findViewById(R.id.informationEmailTextView);
-//                TextView informationDurationTextView = (TextView) layoutView.findViewById(R.id.informationDurationTextView);
-//                TextView informationBalanceTextView = (TextView) layoutView.findViewById(R.id.informationBalanceTextView);
-//                TextView informationPriceEstimateTextView = (TextView) layoutView.findViewById(R.id.informationPriceEstimateTextView);
-//                TextView informationPlateNumberTextView = (TextView) layoutView.findViewById(R.id.informationPlateNumberTextView);
-//                TextView informationImmobilizerTextView = (TextView) layoutView.findViewById(R.id.informationImmobilizerTextView);
-//                TextView informationIgnitionTextView = (TextView) layoutView.findViewById(R.id.informationIgnitionTextView);
-//                TextView informationCentralLockTextView = (TextView) layoutView.findViewById(R.id.informationCentralLockTextView);
-//                TextView informationMileageTextView = (TextView) layoutView.findViewById(R.id.informationMileageTextView);
-//                TextView informationSpeedTextView = (TextView) layoutView.findViewById(R.id.informationSpeedTextView);
-//
-//                informationNameTextView.setText(onGoingReservation.getFull_name());
-//                informationContactNumberTextView.setText(onGoingReservation.getContact_number());
-//                informationEmailTextView.setText(onGoingReservation.getEmail());
-//                informationDurationTextView.setText(new OnGoingReservationAdapter().formatDateString(
-//                        onGoingReservation.getReturn_date(), true));
-//                informationBalanceTextView.setText("Rp. " +
-//                        String.valueOf(decimalFormat.format(onGoingReservation.getUser().getBalance())));
-//                informationPriceEstimateTextView.setText("Rp. " +
-//                        String.valueOf(decimalFormat.format(onGoingReservation.getTotal_price())));
-//                informationPlateNumberTextView.setText(onGoingReservation.getVehicle().getPlate_number());
-//                informationImmobilizerTextView.setText(vehicleStatus.getImmobilizer());
-//                informationIgnitionTextView.setText(vehicleStatus.getIgnition());
-//                informationCentralLockTextView.setText(vehicleStatus.getCentral_lock());
-//                informationMileageTextView.setText(String.valueOf(vehicleStatus.getMileage()));
-//                informationSpeedTextView.setText(String.valueOf(vehicleStatus.getPosition().getSpeed_over_ground()));
-//
-//            }
-//
+            View layoutView;
 
-//            container.addView(layoutView);
+            if(position == 0) {
 
-            //TODO: try to inflate the view for PlaceHolderFragment and return new plaecholderfragment
-            //then inside the placeholderfragment class try and change the image progamatically and see if it changes for
-            //the google maps view, if it does, then for position 0 of the view pager, inflate the fragment_map and return
-            //new PlaceHolderFragment(), and in the else just container.addView layout view.
+                layoutView = inflater.inflate(R.layout.fragment_map, null);
 
-            return new PlaceHolderFragment();
+                final MapView hipCarMapView = (MapView) layoutView.findViewById(R.id.hipCarMapView);
+
+                hipCarMapView.onCreate(savedInstanceState);
+
+                hipCarMapView.getMapAsync(new OnMapReadyCallback() {
+                    @Override
+                    public void onMapReady(GoogleMap googleMap) {
+
+                        LatLng carCoordinates = new LatLng(vehicleStatus.getPosition().getLat(), vehicleStatus.getPosition().getLon());
+
+                        googleMap.addMarker(new MarkerOptions()
+                                .position(carCoordinates)
+                                .title("Car Location")
+                                .icon(carIcon));
+
+                        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(carCoordinates, 18));
+
+                        hipCarMapView.onResume();
+
+                    }
+                });
+
+
+            } else {
+
+                layoutView = inflater.inflate(R.layout.fragment_information, null);
+
+                //Instantiate and assign all values in here so variables aren't created for both views.
+                DecimalFormat decimalFormat = new DecimalFormat();
+                TextView informationNameTextView = (TextView) layoutView.findViewById(R.id.informationNameTextView);
+                TextView informationContactNumberTextView = (TextView) layoutView.findViewById(R.id.informationContactNumberTextView);
+                TextView informationEmailTextView = (TextView) layoutView.findViewById(R.id.informationEmailTextView);
+                TextView informationDurationTextView = (TextView) layoutView.findViewById(R.id.informationDurationTextView);
+                TextView informationBalanceTextView = (TextView) layoutView.findViewById(R.id.informationBalanceTextView);
+                TextView informationPriceEstimateTextView = (TextView) layoutView.findViewById(R.id.informationPriceEstimateTextView);
+                TextView informationPlateNumberTextView = (TextView) layoutView.findViewById(R.id.informationPlateNumberTextView);
+                TextView informationImmobilizerTextView = (TextView) layoutView.findViewById(R.id.informationImmobilizerTextView);
+                TextView informationIgnitionTextView = (TextView) layoutView.findViewById(R.id.informationIgnitionTextView);
+                TextView informationCentralLockTextView = (TextView) layoutView.findViewById(R.id.informationCentralLockTextView);
+                TextView informationMileageTextView = (TextView) layoutView.findViewById(R.id.informationMileageTextView);
+                TextView informationSpeedTextView = (TextView) layoutView.findViewById(R.id.informationSpeedTextView);
+
+                informationNameTextView.setText(onGoingReservation.getFull_name());
+                informationContactNumberTextView.setText(onGoingReservation.getContact_number());
+                informationEmailTextView.setText(onGoingReservation.getEmail());
+                informationDurationTextView.setText(new OnGoingReservationAdapter().formatDateString(
+                        onGoingReservation.getReturn_date(), true));
+                informationBalanceTextView.setText("Rp. " +
+                        String.valueOf(decimalFormat.format(onGoingReservation.getUser().getBalance())));
+                informationPriceEstimateTextView.setText("Rp. " +
+                        String.valueOf(decimalFormat.format(onGoingReservation.getTotal_price())));
+                informationPlateNumberTextView.setText(onGoingReservation.getVehicle().getPlate_number());
+                informationImmobilizerTextView.setText(vehicleStatus.getImmobilizer());
+                informationIgnitionTextView.setText(vehicleStatus.getIgnition());
+                informationCentralLockTextView.setText(vehicleStatus.getCentral_lock());
+                informationMileageTextView.setText(String.valueOf(vehicleStatus.getMileage()));
+                informationSpeedTextView.setText(String.valueOf(vehicleStatus.getPosition().getSpeed_over_ground()));
+
+            }
+
+
+            container.addView(layoutView);
+
+            return layoutView;
 
         }
 
@@ -346,13 +465,14 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
             return view == object;
         }
 
-        @Override
-        public void onMapReady(GoogleMap googleMap) {
-
-            Log.e("Map Ready: ", "True");
-
-        }
-
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        //Everytime the tab is selected, load the information again.
+        onGoingReservationStringRequest(thisFragment);
+        showLoadingScreen();
+    }
 }

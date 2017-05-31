@@ -8,6 +8,7 @@
     <string name="title_activity_font">FontActivity</string>
     <string name="title_activity_login">LoginActivity</string>
     <string name="title_activity_main">MainActivity</string>
+    <string name="googleMapAPI">AIzaSyAeY3UAf-4uzftsyP0Mdp7VStc_vHZdz98</string>
 
     <string-array name="navBarEntries">
         <item>Dashboard</item>
