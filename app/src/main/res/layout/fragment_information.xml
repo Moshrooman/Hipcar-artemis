@@ -1,11 +1,11 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="380dp"
-    android:paddingLeft="25dp"
-    android:paddingStart="25dp"
-    android:paddingRight="25dp"
-    android:paddingEnd="25dp"
+    android:layout_height="335dp"
+    android:paddingLeft="20dp"
+    android:paddingStart="20dp"
+    android:paddingRight="20dp"
+    android:paddingEnd="20dp"
     >
 
     <TableLayout
@@ -24,7 +24,7 @@
 
             <TextView
                 android:layout_width="wrap_content"
-                android:layout_height="31dp"
+                android:layout_height="27.5dp"
                 android:textSize="15dp"
                 android:gravity="left|center_vertical"
                 android:text="Name: "
@@ -33,7 +33,7 @@
 
             <TextView
                 android:layout_width="match_parent"
-                android:layout_height="31dp"
+                android:layout_height="27.5dp"
                 android:textSize="15dp"
                 android:gravity="right|center_vertical"
                 fontPath="fonts/Exo2-Regular.ttf"
@@ -49,7 +49,7 @@
 
             <TextView
                 android:layout_width="wrap_content"
-                android:layout_height="31dp"
+                android:layout_height="27.5dp"
                 android:textSize="15dp"
                 android:gravity="left|center_vertical"
                 android:text="Contact Number: "
@@ -58,7 +58,7 @@
 
             <TextView
                 android:layout_width="match_parent"
-                android:layout_height="31dp"
+                android:layout_height="27.5dp"
                 android:textSize="15dp"
                 android:gravity="right|center_vertical"
                 fontPath="fonts/Exo2-Regular.ttf"
@@ -74,7 +74,7 @@
 
             <TextView
                 android:layout_width="wrap_content"
-                android:layout_height="31dp"
+                android:layout_height="27.5dp"
                 android:textSize="15dp"
                 android:gravity="left|center_vertical"
                 android:text="Email: "
@@ -83,7 +83,7 @@
 
             <TextView
                 android:layout_width="match_parent"
-                android:layout_height="31dp"
+                android:layout_height="27.5dp"
                 android:textSize="15dp"
                 android:gravity="right|center_vertical"
                 fontPath="fonts/Exo2-Regular.ttf"
@@ -99,7 +99,7 @@
 
             <TextView
                 android:layout_width="wrap_content"
-                android:layout_height="31dp"
+                android:layout_height="27.5dp"
                 android:textSize="15dp"
                 android:gravity="left|center_vertical"
                 android:text="Duration: "
@@ -108,7 +108,7 @@
 
             <TextView
                 android:layout_width="match_parent"
-                android:layout_height="31dp"
+                android:layout_height="27.5dp"
                 android:textSize="15dp"
                 android:gravity="right|center_vertical"
                 fontPath="fonts/Exo2-Regular.ttf"
@@ -124,7 +124,7 @@
 
             <TextView
                 android:layout_width="wrap_content"
-                android:layout_height="31dp"
+                android:layout_height="27.5dp"
                 android:textSize="15dp"
                 android:gravity="left|center_vertical"
                 android:text="Balance: "
@@ -133,7 +133,7 @@
 
             <TextView
                 android:layout_width="match_parent"
-                android:layout_height="31dp"
+                android:layout_height="27.5dp"
                 android:textSize="15dp"
                 android:gravity="right|center_vertical"
                 fontPath="fonts/Exo2-Regular.ttf"
@@ -149,7 +149,7 @@
 
             <TextView
                 android:layout_width="wrap_content"
-                android:layout_height="31dp"
+                android:layout_height="27.5dp"
                 android:textSize="15dp"
                 android:gravity="left|center_vertical"
                 android:text="Price Estimate: "
@@ -158,7 +158,7 @@
 
             <TextView
                 android:layout_width="match_parent"
-                android:layout_height="31dp"
+                android:layout_height="27.5dp"
                 android:textSize="15dp"
                 android:gravity="right|center_vertical"
                 fontPath="fonts/Exo2-Regular.ttf"
@@ -174,7 +174,7 @@
 
             <TextView
                 android:layout_width="wrap_content"
-                android:layout_height="31dp"
+                android:layout_height="27.5dp"
                 android:textSize="15dp"
                 android:gravity="left|center_vertical"
                 android:text="Plate Number: "
@@ -183,7 +183,7 @@
 
             <TextView
                 android:layout_width="match_parent"
-                android:layout_height="31dp"
+                android:layout_height="27.5dp"
                 android:textSize="15dp"
                 android:gravity="right|center_vertical"
                 fontPath="fonts/Exo2-Regular.ttf"
@@ -199,7 +199,7 @@
 
             <TextView
                 android:layout_width="wrap_content"
-                android:layout_height="31dp"
+                android:layout_height="27.5dp"
                 android:textSize="15dp"
                 android:gravity="left|center_vertical"
                 android:text="Immobilizer: "
@@ -208,7 +208,7 @@
 
             <TextView
                 android:layout_width="match_parent"
-                android:layout_height="31dp"
+                android:layout_height="27.5dp"
                 android:textSize="15dp"
                 android:gravity="right|center_vertical"
                 fontPath="fonts/Exo2-Regular.ttf"
@@ -224,7 +224,7 @@
 
             <TextView
                 android:layout_width="wrap_content"
-                android:layout_height="31dp"
+                android:layout_height="27.5dp"
                 android:textSize="15dp"
                 android:gravity="left|center_vertical"
                 android:text="Ignition: "
@@ -233,7 +233,7 @@
 
             <TextView
                 android:layout_width="match_parent"
-                android:layout_height="31dp"
+                android:layout_height="27.5dp"
                 android:textSize="15dp"
                 android:gravity="right|center_vertical"
                 fontPath="fonts/Exo2-Regular.ttf"
@@ -249,7 +249,7 @@
 
             <TextView
                 android:layout_width="wrap_content"
-                android:layout_height="31dp"
+                android:layout_height="27.5dp"
                 android:textSize="15dp"
                 android:gravity="left|center_vertical"
                 android:text="Central Lock: "
@@ -258,7 +258,7 @@
 
             <TextView
                 android:layout_width="match_parent"
-                android:layout_height="31dp"
+                android:layout_height="27.5dp"
                 android:textSize="15dp"
                 android:gravity="right|center_vertical"
                 fontPath="fonts/Exo2-Regular.ttf"
@@ -274,7 +274,7 @@
 
             <TextView
                 android:layout_width="wrap_content"
-                android:layout_height="31dp"
+                android:layout_height="27.5dp"
                 android:textSize="15dp"
                 android:gravity="left|center_vertical"
                 android:text="Mileage: "
@@ -283,7 +283,7 @@
 
             <TextView
                 android:layout_width="match_parent"
-                android:layout_height="31dp"
+                android:layout_height="27.5dp"
                 android:textSize="15dp"
                 android:gravity="right|center_vertical"
                 fontPath="fonts/Exo2-Regular.ttf"
@@ -299,7 +299,7 @@
 
             <TextView
                 android:layout_width="wrap_content"
-                android:layout_height="31dp"
+                android:layout_height="27.5dp"
                 android:textSize="15dp"
                 android:gravity="left|center_vertical"
                 android:text="Speed: "
@@ -308,7 +308,7 @@
 
             <TextView
                 android:layout_width="match_parent"
-                android:layout_height="31dp"
+                android:layout_height="27.5dp"
                 android:textSize="15dp"
                 android:gravity="right|center_vertical"
                 fontPath="fonts/Exo2-Regular.ttf"
@@ -318,22 +318,5 @@
         </TableRow>
 
     </TableLayout>
-
-    <!--
-
-    Name :  abi manyu
-Contact Number:  +62812960060651
-Email :  apoernomo@hipcar.com
-Duration :  22 hours 44 minutes
-Balance :  Rp. 100,000
-Price Estimate :  Rp. 450,000
-Plate Number :  B 1875 POK
-Immobilizer :  locked
-Ignition :  off
-Central Lock :  locked
-Mileage :  1223
-Speed :  0
-
-    -->
 
 </FrameLayout>

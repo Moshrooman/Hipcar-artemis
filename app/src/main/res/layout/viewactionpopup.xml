@@ -49,7 +49,7 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="380dp"
+        android:layout_height="335dp"
         android:background="@color/greyScreenLoading"
         android:alpha="0.8"
         android:id="@+id/popUpGreyScreenLoading"
@@ -69,7 +69,7 @@
 
     <android.support.v4.view.ViewPager
         android:layout_width="match_parent"
-        android:layout_height="380dp"
+        android:layout_height="335dp"
         android:layout_below="@+id/popUpTitleLinearLayout"
         android:id="@+id/googleMapAndInfoViewPager"
         android:background="@drawable/bottomborder"

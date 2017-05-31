@@ -334,7 +334,7 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
         //Code to dim background.
         WindowManager.LayoutParams layoutParams = (WindowManager.LayoutParams) viewActionPopUpContainer.getLayoutParams();
         layoutParams.flags = WindowManager.LayoutParams.FLAG_DIM_BEHIND;
-        layoutParams.dimAmount = 0.3f;
+        layoutParams.dimAmount = 0.7f;
         windowManager.updateViewLayout(viewActionPopUpContainer, layoutParams);
 
         exitTextView = (TextView) viewActionPopUpContainer.findViewById(R.id.exitTextView);
@@ -558,7 +558,8 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
     }
 
     //TODO: implement the onclick listeners of each button.
-    //TODO: WHEN CLICKING EVERY BUTTON EXCEPT GENERATE VOUCHER AND CHECKIN/CHECKOUT WE CALL ABOVE ONRESUME
+    //TODO: WHEN CLICKING EVERY BUTTON EXCEPT GENERATE VOUCHER AND CHECKIN/CHECKOUT WE CALL onGoingReservationStringRequest and
+    //showorhideloadingscreen.
     //AND WE ALSO RE-CALL THE VEHICLE STATUS STRING REQUEST AND SET ALL THE VIEWS.
     //TODO: if click lock door, then lock door and unlock door become inactive, same with the other ones.
 }
