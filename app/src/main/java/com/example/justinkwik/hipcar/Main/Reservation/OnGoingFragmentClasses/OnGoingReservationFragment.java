@@ -1,8 +1,6 @@
 package com.example.justinkwik.hipcar.Main.Reservation.OnGoingFragmentClasses;
 
 import android.content.Context;
-import android.graphics.Color;
-import android.icu.text.LocaleDisplayNames;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
@@ -11,7 +9,6 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -51,7 +48,6 @@ import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Map;
 
-import in.srain.cube.views.ptr.PtrClassicFrameLayout;
 import in.srain.cube.views.ptr.PtrDefaultHandler;
 import in.srain.cube.views.ptr.PtrFrameLayout;
 import in.srain.cube.views.ptr.header.StoreHouseHeader;
@@ -95,8 +91,7 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
     private PtrFrameLayout pullToRefreshLayout;
     private OnGoingReservationFragment thisFragment;
     private boolean pulledToRefresh;
-
-    //TODO: Make the header bigger and the text bigger.
+    private boolean firstTimeClickedTab;
 
     public OnGoingReservationFragment() {
 
@@ -109,6 +104,7 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
         //This is for the google maps.
         this.savedInstanceState = savedInstanceState;
         this.thisFragment = this;
+        firstTimeClickedTab = true;
 
         this.context = getContext().getApplicationContext();
         userCredentials = LoginActivity.getUserCredentials();
@@ -154,6 +150,8 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
         viewActionPopUpContainer = (ViewGroup) layoutInflater.inflate(R.layout.viewactionpopup, null);
         buttonViewPager = (ViewPager) viewActionPopUpContainer.findViewById(R.id.buttonViewPager);
         googleMapAndInfoViewPager = (ViewPager) viewActionPopUpContainer.findViewById(R.id.googleMapAndInfoViewPager);
+        //So only if they stay within the tab the google maps will stay there.
+        googleMapAndInfoViewPager.setOffscreenPageLimit(1);
 
         //Page change listener so while stuff is loading and information is succesfully loaded, it stays on the same page.
         googleMapAndInfoViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -180,10 +178,12 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
 
     private void initializePullToRefreshLayout() {
 
+        int dPHeight = dPToPx(context, 10);
+
         StoreHouseHeader storeHouseHeader = new StoreHouseHeader(context);
-        storeHouseHeader.setPadding(5, 5, 5, 5);
+        storeHouseHeader.setPadding(0, dPHeight, 0, dPHeight);
         storeHouseHeader.setTextColor(red);
-        storeHouseHeader.initWithString("Hipcar");
+        storeHouseHeader.initWithString("HIPCAR");
 
         pullToRefreshLayout.setHeaderView(storeHouseHeader);
         pullToRefreshLayout.addPtrUIHandler(storeHouseHeader);
@@ -224,8 +224,8 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
                 }
 
                 pullToRefreshLayout.refreshComplete();
-
                 pulledToRefresh = false;
+                firstTimeClickedTab = false;
 
             }
         }, new Response.ErrorListener() {
@@ -262,8 +262,6 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
             @Override
             public void onResponse(String response) {
 
-                Log.e("String Request DONE: ", "True"); //TODO: take away this Log.
-
                 vehicleStatus = gson.fromJson(response, VehicleStatus.class);
 
                 setPopUpViewPagerAdapters();
@@ -295,7 +293,6 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
         googleMapAndInfoViewPager.setCurrentItem(googleMapAndInfoPosition, false);
 
     }
-
 
 
     private void showPopUpAndSetExitClickListener(ViewGroup viewActionPopUpContainer) {
@@ -360,6 +357,10 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
 
     }
 
+    private int dPToPx(final Context context, final float dp) {
+        return (int)(dp * context.getResources().getDisplayMetrics().density);
+    }
+
     public class GoogleMapInfoAdapter extends PagerAdapter {
 
         private LayoutInflater inflater;
@@ -397,6 +398,9 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
                     public void onMapReady(GoogleMap googleMap) {
 
                         LatLng carCoordinates = new LatLng(vehicleStatus.getPosition().getLat(), vehicleStatus.getPosition().getLon());
+
+                        googleMap.getUiSettings().setMapToolbarEnabled(true);
+                        googleMap.getUiSettings().setZoomControlsEnabled(true);
 
                         googleMap.addMarker(new MarkerOptions()
                                 .position(carCoordinates)
@@ -471,8 +475,11 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
     public void onResume() {
         super.onResume();
 
-        //Everytime the tab is selected, load the information again.
-        onGoingReservationStringRequest(thisFragment);
-        showLoadingScreen();
+        if (!firstTimeClickedTab) {
+            //Everytime the tab is selected, load the information again.
+            onGoingReservationStringRequest(thisFragment);
+            showLoadingScreen();
+        }
+
     }
 }

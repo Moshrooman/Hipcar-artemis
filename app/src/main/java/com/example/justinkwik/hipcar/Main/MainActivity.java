@@ -90,6 +90,12 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             @Override
             public void onDrawerOpened(View drawerView) {
 
+                if(openDrawer) {
+
+                    hamburgerToArrow();
+
+                }
+
             }
 
             @Override
@@ -167,6 +173,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         //remove placeholder fragment when all pages are implemented.
         //add a border around the login window (???)
         //design login like https://sourcey.com/beautiful-android-logn-and-signup-screens-with-material-design/screenshot-signup.png
+        //Set orientation to only vertical
 
     }
 
@@ -349,6 +356,18 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         }
     }
 
+    private void openDrawer() {
+
+        navBarButtonHtA.setVisibility(View.VISIBLE);
+        navBarButtonAtH.setVisibility(View.INVISIBLE);
+        navBarButtonHtA.playAnimation();
+
+        drawerLayout.openDrawer(Gravity.LEFT);
+
+        openDrawer = false;
+
+    }
+
     private void closeDrawer() {
 
         navBarButtonAtH.setVisibility(View.VISIBLE);
@@ -361,29 +380,23 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     }
 
-    private void openDrawer() {
-
-        navBarButtonHtA.setVisibility(View.VISIBLE);
-
-        navBarButtonAtH.setVisibility(View.INVISIBLE);
-
-        navBarButtonHtA.playAnimation();
-
-        drawerLayout.setVisibility(View.VISIBLE);
-        drawerLayout.openDrawer(Gravity.LEFT);
-
-        openDrawer = false;
-
-    }
-
     private void arrowToHamburger() {
 
         navBarButtonAtH.setVisibility(View.VISIBLE);
         navBarButtonHtA.setVisibility(View.INVISIBLE);
         navBarButtonAtH.playAnimation();
-        drawerLayout.setVisibility(View.GONE);
 
         openDrawer = true;
+
+    }
+
+    private void hamburgerToArrow() {
+
+        navBarButtonHtA.setVisibility(View.VISIBLE);
+        navBarButtonAtH.setVisibility(View.INVISIBLE);
+        navBarButtonHtA.playAnimation();
+
+        openDrawer = false;
 
     }
 
