@@ -169,6 +169,8 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
                 (Button) viewActionPopUpContainer.findViewById(R.id.checkOutButton),
         };
 
+        setpopUpActionButtonClickListeners();
+
         //So only if they stay within the tab the google maps will stay there.
         googleMapAndInfoViewPager.setOffscreenPageLimit(1);
 
@@ -193,6 +195,60 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
         });
 
         return view;
+    }
+
+    private void setpopUpActionButtonClickListeners() {
+
+        for (int i = 0; i < popUpActionButtonArray.length; i++) {
+
+            if(popUpActionButtonArray[i].getText().toString().contains("Check")) {
+
+                final int finalI = i;
+
+                popUpActionButtonArray[i].setOnTouchListener(new View.OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View v, MotionEvent event) {
+
+                        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+
+                            popUpActionButtonArray[finalI].setBackgroundResource(R.drawable.redactionviewbuttonpressed);
+
+                        } else {
+
+                            popUpActionButtonArray[finalI].setBackgroundResource(R.drawable.redactionviewbutton);
+
+                        }
+
+                        return false;
+                    }
+                });
+
+            } else {
+
+                final int finalI = i;
+
+                popUpActionButtonArray[i].setOnTouchListener(new View.OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View v, MotionEvent event) {
+
+                        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+
+                            popUpActionButtonArray[finalI].setBackgroundResource(R.drawable.blueactionviewbuttonpressed);
+
+                        } else {
+
+                            popUpActionButtonArray[finalI].setBackgroundResource(R.drawable.blueactionviewbutton);
+
+                        }
+
+                        return false;
+                    }
+                });
+
+            }
+
+        }
+
     }
 
     private void initializePullToRefreshLayout() {
