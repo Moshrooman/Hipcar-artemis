@@ -9,7 +9,6 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -58,7 +57,7 @@ import in.srain.cube.views.ptr.header.StoreHouseHeader;
 public class OnGoingReservationFragment extends Fragment implements OnGoingReservationAdapter.VehicleStatusInterface{
 
     private final String onGoingReservationLink = "https://artemis-api-dev.hipcar.com/reservation/on-going";
-    private final String vehicleStatusLink = "https://artemis-api-dev.hipcar.com/vehicle/:id/status";
+    private final String vehicleActionLink = "https://artemis-api-dev.hipcar.com/vehicle/:id/";
     private int red;
     private int black;
     private int navBarGrey;
@@ -201,9 +200,9 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
 
         for (int i = 0; i < popUpActionButtonArray.length; i++) {
 
-            if(popUpActionButtonArray[i].getText().toString().contains("Check")) {
+            final int finalI = i;
 
-                final int finalI = i;
+            if(popUpActionButtonArray[i].getText().toString().contains("Check")) {
 
                 popUpActionButtonArray[i].setOnTouchListener(new View.OnTouchListener() {
                     @Override
@@ -225,8 +224,6 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
 
             } else {
 
-                final int finalI = i;
-
                 popUpActionButtonArray[i].setOnTouchListener(new View.OnTouchListener() {
                     @Override
                     public boolean onTouch(View v, MotionEvent event) {
@@ -247,7 +244,40 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
 
             }
 
+            //TODO: click listeners go here.
+
+            popUpActionButtonArray[i].setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    actionButtonStringRequest(popUpActionButtonArray[finalI]);
+
+                }
+            });
+
         }
+
+    }
+
+    private void actionButtonStringRequest(Button actionButton) {
+
+        StringRequest buttonActionRequest = new StringRequest(Request.Method.PUT, vehicleActionLink
+                .replace(":id", String.valueOf(onGoingReservation.getVehicle_id()))
+                .concat(//in here get the buttons text, make all lowercase and replace space with dash), new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        }) {
+
+
+
+        };
 
     }
 
@@ -331,7 +361,8 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
 
         this.onGoingReservation = onGoingReservation;
 
-        String modifiedVehicleStatusLink = vehicleStatusLink.replace(":id", String.valueOf(onGoingReservation.getVehicle_id()));
+        String modifiedVehicleStatusLink = vehicleActionLink.replace(":id", String.valueOf(onGoingReservation.getVehicle_id()))
+                .concat("status");
 
         StringRequest vehicleStatusRequest = new StringRequest(Request.Method.GET, modifiedVehicleStatusLink, new Response.Listener<String>() {
             @Override
@@ -613,8 +644,8 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
     }
 
     //TODO: implement the onclick listeners of each button.
+    //WHEN CLICKING EVERY BUTTON EXCEPT GENERATE VOUCHER AND CHECKIN/CHECKOUT WE CALL onGoingReservationStringRequest and
     //TODO: implement google maps to only scroll with 2 fingers.
-    //TODO: WHEN CLICKING EVERY BUTTON EXCEPT GENERATE VOUCHER AND CHECKIN/CHECKOUT WE CALL onGoingReservationStringRequest and
     //showorhideloadingscreen.
     //AND WE ALSO RE-CALL THE VEHICLE STATUS STRING REQUEST AND SET ALL THE VIEWS.
     //TODO: if click lock door, then lock door and unlock door become inactive, same with the other ones.
