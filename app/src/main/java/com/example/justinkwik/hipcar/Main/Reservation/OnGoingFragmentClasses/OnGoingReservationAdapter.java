@@ -117,7 +117,7 @@ public class OnGoingReservationAdapter extends RecyclerView.Adapter<OnGoingReser
         setExpandIndicatorClickListener(holder.lineToX, holder.xToLine, holder.onGoingReservationTableLayout,
                 holder.expandableOnGoingReservation);
 
-        setViewActionButtonClickListener(holder.viewActionButton, onGoingReservation);
+        setViewActionButtonClickListener(holder.viewActionButton, onGoingReservation, position);
 
     }
 
@@ -265,7 +265,7 @@ public class OnGoingReservationAdapter extends RecyclerView.Adapter<OnGoingReser
 
     }
 
-    private void setViewActionButtonClickListener(Button viewActionButton, final OnGoingReservation onGoingReservation) {
+    private void setViewActionButtonClickListener(Button viewActionButton, final OnGoingReservation onGoingReservation, final int position) {
 
         viewActionButton.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -290,7 +290,7 @@ public class OnGoingReservationAdapter extends RecyclerView.Adapter<OnGoingReser
             @Override
             public void onClick(View v) {
 
-                vehicleStatusInterface.showVehicleStatusPopup(onGoingReservation);
+                vehicleStatusInterface.showVehicleStatusPopup(onGoingReservation, position);
 
             }
         });
@@ -299,7 +299,7 @@ public class OnGoingReservationAdapter extends RecyclerView.Adapter<OnGoingReser
 
     public interface VehicleStatusInterface {
 
-        public void showVehicleStatusPopup(OnGoingReservation onGoingReservation);
+        public void showVehicleStatusPopup(OnGoingReservation onGoingReservation, int position);
 
     }
 

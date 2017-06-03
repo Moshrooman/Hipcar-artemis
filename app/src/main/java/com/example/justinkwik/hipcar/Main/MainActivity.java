@@ -168,6 +168,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         //add a border around the login window (???)
         //design login like https://sourcey.com/beautiful-android-logn-and-signup-screens-with-material-design/screenshot-signup.png
         //Set orientation to only vertical
+        //On back button if drawer is opened, close it, and don't put app in background.
 
     }
 

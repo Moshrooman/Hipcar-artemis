@@ -9,6 +9,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -49,6 +50,7 @@ import com.google.gson.Gson;
 import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Executors;
 
 import in.srain.cube.views.ptr.PtrDefaultHandler;
 import in.srain.cube.views.ptr.PtrFrameLayout;
@@ -97,6 +99,7 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
     private RelativeLayout popUpGreyScreenLoading;
     private LottieAnimationView popUpLoadingLottieView;
     private Button[] popUpActionButtonArray;
+    private int recyclerViewPosition;
 
     public OnGoingReservationFragment() {
 
@@ -125,7 +128,7 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
         black = ContextCompat.getColor(getContext(), R.color.black);
         navBarGrey = ContextCompat.getColor(getContext(), R.color.navBarGrey);
 
-        onGoingReservationStringRequest(thisFragment);
+        onGoingReservationStringRequest(thisFragment, false);
 
     }
 
@@ -149,7 +152,7 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
 
         initializePullToRefreshLayout();
 
-        showOrHideLoadingScreen(false);
+        showLoadingScreen(false);
 
         //Below start of assigning variables for popup view.
         viewActionPopUpContainer = (ViewGroup) layoutInflater.inflate(R.layout.viewactionpopup, null);
@@ -261,11 +264,81 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
 
     private void actionButtonStringRequest(Button actionButton) {
 
-        StringRequest buttonActionRequest = new StringRequest(Request.Method.PUT, vehicleActionLink
-                .replace(":id", String.valueOf(onGoingReservation.getVehicle_id()))
-                .concat(//in here get the buttons text, make all lowercase and replace space with dash), new Response.Listener<String>() {
+        String actionButtonText = actionButton.getText().toString();
+        String requestLink = "";
+
+        if(actionButtonText.contains("Check")) {
+
+            requestLink = vehicleActionLink
+                    .replace(":id", String.valueOf(onGoingReservation.getId()))
+                    .concat(actionButton.getText().toString().toLowerCase().replace(" ", "-"));
+
+        } else if(actionButtonText.contains("Voucher")) {
+
+            //TODO:
+            //Have to inflate another popupwindow. Because it is a POST request instead of a put.
+            Log.e("Need display: ", "Popup window");
+
+        } else if(actionButtonText.contains("Status")) {
+
+            //We are calling to refresh the recycler view information which in turn updates the current
+            //this.onGoingReservation object, then we call refreshPopUpWindow in its on response because it uses
+            //the new onGoingReservation object to display the information.
+
+            disablePopUpButtons();
+            showLoadingScreen(true);
+
+            onGoingReservationStringRequest(thisFragment, true);
+
+            return;
+
+        } else {
+
+            requestLink = vehicleActionLink
+                    .replace(":id", String.valueOf(onGoingReservation.getVehicle_id()))
+                    .concat(actionButton.getText().toString().toLowerCase().replace(" ", "-"));
+
+        }
+
+        Log.e("Link: ", requestLink);
+
+        //TODO: start implementing this, its a put request and use the link made above, :id was changed, thats all need think
+
+//        StringRequest buttonActionRequest = new StringRequest(Request.Method.PUT, vehicleActionLink
+//                .replace(":id", String.valueOf(onGoingReservation.getVehicle_id()))
+//                .concat(actionButton.getText().toString().toLowerCase().replace(" ", "-")), new Response.Listener<String>() {
+//            @Override
+//            public void onResponse(String response) {
+//
+//            }
+//        }, new Response.ErrorListener() {
+//            @Override
+//            public void onErrorResponse(VolleyError error) {
+//
+//            }
+//        }) {
+//
+//
+//
+//        };
+
+    }
+
+    private void refreshPopUpWindowInfo() {
+
+        String modifiedVehicleStatusLink = vehicleActionLink.replace(":id", String.valueOf(onGoingReservation.getVehicle_id()))
+                .concat("status");
+
+        StringRequest vehicleStatusRequest = new StringRequest(Request.Method.GET, modifiedVehicleStatusLink, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
+
+                vehicleStatus = gson.fromJson(response, VehicleStatus.class);
+
+                //Problem is the this.onGoingreservation isn't updated.
+                setPopUpViewPagerAdapters();
+                dismissLoadingScreen(true);
+                enablePopUpButtons();
 
             }
         }, new Response.ErrorListener() {
@@ -275,9 +348,16 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
             }
         }) {
 
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headerMap = new HashMap<String, String>();
+                headerMap.put("token", userCredentials.getToken());
 
-
+                return headerMap;
+            }
         };
+
+        ConnectionManager.getInstance(context).add(vehicleStatusRequest);
 
     }
 
@@ -304,14 +384,14 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
             public void onRefreshBegin(PtrFrameLayout frame) {
 
                 pulledToRefresh = true;
-                onGoingReservationStringRequest(thisFragment);
+                onGoingReservationStringRequest(thisFragment, false);
 
             }
         });
 
     }
 
-    private void onGoingReservationStringRequest(final OnGoingReservationFragment onGoingReservationFragment) {
+    private void onGoingReservationStringRequest(final OnGoingReservationFragment onGoingReservationFragment, final boolean popUpRefresh) {
 
         StringRequest onGoingReservationRequest = new StringRequest(Request.Method.GET, onGoingReservationLink, new Response.Listener<String>() {
             @Override
@@ -319,10 +399,17 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
 
                 onGoingReservations = gson.fromJson(response, OnGoingReservation[].class);
 
+                if (popUpRefresh) {
+
+                    onGoingReservation = onGoingReservations[recyclerViewPosition];
+                    refreshPopUpWindowInfo();
+
+                }
+
                 onGoingReservationRecyclerView.setAdapter(new OnGoingReservationAdapter(getActivity(),
                         onGoingReservations, onGoingReservationFragment));
 
-                if(!pulledToRefresh) {
+                if(!pulledToRefresh && !popUpRefresh) {
 
                     dismissLoadingScreen(false);
 
@@ -354,12 +441,13 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
     }
 
     @Override
-    public void showVehicleStatusPopup(final OnGoingReservation onGoingReservation) {
+    public void showVehicleStatusPopup(final OnGoingReservation onGoingReservation, int position) {
 
         //We want to display the popup immediately while we let the information load in the background
         showPopUpAndSetExitClickListener(viewActionPopUpContainer);
 
         this.onGoingReservation = onGoingReservation;
+        this.recyclerViewPosition = position;
 
         String modifiedVehicleStatusLink = vehicleActionLink.replace(":id", String.valueOf(onGoingReservation.getVehicle_id()))
                 .concat("status");
@@ -415,14 +503,22 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
 
         viewActionPopUpWindow.showAtLocation(onGoingReservationFrameLayout, Gravity.CENTER, 0, 0);
 
-        showOrHideLoadingScreen(true);
+        showLoadingScreen(true);
         disablePopUpButtons();
 
-        //Code to dim background.
-        WindowManager.LayoutParams layoutParams = (WindowManager.LayoutParams) viewActionPopUpContainer.getLayoutParams();
-        layoutParams.flags = WindowManager.LayoutParams.FLAG_DIM_BEHIND;
-        layoutParams.dimAmount = 0.7f;
-        windowManager.updateViewLayout(viewActionPopUpContainer, layoutParams);
+        //Different android versions have different view hierarchie's need to split the code for dimming background.
+        if (android.os.Build.VERSION.SDK_INT > 22) {
+            View popUpDimView = popUpDimView = (View) viewActionPopUpContainer.getParent();
+            WindowManager.LayoutParams layoutParams = (WindowManager.LayoutParams) popUpDimView.getLayoutParams();
+            layoutParams.flags = WindowManager.LayoutParams.FLAG_DIM_BEHIND;
+            layoutParams.dimAmount = 0.7f;
+            windowManager.updateViewLayout(popUpDimView, layoutParams);
+        }else{
+            WindowManager.LayoutParams layoutParams = (WindowManager.LayoutParams) viewActionPopUpContainer.getLayoutParams();
+            layoutParams.flags = WindowManager.LayoutParams.FLAG_DIM_BEHIND;
+            layoutParams.dimAmount = 0.7f;
+            windowManager.updateViewLayout(viewActionPopUpContainer, layoutParams);
+        }
 
         exitTextView = (TextView) viewActionPopUpContainer.findViewById(R.id.exitTextView);
 
@@ -468,7 +564,7 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
 
     }
 
-    private void showOrHideLoadingScreen(boolean popUp) {
+    private void showLoadingScreen(boolean popUp) {
 
         if (!popUp) {
             reservationGreyScreenLoading.setVisibility(View.VISIBLE);
@@ -638,8 +734,8 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
 
         if (!firstTimeClickedTab) {
             //Everytime the tab is selected, load the information again.
-            onGoingReservationStringRequest(thisFragment);
-            showOrHideLoadingScreen(false);
+            onGoingReservationStringRequest(thisFragment, false);
+            showLoadingScreen(false);
         }
     }
 
