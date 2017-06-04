@@ -128,7 +128,7 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
         black = ContextCompat.getColor(getContext(), R.color.black);
         navBarGrey = ContextCompat.getColor(getContext(), R.color.navBarGrey);
 
-        onGoingReservationStringRequest(thisFragment, false);
+        onGoingReservationStringRequest(thisFragment, false, null);
 
     }
 
@@ -247,8 +247,6 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
 
             }
 
-            //TODO: click listeners go here.
-
             popUpActionButtonArray[i].setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -283,12 +281,10 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
 
             //We are calling to refresh the recycler view information which in turn updates the current
             //this.onGoingReservation object, then we call refreshPopUpWindow in its on response because it uses
-            //the new onGoingReservation object to display the information.
-
-            disablePopUpButtons();
-            showLoadingScreen(true);
-
-            onGoingReservationStringRequest(thisFragment, true);
+            //the new onGoingReservation object to display the information. The below method also handles
+            //displaying the loading screens and stuff depending on the boolean passed.
+            onGoingReservationStringRequest(thisFragment, true, actionButton);
+            disableButton(actionButton);
 
             return;
 
@@ -302,29 +298,40 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
 
         Log.e("Link: ", requestLink);
 
-        //TODO: start implementing this, its a put request and use the link made above, :id was changed, thats all need think
+        //TODO: test that all the buttons send request to the right place.
 
-//        StringRequest buttonActionRequest = new StringRequest(Request.Method.PUT, vehicleActionLink
-//                .replace(":id", String.valueOf(onGoingReservation.getVehicle_id()))
-//                .concat(actionButton.getText().toString().toLowerCase().replace(" ", "-")), new Response.Listener<String>() {
-//            @Override
-//            public void onResponse(String response) {
-//
-//            }
-//        }, new Response.ErrorListener() {
-//            @Override
-//            public void onErrorResponse(VolleyError error) {
-//
-//            }
-//        }) {
-//
-//
-//
-//        };
+        StringRequest buttonActionRequest = new StringRequest(Request.Method.PUT, requestLink, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+
+                Log.e("Response: ", response);
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+                Log.e("Error: ", error.getMessage());
+
+            }
+        }) {
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headerMap = new HashMap<String, String>();
+                headerMap.put("token", userCredentials.getToken());
+
+
+                return headerMap;
+            }
+
+        };
+
+        ConnectionManager.getInstance(context).add(buttonActionRequest);
 
     }
 
-    private void refreshPopUpWindowInfo() {
+    private void refreshPopUpWindowInfo(final Button actionButton) {
 
         String modifiedVehicleStatusLink = vehicleActionLink.replace(":id", String.valueOf(onGoingReservation.getVehicle_id()))
                 .concat("status");
@@ -338,7 +345,7 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
                 //Problem is the this.onGoingreservation isn't updated.
                 setPopUpViewPagerAdapters();
                 dismissLoadingScreen(true);
-                enablePopUpButtons();
+                enableButton(actionButton);
 
             }
         }, new Response.ErrorListener() {
@@ -384,14 +391,21 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
             public void onRefreshBegin(PtrFrameLayout frame) {
 
                 pulledToRefresh = true;
-                onGoingReservationStringRequest(thisFragment, false);
+                onGoingReservationStringRequest(thisFragment, false, null);
 
             }
         });
 
     }
 
-    private void onGoingReservationStringRequest(final OnGoingReservationFragment onGoingReservationFragment, final boolean popUpRefresh) {
+    private void onGoingReservationStringRequest(final OnGoingReservationFragment onGoingReservationFragment, final boolean popUpRefresh,
+                                                 final Button actionButton) {
+
+        if (popUpRefresh) {
+
+            showLoadingScreen(true);
+
+        }
 
         StringRequest onGoingReservationRequest = new StringRequest(Request.Method.GET, onGoingReservationLink, new Response.Listener<String>() {
             @Override
@@ -402,7 +416,7 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
                 if (popUpRefresh) {
 
                     onGoingReservation = onGoingReservations[recyclerViewPosition];
-                    refreshPopUpWindowInfo();
+                    refreshPopUpWindowInfo(actionButton);
 
                 }
 
@@ -618,6 +632,29 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
 
     }
 
+    private void disableButton(Button popUpActionButton) {
+
+        popUpActionButton.setBackgroundResource(R.drawable.disabledactionviewbutton);
+        popUpActionButton.setEnabled(false);
+
+    }
+
+    private void enableButton(Button popUpActionButton) {
+
+        if (popUpActionButton.getText().toString().contains("Check")) {
+
+            popUpActionButton.setBackgroundResource(R.drawable.redactionviewbutton);
+
+        } else {
+
+            popUpActionButton.setBackgroundResource(R.drawable.blueactionviewbutton);
+
+        }
+
+        popUpActionButton.setEnabled(true);
+
+    }
+
     public class GoogleMapInfoAdapter extends PagerAdapter {
 
         private LayoutInflater inflater;
@@ -734,15 +771,14 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
 
         if (!firstTimeClickedTab) {
             //Everytime the tab is selected, load the information again.
-            onGoingReservationStringRequest(thisFragment, false);
+            onGoingReservationStringRequest(thisFragment, false, null);
             showLoadingScreen(false);
         }
     }
 
     //TODO: implement the onclick listeners of each button.
-    //WHEN CLICKING EVERY BUTTON EXCEPT GENERATE VOUCHER AND CHECKIN/CHECKOUT WE CALL onGoingReservationStringRequest and
+    //WHEN CLICKING EVERY BUTTON EXCEPT GENERATE VOUCHER AND CHECKIN/CHECKOUT WE CALL onGoingReservationStringRequest passing true for
+    //popup because we want to refresh the popup view stuff.
     //TODO: implement google maps to only scroll with 2 fingers.
-    //showorhideloadingscreen.
-    //AND WE ALSO RE-CALL THE VEHICLE STATUS STRING REQUEST AND SET ALL THE VIEWS.
     //TODO: if click lock door, then lock door and unlock door become inactive, same with the other ones.
 }

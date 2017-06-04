@@ -7,7 +7,7 @@ import com.google.gson.annotations.SerializedName;
  */
 public class VehicleStatus {
 
-    public VehicleStatus(Position position, String immobilizer, String ignition, String central_lock, String bluetooth_connection, Float board_voltage, com.example.justinkwik.hipcar.Main.Reservation.ParseClassesOnGoing.VehicleStatus.rfid_tag_states rfid_tag_states, String central_lock_last_command, String alarm_input, boolean lowFuelLevelAlarm, Float mileage_since_immobilizer_unlock, int mileage) {
+    public VehicleStatus(Position position, String immobilizer, String ignition, String central_lock, String bluetooth_connection, Float board_voltage, com.example.justinkwik.hipcar.Main.Reservation.ParseClassesOnGoing.VehicleStatus.rfid_tag_states rfid_tag_states, String central_lock_last_command, String alarm_input, boolean lowFuelLevelAlarm, Float mileage_since_immobilizer_unlock, Float mileage) {
         this.position = position;
         this.immobilizer = immobilizer;
         this.ignition = ignition;
@@ -56,7 +56,7 @@ public class VehicleStatus {
     private Float mileage_since_immobilizer_unlock;
 
     @SerializedName("mileage")
-    private int mileage;
+    private Float mileage;
 
     public Position getPosition() {
         return position;
@@ -102,7 +102,7 @@ public class VehicleStatus {
         return mileage_since_immobilizer_unlock;
     }
 
-    public int getMileage() {
+    public Float getMileage() {
         return mileage;
     }
 
@@ -150,7 +150,7 @@ public class VehicleStatus {
         this.mileage_since_immobilizer_unlock = mileage_since_immobilizer_unlock;
     }
 
-    public void setMileage(int mileage) {
+    public void setMileage(Float mileage) {
         this.mileage = mileage;
     }
 }
