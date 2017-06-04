@@ -34,8 +34,11 @@ import com.android.volley.toolbox.StringRequest;
 import com.example.justinkwik.hipcar.ConnectionManager;
 import com.example.justinkwik.hipcar.Login.LoginActivity;
 import com.example.justinkwik.hipcar.Login.UserCredentials;
+import com.example.justinkwik.hipcar.Main.Reservation.ParseClassesOnGoing.Response.SuccessResponse;
 import com.example.justinkwik.hipcar.Main.Reservation.ParseClassesOnGoing.VehicleStatus.VehicleStatus;
 import com.example.justinkwik.hipcar.R;
+import com.github.johnpersano.supertoasts.library.Style;
+import com.github.johnpersano.supertoasts.library.SuperToast;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -100,6 +103,7 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
     private LottieAnimationView popUpLoadingLottieView;
     private Button[] popUpActionButtonArray;
     private int recyclerViewPosition;
+    private static int disabledPosition;
 
     public OnGoingReservationFragment() {
 
@@ -123,6 +127,7 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
         carIcon = BitmapDescriptorFactory.fromResource(R.drawable.caricon);
         loadingScreenFadeOut = AnimationUtils.loadAnimation(context, R.anim.fade_out_loading);
         pulledToRefresh = false;
+        disabledPosition = 0;
 
         red = ContextCompat.getColor(getContext(), R.color.red);
         black = ContextCompat.getColor(getContext(), R.color.black);
@@ -251,7 +256,7 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
                 @Override
                 public void onClick(View v) {
 
-                    actionButtonStringRequest(popUpActionButtonArray[finalI]);
+                    actionButtonStringRequest(popUpActionButtonArray[finalI], finalI);
 
                 }
             });
@@ -260,7 +265,7 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
 
     }
 
-    private void actionButtonStringRequest(Button actionButton) {
+    private void actionButtonStringRequest(final Button actionButton, int position) {
 
         String actionButtonText = actionButton.getText().toString();
         String requestLink = "";
@@ -270,12 +275,18 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
             requestLink = vehicleActionLink
                     .replace(":id", String.valueOf(onGoingReservation.getId()))
                     .concat(actionButton.getText().toString().toLowerCase().replace(" ", "-"));
+            Log.e("Need Display: ", "Check Windows");
+            //TODO: need to do popup asking for milage and date, the request is a put.
+            return;
 
         } else if(actionButtonText.contains("Voucher")) {
 
-            //TODO:
-            //Have to inflate another popupwindow. Because it is a POST request instead of a put.
+            //TODO: Have to inflate another popupwindow. Because it is a POST request instead of a put.
+            requestLink = vehicleActionLink
+                    .replace(":id", String.valueOf(onGoingReservation.getId()))
+                    .concat(actionButton.getText().toString().toLowerCase().replace(" ", "-"));
             Log.e("Need display: ", "Popup window");
+            return;
 
         } else if(actionButtonText.contains("Status")) {
 
@@ -296,22 +307,42 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
 
         }
 
-        Log.e("Link: ", requestLink);
+        if (position == 1 || position == 3) {
 
-        //TODO: test that all the buttons send request to the right place.
+            disabledPosition = position - 1;
+
+        } else {
+
+            disabledPosition = position + 1;
+
+        }
+
+        disableButton(actionButton);
+        disableButton(popUpActionButtonArray[disabledPosition]);
 
         StringRequest buttonActionRequest = new StringRequest(Request.Method.PUT, requestLink, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
 
-                Log.e("Response: ", response);
+                SuccessResponse responseString = gson.fromJson(response, SuccessResponse.class);
+
+                enableButton(actionButton);
+                enableButton(popUpActionButtonArray[disabledPosition]);
+
+                SuperToast superToast = SuperToast.create(context, responseString.getMessage(), Style.DURATION_SHORT,
+                        Style.green()).setAnimations(Style.ANIMATIONS_POP);
+                superToast.show();
+
+                onGoingReservationStringRequest(thisFragment, true, actionButton);
 
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
 
-                Log.e("Error: ", error.getMessage());
+                SuperToast superToast = SuperToast.create(context, "Error Making Request!", Style.DURATION_SHORT,
+                        Style.red()).setAnimations(Style.ANIMATIONS_POP);
+                superToast.show();
 
             }
         }) {
@@ -328,6 +359,121 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
         };
 
         ConnectionManager.getInstance(context).add(buttonActionRequest);
+
+    }
+
+    //TODO: work on this and below method to make the popup window show, then these will be called in the actionButtonStringRequest.
+    private void showVoucherPopupWindow (ViewGroup voucherPopUpContainer, String actionUrl) {
+
+        //TODO: need to make a viewActionPopUp container that is inflated in the oncreate.
+        //Need to make an empty view for the size that we want the voucher view to be. Make it invisible remember.
+        viewActionPopUpWindow = new PopupWindow(viewActionPopUpContainer, popUpWindowMeasuredView.getWidth(),
+                popUpWindowMeasuredView.getHeight(), true);
+
+        viewActionPopUpWindow.setAnimationStyle(R.style.PopUpWindowAnimation);
+
+        //Show it in the center of the popupwindow, not the frame layout.
+        viewActionPopUpWindow.showAtLocation(onGoingReservationFrameLayout, Gravity.CENTER, 0, 0);
+
+        //Different android versions have different view hierarchie's need to split the code for dimming background.
+        if (android.os.Build.VERSION.SDK_INT > 22) {
+            View popUpDimView = popUpDimView = (View) viewActionPopUpContainer.getParent();
+            WindowManager.LayoutParams layoutParams = (WindowManager.LayoutParams) popUpDimView.getLayoutParams();
+            layoutParams.flags = WindowManager.LayoutParams.FLAG_DIM_BEHIND;
+            layoutParams.dimAmount = 0.7f;
+            windowManager.updateViewLayout(popUpDimView, layoutParams);
+        } else {
+            WindowManager.LayoutParams layoutParams = (WindowManager.LayoutParams) viewActionPopUpContainer.getLayoutParams();
+            layoutParams.flags = WindowManager.LayoutParams.FLAG_DIM_BEHIND;
+            layoutParams.dimAmount = 0.7f;
+            windowManager.updateViewLayout(viewActionPopUpContainer, layoutParams);
+        }
+
+        //Same thing for the exit button of the voucher pop up window but maybe change the name of the textview.
+        exitTextView = (TextView) viewActionPopUpContainer.findViewById(R.id.exitTextView);
+
+        exitTextView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+
+                    exitTextView.setTextColor(black);
+
+                } else {
+
+                    exitTextView.setTextColor(navBarGrey);
+
+                }
+
+                return false;
+            }
+        });
+
+        //Dismiss the voucher popup window, not the view actionpopup window.
+        exitTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                viewActionPopUpWindow.dismiss();
+            }
+        });
+
+    }
+
+    private void showVoucherCheckInOut (ViewGroup checkInOutPopUpContainer, String actionUrl) {
+
+        //TODO: need to make a viewActionPopUp container that is inflated in the oncreate.
+        //Need to make an empty view for the size that we want the voucher view to be. Make it invisible remember.
+        viewActionPopUpWindow = new PopupWindow(viewActionPopUpContainer, popUpWindowMeasuredView.getWidth(),
+                popUpWindowMeasuredView.getHeight(), true);
+
+        viewActionPopUpWindow.setAnimationStyle(R.style.PopUpWindowAnimation);
+
+        //Show it in the center of the popupwindow, not the frame layout.
+        viewActionPopUpWindow.showAtLocation(onGoingReservationFrameLayout, Gravity.CENTER, 0, 0);
+
+        //Different android versions have different view hierarchie's need to split the code for dimming background.
+        if (android.os.Build.VERSION.SDK_INT > 22) {
+            View popUpDimView = popUpDimView = (View) viewActionPopUpContainer.getParent();
+            WindowManager.LayoutParams layoutParams = (WindowManager.LayoutParams) popUpDimView.getLayoutParams();
+            layoutParams.flags = WindowManager.LayoutParams.FLAG_DIM_BEHIND;
+            layoutParams.dimAmount = 0.7f;
+            windowManager.updateViewLayout(popUpDimView, layoutParams);
+        } else {
+            WindowManager.LayoutParams layoutParams = (WindowManager.LayoutParams) viewActionPopUpContainer.getLayoutParams();
+            layoutParams.flags = WindowManager.LayoutParams.FLAG_DIM_BEHIND;
+            layoutParams.dimAmount = 0.7f;
+            windowManager.updateViewLayout(viewActionPopUpContainer, layoutParams);
+        }
+
+        //Same thing for the exit button of the voucher pop up window but maybe change the name of the textview.
+        exitTextView = (TextView) viewActionPopUpContainer.findViewById(R.id.exitTextView);
+
+        exitTextView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+
+                    exitTextView.setTextColor(black);
+
+                } else {
+
+                    exitTextView.setTextColor(navBarGrey);
+
+                }
+
+                return false;
+            }
+        });
+
+        //Dismiss the voucher popup window, not the view actionpopup window.
+        exitTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                viewActionPopUpWindow.dismiss();
+            }
+        });
 
     }
 
@@ -527,7 +673,7 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
             layoutParams.flags = WindowManager.LayoutParams.FLAG_DIM_BEHIND;
             layoutParams.dimAmount = 0.7f;
             windowManager.updateViewLayout(popUpDimView, layoutParams);
-        }else{
+        } else {
             WindowManager.LayoutParams layoutParams = (WindowManager.LayoutParams) viewActionPopUpContainer.getLayoutParams();
             layoutParams.flags = WindowManager.LayoutParams.FLAG_DIM_BEHIND;
             layoutParams.dimAmount = 0.7f;
@@ -776,9 +922,4 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
         }
     }
 
-    //TODO: implement the onclick listeners of each button.
-    //WHEN CLICKING EVERY BUTTON EXCEPT GENERATE VOUCHER AND CHECKIN/CHECKOUT WE CALL onGoingReservationStringRequest passing true for
-    //popup because we want to refresh the popup view stuff.
-    //TODO: implement google maps to only scroll with 2 fingers.
-    //TODO: if click lock door, then lock door and unlock door become inactive, same with the other ones.
 }

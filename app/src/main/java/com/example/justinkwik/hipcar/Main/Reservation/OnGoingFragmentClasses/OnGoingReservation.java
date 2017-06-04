@@ -13,7 +13,7 @@ import com.google.gson.annotations.SerializedName;
  */
 public class OnGoingReservation {
 
-    public OnGoingReservation(int id, String full_name, String email, String contact_number, String pickup_address, String pickup_date, String return_date, int total_amount, int payment_status, String actual_pickup_date, String actual_return_date, String i_token, String i_session_key, int actual_total_amount, int owed_amount, int pickup_km, int return_km, int excess_km_charge, int total_free_km, int km_limit, int km_nominal, boolean is_owner, VehicleRates[] vehicle_rates, String created, String updated, String deleted, int user_id, int vehicle_id, int pickup_station_id, int return_station_id, User user, ReturnStation return_station, PickupStation pickup_station, Vehicle vehicle, int total_nominal, int total_basic_price, int total_used_km, int total_excess_km_charge, int total_price, Prices[] prices) {
+    public OnGoingReservation(int id, String full_name, String email, String contact_number, String pickup_address, String pickup_date, String return_date, int total_amount, int payment_status, String actual_pickup_date, String actual_return_date, String i_token, String i_session_key, int actual_total_amount, int owed_amount, Float pickup_km, Float return_km, int excess_km_charge, Float total_free_km, Float km_limit, Float km_nominal, boolean is_owner, VehicleRates[] vehicle_rates, String created, String updated, String deleted, int user_id, int vehicle_id, int pickup_station_id, int return_station_id, User user, ReturnStation return_station, PickupStation pickup_station, Vehicle vehicle, int total_nominal, int total_basic_price, Float total_used_km, int total_excess_km_charge, int total_price, Prices[] prices) {
         this.id = id;
         this.full_name = full_name;
         this.email = email;
@@ -102,22 +102,22 @@ public class OnGoingReservation {
     private int owed_amount;
 
     @SerializedName("pickup_km")
-    private int pickup_km;
+    private Float pickup_km;
 
     @SerializedName("return_km")
-    private int return_km;
+    private Float return_km;
 
     @SerializedName("excess_km_charge")
     private int excess_km_charge;
 
     @SerializedName("total_free_km")
-    private int total_free_km;
+    private Float total_free_km;
 
     @SerializedName("km_limit")
-    private int km_limit;
+    private Float km_limit;
 
     @SerializedName("km_nominal")
-    private int km_nominal;
+    private Float km_nominal;
 
     @SerializedName("is_owner")
     private boolean is_owner;
@@ -165,7 +165,7 @@ public class OnGoingReservation {
     private int total_basic_price;
 
     @SerializedName("total_used_km")
-    private int total_used_km;
+    private Float total_used_km;
 
     @SerializedName("total_excess_km_charge")
     private int total_excess_km_charge;
@@ -306,11 +306,11 @@ public class OnGoingReservation {
         return owed_amount;
     }
 
-    public int getPickup_km() {
+    public Float getPickup_km() {
         return pickup_km;
     }
 
-    public int getReturn_km() {
+    public Float getReturn_km() {
         return return_km;
     }
 
@@ -318,15 +318,15 @@ public class OnGoingReservation {
         return excess_km_charge;
     }
 
-    public int getTotal_free_km() {
+    public Float getTotal_free_km() {
         return total_free_km;
     }
 
-    public int getKm_limit() {
+    public Float getKm_limit() {
         return km_limit;
     }
 
-    public int getKm_nominal() {
+    public Float getKm_nominal() {
         return km_nominal;
     }
 
@@ -411,7 +411,7 @@ public class OnGoingReservation {
         return total_basic_price;
     }
 
-    public int getTotal_used_km() {
+    public Float getTotal_used_km() {
         return total_used_km;
     }
 
@@ -487,11 +487,11 @@ public class OnGoingReservation {
         this.owed_amount = owed_amount;
     }
 
-    public void setPickup_km(int pickup_km) {
+    public void setPickup_km(Float pickup_km) {
         this.pickup_km = pickup_km;
     }
 
-    public void setReturn_km(int return_km) {
+    public void setReturn_km(Float return_km) {
         this.return_km = return_km;
     }
 
@@ -499,15 +499,15 @@ public class OnGoingReservation {
         this.excess_km_charge = excess_km_charge;
     }
 
-    public void setTotal_free_km(int total_free_km) {
+    public void setTotal_free_km(Float total_free_km) {
         this.total_free_km = total_free_km;
     }
 
-    public void setKm_limit(int km_limit) {
+    public void setKm_limit(Float km_limit) {
         this.km_limit = km_limit;
     }
 
-    public void setKm_nominal(int km_nominal) {
+    public void setKm_nominal(Float km_nominal) {
         this.km_nominal = km_nominal;
     }
 
@@ -571,7 +571,7 @@ public class OnGoingReservation {
         this.total_basic_price = total_basic_price;
     }
 
-    public void setTotal_used_km(int total_used_km) {
+    public void setTotal_used_km(Float total_used_km) {
         this.total_used_km = total_used_km;
     }
 
