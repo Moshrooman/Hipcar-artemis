@@ -114,17 +114,31 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
     private static int disabledPosition;
 
     /*
-    Start of variables for voucher pop
+    Start of variables for voucher pop up
      */
 
     private PopupWindow voucherPopUpWindow;
     private ViewGroup voucherPopUpContainer;
-    private View voucherPopUpWindowMeasuredView;
+    private View voucherCheckInOutPopUpWindowMeasuredView;
     private TextView voucherExitTextView;
     private EditText voucherAmountEditText;
     private Spinner voucherPurposeSpinner;
     private Button voucherOkButton;
     private Button voucherCancelButton;
+
+    /*
+    Start of variables for check in/check out pop up
+     */
+
+    private PopupWindow checkInOutPopUpWindow;
+    private ViewGroup checkInOutPopUpContainer;
+    private TextView checkInOutTitleTextView;
+    private TextView checkInOutTextView;
+    private TextView checkInOutExitTextView;
+    private EditText checkInOutMileageEditText;
+    private Button checkInOutOkButton;
+    private Button checkInOutCancelButton;
+    private TextView checkInOutDateTextView;
 
     public OnGoingReservationFragment() {
 
@@ -223,12 +237,23 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
             }
         });
 
+        //Voucher Pop up variables
         voucherPopUpContainer = (ViewGroup) layoutInflater.inflate(R.layout.voucherpopup, null);
-        voucherPopUpWindowMeasuredView = rootView.findViewById(R.id.voucherPopUpWindowMeasuredView);
+        voucherCheckInOutPopUpWindowMeasuredView = rootView.findViewById(R.id.voucherCheckInOutPopUpWindowMeasuredView);
         voucherAmountEditText = (EditText) voucherPopUpContainer.findViewById(R.id.voucherAmountEditText);
         voucherPurposeSpinner = (Spinner) voucherPopUpContainer.findViewById(R.id.voucherPurposeSpinner);
         voucherOkButton = (Button) voucherPopUpContainer.findViewById(R.id.voucherOkButton);
         voucherCancelButton = (Button) voucherPopUpContainer.findViewById(R.id.voucherCancelButton);
+
+        //Check in/out pop up variables.
+        checkInOutPopUpContainer = (ViewGroup) layoutInflater.inflate(R.layout.checkinoutpopup, null);
+        checkInOutExitTextView = (TextView) checkInOutPopUpContainer.findViewById(R.id.checkInOutExitTextView);
+        checkInOutTitleTextView = (TextView) checkInOutPopUpContainer.findViewById(R.id.checkInOutTitleTextView);
+        checkInOutTextView = (TextView) checkInOutPopUpContainer.findViewById(R.id.checkInOutTextView);
+        checkInOutMileageEditText = (EditText) checkInOutPopUpContainer.findViewById(R.id.checkInOutMileageEditText);
+        checkInOutOkButton = (Button) checkInOutPopUpContainer.findViewById(R.id.checkInOutOkButton);
+        checkInOutCancelButton = (Button) checkInOutPopUpContainer.findViewById(R.id.checkInOutCancelButton);
+        checkInOutDateTextView = (TextView) checkInOutPopUpContainer.findViewById(R.id.checkInOutDateTextView);
 
         return rootView;
     }
@@ -304,13 +329,14 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
             requestLink = vehicleActionLink
                     .replace(":id", String.valueOf(onGoingReservation.getId()))
                     .concat(actionButton.getText().toString().toLowerCase().replace(" ", "-"));
-            Log.e("Need Display: ", "Check Windows");
+
+            showCheckInOutPopUpWindowAndSetClickListeners(requestLink, actionButtonText);
+
             //TODO: need to do popup asking for milage and date, the request is a put.
             return;
 
         } else if(actionButtonText.contains("Voucher")) {
 
-            //TODO: Have to inflate another popupwindow. Because it is a POST request instead of a put.
             requestLink = generateVoucherLink
                     .replace(":id", String.valueOf(onGoingReservation.getId()));
 
@@ -394,8 +420,12 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
 
     private void showVoucherPopupWindowAndSetClickListeners(final String actionUrl) {
 
-        voucherPopUpWindow = new PopupWindow(voucherPopUpContainer, voucherPopUpWindowMeasuredView.getWidth(),
-                voucherPopUpWindowMeasuredView.getHeight(), true);
+        //TODO: need to make sure that the link for the generate voucher, that the id part changes when we select another
+        //item from the recycler view.
+        Log.e("Url: ", actionUrl);
+
+        voucherPopUpWindow = new PopupWindow(voucherPopUpContainer, voucherCheckInOutPopUpWindowMeasuredView.getWidth(),
+                voucherCheckInOutPopUpWindowMeasuredView.getHeight(), true);
 
         voucherPopUpWindow.setAnimationStyle(R.style.PopUpWindowAnimation);
 
@@ -403,7 +433,7 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
 
         //Different android versions have different view hierarchie's need to split the code for dimming background.
         if (android.os.Build.VERSION.SDK_INT > 22) {
-            View popUpDimView = popUpDimView = (View) voucherPopUpContainer.getParent();
+            View popUpDimView = (View) voucherPopUpContainer.getParent();
             WindowManager.LayoutParams layoutParams = (WindowManager.LayoutParams) popUpDimView.getLayoutParams();
             layoutParams.flags = WindowManager.LayoutParams.FLAG_DIM_BEHIND;
             layoutParams.dimAmount = 0.7f;
@@ -469,7 +499,7 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
             @Override
             public boolean onTouch(View v, MotionEvent event) {
 
-                if(event.getAction() == MotionEvent.ACTION_DOWN) {
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
 
                     voucherCancelButton.setBackgroundResource(R.drawable.redactionviewbuttonpressed);
 
@@ -575,46 +605,46 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
 
     }
 
-    private void showVoucherCheckInOut (ViewGroup checkInOutPopUpContainer, String actionUrl) {
+    private void showCheckInOutPopUpWindowAndSetClickListeners (String actionUrl, String title) {
 
         //TODO: need to make a viewActionPopUp container that is inflated in the oncreate.
         //Need to make an empty view for the size that we want the voucher view to be. Make it invisible remember.
-        viewActionPopUpWindow = new PopupWindow(viewActionPopUpContainer, popUpWindowMeasuredView.getWidth(),
-                popUpWindowMeasuredView.getHeight(), true);
+        checkInOutPopUpWindow = new PopupWindow(checkInOutPopUpContainer, voucherCheckInOutPopUpWindowMeasuredView.getWidth(),
+                voucherCheckInOutPopUpWindowMeasuredView.getHeight(), true);
 
-        viewActionPopUpWindow.setAnimationStyle(R.style.PopUpWindowAnimation);
+        checkInOutPopUpWindow.setAnimationStyle(R.style.PopUpWindowAnimation);
 
         //Show it in the center of the popupwindow, not the frame layout.
-        viewActionPopUpWindow.showAtLocation(onGoingReservationFrameLayout, Gravity.CENTER, 0, 0);
+        checkInOutPopUpWindow.showAtLocation(onGoingReservationFrameLayout, Gravity.CENTER, 0, 0);
 
         //Different android versions have different view hierarchie's need to split the code for dimming background.
         if (android.os.Build.VERSION.SDK_INT > 22) {
-            View popUpDimView = popUpDimView = (View) viewActionPopUpContainer.getParent();
+            View popUpDimView = (View) checkInOutPopUpContainer.getParent();
             WindowManager.LayoutParams layoutParams = (WindowManager.LayoutParams) popUpDimView.getLayoutParams();
             layoutParams.flags = WindowManager.LayoutParams.FLAG_DIM_BEHIND;
             layoutParams.dimAmount = 0.7f;
             windowManager.updateViewLayout(popUpDimView, layoutParams);
         } else {
-            WindowManager.LayoutParams layoutParams = (WindowManager.LayoutParams) viewActionPopUpContainer.getLayoutParams();
+            WindowManager.LayoutParams layoutParams = (WindowManager.LayoutParams) checkInOutPopUpContainer.getLayoutParams();
             layoutParams.flags = WindowManager.LayoutParams.FLAG_DIM_BEHIND;
             layoutParams.dimAmount = 0.7f;
-            windowManager.updateViewLayout(viewActionPopUpContainer, layoutParams);
+            windowManager.updateViewLayout(checkInOutPopUpContainer, layoutParams);
         }
 
-        //Same thing for the exit button of the voucher pop up window but maybe change the name of the textview.
-        exitTextView = (TextView) viewActionPopUpContainer.findViewById(R.id.exitTextView);
+        checkInOutTitleTextView.setText("Reservation " + title);
+        checkInOutTextView.setText(title + " Date");
 
-        exitTextView.setOnTouchListener(new View.OnTouchListener() {
+        checkInOutExitTextView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
 
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
 
-                    exitTextView.setTextColor(black);
+                    checkInOutExitTextView.setTextColor(black);
 
                 } else {
 
-                    exitTextView.setTextColor(navBarGrey);
+                    checkInOutExitTextView.setTextColor(navBarGrey);
 
                 }
 
@@ -622,11 +652,74 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
             }
         });
 
-        //Dismiss the voucher popup window, not the view actionpopup window.
-        exitTextView.setOnClickListener(new View.OnClickListener() {
+        checkInOutExitTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                viewActionPopUpWindow.dismiss();
+                checkInOutPopUpWindow.dismiss();
+            }
+        });
+
+        checkInOutOkButton.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+
+                    checkInOutOkButton.setBackgroundResource(R.drawable.greenactionviewbuttonpressed);
+
+                } else {
+
+                    checkInOutOkButton.setBackgroundResource(R.drawable.greenactionviewbutton);
+
+                }
+
+                return false;
+            }
+        });
+
+        checkInOutCancelButton.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+
+                    checkInOutCancelButton.setBackgroundResource(R.drawable.redactionviewbuttonpressed);
+
+                } else {
+
+                    checkInOutCancelButton.setBackgroundResource(R.drawable.redactionviewbutton);
+
+                }
+
+                return false;
+            }
+        });
+
+        checkInOutOkButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                String mileageAmountEntry = checkInOutMileageEditText.getText().toString();
+
+                if (mileageAmountEntry.equals("") || mileageAmountEntry.equals("0")) {
+
+                    SuperToast superToast = SuperToast.create(context, "Mileage Value Must Be Greater Than 0!", Style.DURATION_SHORT,
+                            Style.orange()).setAnimations(Style.ANIMATIONS_POP);
+                    superToast.show();
+
+                    return;
+
+                }
+
+            }
+        });
+
+        checkInOutDateTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //TODO: first set to the current time and date, then inflate a date and time picker as a dialoge
+                //and set the checkinout date text view to the corresponding selected date and time.
+                //in the form of dd/mm/yyyy hh:mm PM/AM
             }
         });
 
@@ -823,7 +916,7 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
 
         //Different android versions have different view hierarchie's need to split the code for dimming background.
         if (android.os.Build.VERSION.SDK_INT > 22) {
-            View popUpDimView = popUpDimView = (View) viewActionPopUpContainer.getParent();
+            View popUpDimView = (View) viewActionPopUpContainer.getParent();
             WindowManager.LayoutParams layoutParams = (WindowManager.LayoutParams) popUpDimView.getLayoutParams();
             layoutParams.flags = WindowManager.LayoutParams.FLAG_DIM_BEHIND;
             layoutParams.dimAmount = 0.7f;

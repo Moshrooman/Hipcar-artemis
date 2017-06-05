@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="250dp"
+    android:layout_height="250dp"
+    android:layout_gravity="center"
+    android:background="@drawable/ongoingreservationpopupborder"
+    >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:id="@+id/popUpTitleLinearLayout"
+        android:background="@drawable/bottomborder"
+        >
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.9"
+            android:textSize="14dp"
+            android:gravity="center_vertical"
+            fontPath="fonts/Exo2-Regular.ttf"
+            android:textColor="@color/black"
+            android:id="@+id/checkInOutTitleTextView"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:layout_gravity="center_vertical"
+            />
+
+        <com.example.justinkwik.hipcar.CustomAutoFitTextView.FontFitTextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.1"
+            android:text="X"
+            android:gravity="center"
+            android:textSize="30dp"
+            android:layout_toRightOf="@+id/reservationDetailTextView"
+            fontPath="fonts/Exo2-Regular.ttf"
+            android:textColor="@color/navBarGrey"
+            android:id="@+id/checkInOutExitTextView"
+            />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingRight="20dp"
+        android:paddingLeft="20dp"
+        android:paddingTop="10dp"
+        android:background="@drawable/bottomborder"
+        android:orientation="vertical"
+        >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Mileage"
+            fontPath="fonts/Exo2-Bold.ttf"
+            />
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:background="@drawable/ongoingreservationpopupborder"
+            android:hint="123.45"
+            android:textSize="13dp"
+            android:id="@+id/checkInOutMileageEditText"
+            android:layout_marginTop="5dp"
+            fontPath="fonts/Exo2-Regular.ttf"
+            android:inputType="number"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            fontPath="fonts/Exo2-Bold.ttf"
+            android:layout_marginTop="10dp"
+            android:id="@+id/checkInOutTextView"
+            />
+
+        <TextView
+            android:id="@+id/checkInOutDateTextView"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="15dp"
+            android:background="@drawable/ongoingreservationpopupborder"
+            />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:gravity="center_vertical|right"
+        android:paddingRight="20dp"
+        >
+
+        <Button
+            android:id="@+id/checkInOutOkButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="OK"
+            android:background="@drawable/greenactionviewbutton"
+            fontPath="fonts/Exo2-Regular.ttf"
+            android:textSize="13dp"
+            android:textColor="@color/white"
+            android:layout_marginRight="10dp"
+            />
+
+        <Button
+            android:id="@+id/checkInOutCancelButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Cancel"
+            android:background="@drawable/redactionviewbutton"
+            android:textSize="13dp"
+            android:textColor="@color/white"
+            fontPath="fonts/Exo2-Regular.ttf"
+            />
+
+    </LinearLayout>
+
+</LinearLayout>
