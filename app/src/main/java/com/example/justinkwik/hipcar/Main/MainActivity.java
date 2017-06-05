@@ -144,6 +144,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         //IF THE STRINGREQUEST COMES BACK EMPTY, THEN DISPLAY TEXTVIEWS SAYING NO ONGOING OR NO CHECKED OUT.
         //Give indicator to swipe from google maps to information fragment
         //handle back button in mainactivity so that if a boolean is true, to dismiss the pop-up in the ongoingreservationfragment.
+        //Set re-do for string request timeout.
 
         //TODO: LOG OUT AND CHANGE PASSWORD
         //for logging out delete the credentials and set loggedin boolean to false (both in sharedPreference)

@@ -40,6 +40,8 @@ import com.example.justinkwik.hipcar.Login.UserCredentials;
 import com.example.justinkwik.hipcar.Main.Reservation.ParseClassesOnGoing.Response.SuccessResponse;
 import com.example.justinkwik.hipcar.Main.Reservation.ParseClassesOnGoing.VehicleStatus.VehicleStatus;
 import com.example.justinkwik.hipcar.R;
+import com.github.jjobes.slidedatetimepicker.SlideDateTimeListener;
+import com.github.jjobes.slidedatetimepicker.SlideDateTimePicker;
 import com.github.johnpersano.supertoasts.library.Style;
 import com.github.johnpersano.supertoasts.library.SuperToast;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -53,12 +55,19 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.gson.Gson;
 
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+import org.joda.time.format.DateTimeFormatter;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.DecimalFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TimeZone;
 
 import in.srain.cube.views.ptr.PtrDefaultHandler;
 import in.srain.cube.views.ptr.PtrFrameLayout;
@@ -69,6 +78,8 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
     private final String onGoingReservationLink = "https://artemis-api-dev.hipcar.com/reservation/on-going";
     private final String generateVoucherLink = "https://artemis-api-dev.hipcar.com/reservation/:id/generate-voucher";
     private final String vehicleActionLink = "https://artemis-api-dev.hipcar.com/vehicle/:id/";
+    private final String dateDisplayFormat = "dd/MM/yyyy hh:mm a";
+    private final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     private int red;
     private int black;
     private int navBarGrey;
@@ -139,6 +150,10 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
     private Button checkInOutOkButton;
     private Button checkInOutCancelButton;
     private TextView checkInOutDateTextView;
+    private DateTime currentDateTime;
+    private String dateTimeISO;
+
+    private SlideDateTimeListener slideDateTimeListener;
 
     public OnGoingReservationFragment() {
 
@@ -254,6 +269,18 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
         checkInOutOkButton = (Button) checkInOutPopUpContainer.findViewById(R.id.checkInOutOkButton);
         checkInOutCancelButton = (Button) checkInOutPopUpContainer.findViewById(R.id.checkInOutCancelButton);
         checkInOutDateTextView = (TextView) checkInOutPopUpContainer.findViewById(R.id.checkInOutDateTextView);
+
+        slideDateTimeListener = new SlideDateTimeListener() {
+            @Override
+            public void onDateTimeSet(Date date) {
+
+                DateTime dateTime = new DateTime(date);
+                String ISOString = dateTime.toDateTimeISO().toString();
+                dateTimeISO = ISOString; //TODO: the date time iso has -4:00 offset when needs to be +7:00 offset.
+                checkInOutDateTextView.setText(dateTime.toString(dateDisplayFormat));
+
+            }
+        };
 
         return rootView;
     }
@@ -634,6 +661,11 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
         checkInOutTitleTextView.setText("Reservation " + title);
         checkInOutTextView.setText(title + " Date");
 
+        //TODO: need to change to localdate because depends on where they rented from.
+        currentDateTime = new DateTime(DateTimeZone.forTimeZone(TimeZone.getTimeZone("Asia/Bangkok")));
+        checkInOutDateTextView.setText(currentDateTime.toString(dateDisplayFormat));
+        dateTimeISO = currentDateTime.toDateTimeISO().toString();
+
         checkInOutExitTextView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -699,6 +731,8 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
             @Override
             public void onClick(View v) {
 
+                Log.e("Date: ", dateTimeISO);
+
                 String mileageAmountEntry = checkInOutMileageEditText.getText().toString();
 
                 if (mileageAmountEntry.equals("") || mileageAmountEntry.equals("0")) {
@@ -717,9 +751,28 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
         checkInOutDateTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO: first set to the current time and date, then inflate a date and time picker as a dialoge
-                //and set the checkinout date text view to the corresponding selected date and time.
-                //in the form of dd/mm/yyyy hh:mm PM/AM
+
+                try {
+
+                    Date intialDate = simpleDateFormat
+                            .parse(currentDateTime.toString("yyyy-MM-dd HH:mm:ss"));
+
+                    new SlideDateTimePicker.Builder(getChildFragmentManager())
+                            .setListener(slideDateTimeListener)
+                            .setInitialDate(intialDate)
+                            .build()
+                            .show();
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        });
+
+        checkInOutCancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                checkInOutPopUpWindow.dismiss();
             }
         });
 
