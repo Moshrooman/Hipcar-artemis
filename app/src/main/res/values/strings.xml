@@ -23,4 +23,12 @@
         <item>Station</item>
     </string-array>
 
+    <string-array name="voucherEntries">
+        <item></item>
+        <item>Fuel</item>
+        <item>Car Wash</item>
+        <item>Tire</item>
+        <item>Complementary</item>
+    </string-array>
+
 </resources>

@@ -6,7 +6,7 @@
     android:background="@drawable/ongoingreservationpopupborder"
     android:layout_gravity="center"
     android:weightSum="1"
-    android:id="@+id/popUpLinearLayout">
+    android:id="@+id/popUpRelativeLayout">
 
     <LinearLayout
         android:layout_width="match_parent"

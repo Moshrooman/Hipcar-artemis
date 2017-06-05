@@ -18,11 +18,14 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.airbnb.lottie.LottieAnimationView;
@@ -50,10 +53,12 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.gson.Gson;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.Executors;
 
 import in.srain.cube.views.ptr.PtrDefaultHandler;
 import in.srain.cube.views.ptr.PtrFrameLayout;
@@ -62,10 +67,12 @@ import in.srain.cube.views.ptr.header.StoreHouseHeader;
 public class OnGoingReservationFragment extends Fragment implements OnGoingReservationAdapter.VehicleStatusInterface{
 
     private final String onGoingReservationLink = "https://artemis-api-dev.hipcar.com/reservation/on-going";
+    private final String generateVoucherLink = "https://artemis-api-dev.hipcar.com/reservation/:id/generate-voucher";
     private final String vehicleActionLink = "https://artemis-api-dev.hipcar.com/vehicle/:id/";
     private int red;
     private int black;
     private int navBarGrey;
+    private View rootView;
 
     private UserCredentials userCredentials;
     private OnGoingReservation[] onGoingReservations;
@@ -85,6 +92,7 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
     private LayoutInflater layoutInflater;
     private WindowManager windowManager;
     private TextView exitTextView;
+    private RelativeLayout popUpRelativeLayout;
     //Viewpagers for the popupwindow.
     private ViewPager googleMapAndInfoViewPager;
     private ScrollView buttonScrollView;
@@ -104,6 +112,19 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
     private Button[] popUpActionButtonArray;
     private int recyclerViewPosition;
     private static int disabledPosition;
+
+    /*
+    Start of variables for voucher pop
+     */
+
+    private PopupWindow voucherPopUpWindow;
+    private ViewGroup voucherPopUpContainer;
+    private View voucherPopUpWindowMeasuredView;
+    private TextView voucherExitTextView;
+    private EditText voucherAmountEditText;
+    private Spinner voucherPurposeSpinner;
+    private Button voucherOkButton;
+    private Button voucherCancelButton;
 
     public OnGoingReservationFragment() {
 
@@ -141,19 +162,19 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              final Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.fragment_reservation, container, false);
+        rootView = inflater.inflate(R.layout.fragment_reservation, container, false);
 
-        onGoingReservationRecyclerView = (RecyclerView) view.findViewById(R.id.onGoingReservationRecyclerView);
+        onGoingReservationRecyclerView = (RecyclerView) rootView.findViewById(R.id.onGoingReservationRecyclerView);
         onGoingReservationRecyclerView.setItemAnimator(new DefaultItemAnimator());
         onGoingReservationRecyclerView.setLayoutManager(new LinearLayoutManager(context));
 
-        onGoingReservationFrameLayout = (FrameLayout) view.findViewById(R.id.onGoingReservationFrameLayout);
-        popUpWindowMeasuredView = view.findViewById(R.id.popUpWindowMeasuredView);
+        onGoingReservationFrameLayout = (FrameLayout) rootView.findViewById(R.id.onGoingReservationFrameLayout);
+        popUpWindowMeasuredView = rootView.findViewById(R.id.popUpWindowMeasuredView);
 
-        reservationGreyScreenLoading = (RelativeLayout) view.findViewById(R.id.reservationGreyScreenLoading);
-        reservationLoadingLottieView = (LottieAnimationView) view.findViewById(R.id.reservationLoadingLottieView);
+        reservationGreyScreenLoading = (RelativeLayout) rootView.findViewById(R.id.reservationGreyScreenLoading);
+        reservationLoadingLottieView = (LottieAnimationView) rootView.findViewById(R.id.reservationLoadingLottieView);
 
-        pullToRefreshLayout = (PtrFrameLayout) view.findViewById(R.id.pullToRefreshLayout);
+        pullToRefreshLayout = (PtrFrameLayout) rootView.findViewById(R.id.pullToRefreshLayout);
 
         initializePullToRefreshLayout();
 
@@ -161,6 +182,7 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
 
         //Below start of assigning variables for popup view.
         viewActionPopUpContainer = (ViewGroup) layoutInflater.inflate(R.layout.viewactionpopup, null);
+        popUpRelativeLayout = (RelativeLayout) viewActionPopUpContainer.findViewById(R.id.popUpRelativeLayout);
         buttonScrollView = (ScrollView) viewActionPopUpContainer.findViewById(R.id.buttonScrollView);
         googleMapAndInfoViewPager = (ViewPager) viewActionPopUpContainer.findViewById(R.id.googleMapAndInfoViewPager);
         popUpGreyScreenLoading = (RelativeLayout) viewActionPopUpContainer.findViewById(R.id.popUpGreyScreenLoading);
@@ -201,7 +223,14 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
             }
         });
 
-        return view;
+        voucherPopUpContainer = (ViewGroup) layoutInflater.inflate(R.layout.voucherpopup, null);
+        voucherPopUpWindowMeasuredView = rootView.findViewById(R.id.voucherPopUpWindowMeasuredView);
+        voucherAmountEditText = (EditText) voucherPopUpContainer.findViewById(R.id.voucherAmountEditText);
+        voucherPurposeSpinner = (Spinner) voucherPopUpContainer.findViewById(R.id.voucherPurposeSpinner);
+        voucherOkButton = (Button) voucherPopUpContainer.findViewById(R.id.voucherOkButton);
+        voucherCancelButton = (Button) voucherPopUpContainer.findViewById(R.id.voucherCancelButton);
+
+        return rootView;
     }
 
     private void setpopUpActionButtonClickListeners() {
@@ -282,10 +311,11 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
         } else if(actionButtonText.contains("Voucher")) {
 
             //TODO: Have to inflate another popupwindow. Because it is a POST request instead of a put.
-            requestLink = vehicleActionLink
-                    .replace(":id", String.valueOf(onGoingReservation.getId()))
-                    .concat(actionButton.getText().toString().toLowerCase().replace(" ", "-"));
-            Log.e("Need display: ", "Popup window");
+            requestLink = generateVoucherLink
+                    .replace(":id", String.valueOf(onGoingReservation.getId()));
+
+            showVoucherPopupWindowAndSetClickListeners(requestLink);
+
             return;
 
         } else if(actionButtonText.contains("Status")) {
@@ -362,47 +392,42 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
 
     }
 
-    //TODO: work on this and below method to make the popup window show, then these will be called in the actionButtonStringRequest.
-    private void showVoucherPopupWindow (ViewGroup voucherPopUpContainer, String actionUrl) {
+    private void showVoucherPopupWindowAndSetClickListeners(final String actionUrl) {
 
-        //TODO: need to make a viewActionPopUp container that is inflated in the oncreate.
-        //Need to make an empty view for the size that we want the voucher view to be. Make it invisible remember.
-        viewActionPopUpWindow = new PopupWindow(viewActionPopUpContainer, popUpWindowMeasuredView.getWidth(),
-                popUpWindowMeasuredView.getHeight(), true);
+        voucherPopUpWindow = new PopupWindow(voucherPopUpContainer, voucherPopUpWindowMeasuredView.getWidth(),
+                voucherPopUpWindowMeasuredView.getHeight(), true);
 
-        viewActionPopUpWindow.setAnimationStyle(R.style.PopUpWindowAnimation);
+        voucherPopUpWindow.setAnimationStyle(R.style.PopUpWindowAnimation);
 
-        //Show it in the center of the popupwindow, not the frame layout.
-        viewActionPopUpWindow.showAtLocation(onGoingReservationFrameLayout, Gravity.CENTER, 0, 0);
+        voucherPopUpWindow.showAtLocation(onGoingReservationFrameLayout, Gravity.CENTER, 0, 0);
 
         //Different android versions have different view hierarchie's need to split the code for dimming background.
         if (android.os.Build.VERSION.SDK_INT > 22) {
-            View popUpDimView = popUpDimView = (View) viewActionPopUpContainer.getParent();
+            View popUpDimView = popUpDimView = (View) voucherPopUpContainer.getParent();
             WindowManager.LayoutParams layoutParams = (WindowManager.LayoutParams) popUpDimView.getLayoutParams();
             layoutParams.flags = WindowManager.LayoutParams.FLAG_DIM_BEHIND;
             layoutParams.dimAmount = 0.7f;
             windowManager.updateViewLayout(popUpDimView, layoutParams);
         } else {
-            WindowManager.LayoutParams layoutParams = (WindowManager.LayoutParams) viewActionPopUpContainer.getLayoutParams();
+            WindowManager.LayoutParams layoutParams = (WindowManager.LayoutParams) voucherPopUpContainer.getLayoutParams();
             layoutParams.flags = WindowManager.LayoutParams.FLAG_DIM_BEHIND;
             layoutParams.dimAmount = 0.7f;
-            windowManager.updateViewLayout(viewActionPopUpContainer, layoutParams);
+            windowManager.updateViewLayout(voucherPopUpContainer, layoutParams);
         }
 
-        //Same thing for the exit button of the voucher pop up window but maybe change the name of the textview.
-        exitTextView = (TextView) viewActionPopUpContainer.findViewById(R.id.exitTextView);
+        voucherExitTextView = (TextView) voucherPopUpContainer.findViewById(R.id.voucherExitTextView);
 
-        exitTextView.setOnTouchListener(new View.OnTouchListener() {
+        voucherExitTextView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
 
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
 
-                    exitTextView.setTextColor(black);
+                    voucherExitTextView.setTextColor(black);
 
                 } else {
 
-                    exitTextView.setTextColor(navBarGrey);
+                    voucherExitTextView.setTextColor(navBarGrey);
 
                 }
 
@@ -410,11 +435,141 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
             }
         });
 
-        //Dismiss the voucher popup window, not the view actionpopup window.
-        exitTextView.setOnClickListener(new View.OnClickListener() {
+        voucherExitTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                viewActionPopUpWindow.dismiss();
+                voucherPopUpWindow.dismiss();
+            }
+        });
+
+        ArrayAdapter<String> voucherAdapter = new ArrayAdapter<String>(rootView.getContext(),
+                R.layout.customdropdown, getResources().getStringArray(R.array.voucherEntries));
+
+        voucherPurposeSpinner.setAdapter(voucherAdapter);
+
+        voucherOkButton.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+
+                    voucherOkButton.setBackgroundResource(R.drawable.greenactionviewbuttonpressed);
+
+                } else {
+
+                    voucherOkButton.setBackgroundResource(R.drawable.greenactionviewbutton);
+
+                }
+
+                return false;
+            }
+        });
+
+        voucherCancelButton.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+
+                if(event.getAction() == MotionEvent.ACTION_DOWN) {
+
+                    voucherCancelButton.setBackgroundResource(R.drawable.redactionviewbuttonpressed);
+
+                } else {
+
+                    voucherCancelButton.setBackgroundResource(R.drawable.redactionviewbutton);
+
+                }
+
+                return false;
+            }
+        });
+
+        voucherOkButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                String voucherAmountEditTextEntry = voucherAmountEditText.getText().toString();
+                String voucherPurposeSpinnerEntry = voucherPurposeSpinner.getSelectedItem().toString();
+
+                if (voucherAmountEditTextEntry.equals("") || voucherAmountEditTextEntry.equals("0")) {
+
+                    SuperToast superToast = SuperToast.create(context, "Voucher Amount Must Be Greater Than 0!", Style.DURATION_SHORT,
+                            Style.orange()).setAnimations(Style.ANIMATIONS_POP);
+                    superToast.show();
+
+                    return;
+
+                }
+
+                if (voucherPurposeSpinnerEntry.equals("")) {
+
+                    SuperToast superToast = SuperToast.create(context, "Please Select A Voucher Purpose!", Style.DURATION_SHORT,
+                            Style.orange()).setAnimations(Style.ANIMATIONS_POP);
+                    superToast.show();
+
+                    return;
+
+                }
+
+                final JSONObject voucherRequestBody = new JSONObject();
+
+                try {
+
+                    voucherRequestBody.put("amount", Integer.valueOf(voucherAmountEditTextEntry));
+                    voucherRequestBody.put("type", voucherPurposeSpinnerEntry);
+
+                } catch (JSONException e) {
+
+                    e.printStackTrace();
+
+                }
+
+                StringRequest voucherStringRequest = new StringRequest(Request.Method.POST, actionUrl, new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+
+                        String responseString = gson.fromJson(response, SuccessResponse.class).getMessage();
+
+                        SuperToast superToast = SuperToast.create(context, responseString, Style.DURATION_SHORT,
+                                Style.green()).setAnimations(Style.ANIMATIONS_POP);
+                        superToast.show();
+
+
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                    }
+                }) {
+
+                    @Override
+                    public String getBodyContentType() {
+                        return "application/json";
+                    }
+
+                    @Override
+                    public byte[] getBody() throws AuthFailureError {
+                        return voucherRequestBody.toString().getBytes();
+                    }
+
+                    @Override
+                    public Map<String, String> getHeaders() throws AuthFailureError {
+                        Map<String, String> headerMap = new HashMap<String, String>();
+                        headerMap.put("token", userCredentials.getToken());
+
+                        return headerMap;
+                    }
+                };
+
+                ConnectionManager.getInstance(context).add(voucherStringRequest);
+
+            }
+        });
+
+        voucherCancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                voucherPopUpWindow.dismiss();
             }
         });
 
@@ -604,7 +759,7 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
     public void showVehicleStatusPopup(final OnGoingReservation onGoingReservation, int position) {
 
         //We want to display the popup immediately while we let the information load in the background
-        showPopUpAndSetExitClickListener(viewActionPopUpContainer);
+        showPopUpAndSetExitClickListener();
 
         this.onGoingReservation = onGoingReservation;
         this.recyclerViewPosition = position;
@@ -651,7 +806,7 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
     }
 
 
-    private void showPopUpAndSetExitClickListener(ViewGroup viewActionPopUpContainer) {
+    private void showPopUpAndSetExitClickListener() {
 
         //Set the infoview pager to the first item every time opened. So first thing they see is map.
         googleMapAndInfoViewPager.setCurrentItem(0, false);
