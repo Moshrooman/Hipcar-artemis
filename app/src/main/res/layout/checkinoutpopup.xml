@@ -70,7 +70,7 @@
             android:id="@+id/checkInOutMileageEditText"
             android:layout_marginTop="5dp"
             fontPath="fonts/Exo2-Regular.ttf"
-            android:inputType="number"
+            android:inputType="numberDecimal"
             />
 
         <TextView

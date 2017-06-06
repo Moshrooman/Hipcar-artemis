@@ -6,7 +6,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -17,7 +17,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
-import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -28,6 +27,7 @@ import com.example.justinkwik.hipcar.ExpandAnimation.ExpandAnimation;
 import com.example.justinkwik.hipcar.HipCarApplication;
 import com.example.justinkwik.hipcar.Login.LoginActivity;
 import com.example.justinkwik.hipcar.Login.UserCredentials;
+import com.example.justinkwik.hipcar.Main.Reservation.CheckoutReservationClasses.CheckedoutReservationFragment;
 import com.example.justinkwik.hipcar.Main.Reservation.OnGoingFragmentClasses.OnGoingReservationFragment;
 import com.example.justinkwik.hipcar.R;
 
@@ -91,7 +91,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             @Override
             public void onDrawerOpened(View drawerView) {
 
-                if(openDrawer) {
+                if (openDrawer) {
 
                     hamburgerToArrow();
 
@@ -144,6 +144,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         //IF THE STRINGREQUEST COMES BACK EMPTY, THEN DISPLAY TEXTVIEWS SAYING NO ONGOING OR NO CHECKED OUT.
         //Give indicator to swipe from google maps to information fragment
         //handle back button in mainactivity so that if a boolean is true, to dismiss the pop-up in the ongoingreservationfragment.
+        //Make the phone number clickable so that they can instantly call.
         //Set re-do for string request timeout.
 
         //TODO: LOG OUT AND CHANGE PASSWORD
@@ -322,7 +323,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 case 6:
                     return new OnGoingReservationFragment();
                 case 7:
-                    return new PlaceHolderFragment();
+                    return new CheckedoutReservationFragment();
                 case 8:
                     return new PlaceHolderFragment();
                 case 9:
@@ -449,19 +450,25 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     private void setOnClickListenersReservation() {
 
-        checkOutReservationTextView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-            }
-        });
-
         onGoingReservationTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 viewPager.setCurrentItem(6, false); //Set to 6 starting from index 0, this submenu is position 6
                 expandCollapseSubMenus(reservationSubMenuLayout);
-                mainActivityTitle.setText("On-Going Reservation");
+                mainActivityTitle.setText("On-Going Reservations");
                 closeDrawer();
+            }
+        });
+
+        checkOutReservationTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                viewPager.setCurrentItem(7, false);
+                expandCollapseSubMenus(reservationSubMenuLayout);
+                mainActivityTitle.setText("Checked-Out Reservations");
+                closeDrawer();
+
             }
         });
 

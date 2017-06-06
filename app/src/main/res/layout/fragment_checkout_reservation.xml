@@ -1,0 +1,137 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".Main.Reservation.OnGoingFragmentClasses.OnGoingReservationFragment"
+    android:id="@+id/checkedOutReservationFrameLayout">
+
+    <View
+        android:layout_width="250dp"
+        android:layout_height="250dp"
+        android:id="@+id/voucherCheckInOutPopUpWindowMeasuredView"
+        android:layout_gravity="center"
+        android:visibility="invisible"
+        />
+
+    <TableLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="fill_parent"
+        android:layout_height="50dp"
+        android:shrinkColumns="*"
+        android:stretchColumns="*"
+        >
+
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:background="@color/navBarGrey"
+            >
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.05"
+                android:layout_gravity="center"
+                android:id="@+id/expandedIndicatorImageView"
+                />
+
+            <com.example.justinkwik.hipcar.CustomAutoFitTextView.FontFitTextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:text="Full Name"
+                android:textSize="12dp"
+                android:textColor="@color/black"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:layout_weight="0.2375"
+                fontPath="fonts/Exo2-Bold.ttf"
+                />
+            <com.example.justinkwik.hipcar.CustomAutoFitTextView.FontFitTextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:text="Contact\nNumber"
+                android:textSize="12dp"
+                android:textColor="@color/black"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:minLines="2"
+                android:layout_weight="0.2375"
+                fontPath="fonts/Exo2-Bold.ttf"
+                />
+            <com.example.justinkwik.hipcar.CustomAutoFitTextView.FontFitTextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:text="Total\nAmount"
+                android:textSize="12dp"
+                android:textColor="@color/black"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:minLines="2"
+                android:layout_weight="0.2375"
+                fontPath="fonts/Exo2-Bold.ttf"
+                />
+
+            <com.example.justinkwik.hipcar.CustomAutoFitTextView.FontFitTextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:text="Balance"
+                android:textSize="12dp"
+                android:textColor="@color/black"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:minLines="2"
+                android:layout_weight="0.2375"
+                fontPath="fonts/Exo2-Bold.ttf"
+                />
+
+        </TableRow>
+
+    </TableLayout>
+
+    <in.srain.cube.views.ptr.PtrFrameLayout
+        xmlns:cube_ptr="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="50dp"
+        android:id="@+id/pullToRefreshLayout"
+
+        cube_ptr:ptr_duration_to_close="200"
+        cube_ptr:ptr_duration_to_close_header="1000"
+        cube_ptr:ptr_keep_header_when_refresh="true"
+        cube_ptr:ptr_pull_to_fresh="false"
+        cube_ptr:ptr_ratio_of_header_height_to_refresh="1.2"
+        cube_ptr:ptr_resistance="1.7"
+        >
+
+        <android.support.v7.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/checkedOutReservationRecyclerView"
+            >
+
+        </android.support.v7.widget.RecyclerView>
+
+    </in.srain.cube.views.ptr.PtrFrameLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/greyScreenLoading"
+        android:alpha="0.8"
+        android:id="@+id/reservationGreyScreenLoading"
+        android:visibility="gone"
+        >
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:lottie_fileName="Lottie/loading.json"
+            app:lottie_loop="true"
+            android:layout_centerInParent="true"
+            android:id="@+id/reservationLoadingLottieView"
+            />
+
+    </RelativeLayout>
+
+</FrameLayout>

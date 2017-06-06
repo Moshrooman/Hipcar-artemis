@@ -1,19 +1,17 @@
-package com.example.justinkwik.hipcar.Main.Reservation.OnGoingFragmentClasses;
+package com.example.justinkwik.hipcar.Main.Reservation.CheckoutReservationClasses;
 
 import com.example.justinkwik.hipcar.Main.Reservation.ParseClassesReservation.Station.PickupStation;
-import com.example.justinkwik.hipcar.Main.Reservation.ParseClassesReservation.Price.Prices;
 import com.example.justinkwik.hipcar.Main.Reservation.ParseClassesReservation.Station.ReturnStation;
 import com.example.justinkwik.hipcar.Main.Reservation.ParseClassesReservation.User.User;
 import com.example.justinkwik.hipcar.Main.Reservation.ParseClassesReservation.Vehicle.Vehicle;
-import com.example.justinkwik.hipcar.Main.Reservation.ParseClassesReservation.Vehicle.VehicleRates;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * Created by Justin Kwik on 23/05/2017.
+ * Created by Justin Kwik on 06/06/2017.
  */
-public class OnGoingReservation {
+public class CheckedOutReservation {
 
-    public OnGoingReservation(int id, String full_name, String email, String contact_number, String pickup_address, String pickup_date, String return_date, int total_amount, int payment_status, String actual_pickup_date, String actual_return_date, String i_token, String i_session_key, int owed_amount, Float pickup_km, Float return_km, int excess_km_charge, Float total_free_km, Float km_limit, Float km_nominal, boolean is_owner, VehicleRates[] vehicle_rates, String created, String updated, String deleted, int user_id, int vehicle_id, int pickup_station_id, int return_station_id, User user, ReturnStation return_station, PickupStation pickup_station, Vehicle vehicle, int total_nominal, int total_basic_price, Float total_used_km, int total_excess_km_charge, int total_price, Prices[] prices) {
+    public CheckedOutReservation(int id, String full_name, String email, String contact_number, String pickup_address, String pickup_date, String return_date, int total_amount, int payment_type, int payment_status, String actual_pickup_date, String actual_return_date, String i_token, String i_session_key, int owed_amount, Float pickup_km, Float return_km, int excess_km_charge, Float total_free_km, Float km_limit, Float km_nominal, boolean is_owner, String vehicle_rates, String created, String updated, String deleted, int user_id, int vehicle_id, int pickup_station_id, int return_station_id, User user, ReturnStation return_station, PickupStation pickup_station, Vehicle vehicle) {
         this.id = id;
         this.full_name = full_name;
         this.email = email;
@@ -22,6 +20,7 @@ public class OnGoingReservation {
         this.pickup_date = pickup_date;
         this.return_date = return_date;
         this.total_amount = total_amount;
+        this.payment_type = payment_type;
         this.payment_status = payment_status;
         this.actual_pickup_date = actual_pickup_date;
         this.actual_return_date = actual_return_date;
@@ -47,12 +46,6 @@ public class OnGoingReservation {
         this.return_station = return_station;
         this.pickup_station = pickup_station;
         this.vehicle = vehicle;
-        this.total_nominal = total_nominal;
-        this.total_basic_price = total_basic_price;
-        this.total_used_km = total_used_km;
-        this.total_excess_km_charge = total_excess_km_charge;
-        this.total_price = total_price;
-        this.prices = prices;
     }
 
     private boolean expanded = false;
@@ -80,6 +73,9 @@ public class OnGoingReservation {
 
     @SerializedName("total_amount")
     private int total_amount;
+
+    @SerializedName("payment_type")
+    private int payment_type;
 
     @SerializedName("payment_status")
     private int payment_status;
@@ -121,7 +117,7 @@ public class OnGoingReservation {
     private boolean is_owner;
 
     @SerializedName("vehicle_rates")
-    private VehicleRates[] vehicle_rates;
+    private String vehicle_rates;
 
     @SerializedName("created")
     private String created;
@@ -156,24 +152,6 @@ public class OnGoingReservation {
     @SerializedName("vehicle")
     private Vehicle vehicle;
 
-    @SerializedName("total_nominal")
-    private int total_nominal;
-
-    @SerializedName("total_basic_price")
-    private int total_basic_price;
-
-    @SerializedName("total_used_km")
-    private Float total_used_km;
-
-    @SerializedName("total_excess_km_charge")
-    private int total_excess_km_charge;
-
-    @SerializedName("total_price")
-    private int total_price;
-
-    @SerializedName("prices")
-    private Prices[] prices;
-
     public boolean getExpanded() {
 
         return expanded;
@@ -185,68 +163,26 @@ public class OnGoingReservation {
     }
 
     public String getFull_name() {
-
-        if(full_name == null) {
-
-            return "-";
-
-        }
-
         return full_name;
     }
 
     public String getEmail() {
-
-        if(email == null) {
-
-            return "-";
-
-        }
-
         return email;
     }
 
     public String getContact_number() {
-
-        if(contact_number == null) {
-
-            return "-";
-
-        }
-
         return contact_number;
     }
 
     public String getPickup_address() {
-
-        if(pickup_address == null) {
-
-            return "-";
-
-        }
-
         return pickup_address;
     }
 
     public String getPickup_date() {
-
-        if(pickup_date == null) {
-
-            return "-";
-
-        }
-
         return pickup_date;
     }
 
     public String getReturn_date() {
-
-        if(return_date == null) {
-
-            return "-";
-
-        }
-
         return return_date;
     }
 
@@ -254,51 +190,27 @@ public class OnGoingReservation {
         return total_amount;
     }
 
+    public int getPayment_type() {
+        return payment_type;
+    }
+
     public int getPayment_status() {
         return payment_status;
     }
 
     public String getActual_pickup_date() {
-
-        if(actual_pickup_date == null) {
-
-            return "-";
-
-        }
-
         return actual_pickup_date;
     }
 
     public String getActual_return_date() {
-
-        if(actual_return_date == null) {
-
-            return "-";
-
-        }
-
         return actual_return_date;
     }
 
     public String getI_token() {
-
-        if(i_token == null) {
-
-            return "-";
-
-        }
-
         return i_token;
     }
 
     public String getI_session_key() {
-
-        if(i_session_key == null) {
-
-            return "-";
-
-        }
-
         return i_session_key;
     }
 
@@ -334,40 +246,19 @@ public class OnGoingReservation {
         return is_owner;
     }
 
-    public VehicleRates[] getVehicle_rates() {
+    public String getVehicle_rates() {
         return vehicle_rates;
     }
 
     public String getCreated() {
-
-        if(created == null) {
-
-            return "-";
-
-        }
-
         return created;
     }
 
     public String getUpdated() {
-
-        if(updated == null) {
-
-            return "-";
-
-        }
-
         return updated;
     }
 
     public String getDeleted() {
-
-        if(deleted == null) {
-
-            return "-";
-
-        }
-
         return deleted;
     }
 
@@ -403,30 +294,6 @@ public class OnGoingReservation {
         return vehicle;
     }
 
-    public int getTotal_nominal() {
-        return total_nominal;
-    }
-
-    public int getTotal_basic_price() {
-        return total_basic_price;
-    }
-
-    public Float getTotal_used_km() {
-        return total_used_km;
-    }
-
-    public int getTotal_excess_km_charge() {
-        return total_excess_km_charge;
-    }
-
-    public int getTotal_price() {
-        return total_price;
-    }
-
-    public Prices[] getPrices() {
-        return prices;
-    }
-
     public void setId(int id) {
         this.id = id;
     }
@@ -457,6 +324,10 @@ public class OnGoingReservation {
 
     public void setTotal_amount(int total_amount) {
         this.total_amount = total_amount;
+    }
+
+    public void setPayment_type(int payment_type) {
+        this.payment_type = payment_type;
     }
 
     public void setPayment_status(int payment_status) {
@@ -511,7 +382,7 @@ public class OnGoingReservation {
         this.is_owner = is_owner;
     }
 
-    public void setVehicle_rates(VehicleRates[] vehicle_rates) {
+    public void setVehicle_rates(String vehicle_rates) {
         this.vehicle_rates = vehicle_rates;
     }
 
@@ -559,33 +430,10 @@ public class OnGoingReservation {
         this.vehicle = vehicle;
     }
 
-    public void setTotal_nominal(int total_nominal) {
-        this.total_nominal = total_nominal;
-    }
-
-    public void setTotal_basic_price(int total_basic_price) {
-        this.total_basic_price = total_basic_price;
-    }
-
-    public void setTotal_used_km(Float total_used_km) {
-        this.total_used_km = total_used_km;
-    }
-
-    public void setTotal_excess_km_charge(int total_excess_km_charge) {
-        this.total_excess_km_charge = total_excess_km_charge;
-    }
-
-    public void setTotal_price(int total_price) {
-        this.total_price = total_price;
-    }
-
-    public void setPrices(Prices[] prices) {
-        this.prices = prices;
-    }
-
     public void setExpanded(boolean expanded) {
 
         this.expanded = expanded;
 
     }
+
 }

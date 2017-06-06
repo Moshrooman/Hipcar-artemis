@@ -9,7 +9,6 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -37,8 +36,8 @@ import com.android.volley.toolbox.StringRequest;
 import com.example.justinkwik.hipcar.ConnectionManager;
 import com.example.justinkwik.hipcar.Login.LoginActivity;
 import com.example.justinkwik.hipcar.Login.UserCredentials;
-import com.example.justinkwik.hipcar.Main.Reservation.ParseClassesOnGoing.Response.SuccessResponse;
-import com.example.justinkwik.hipcar.Main.Reservation.ParseClassesOnGoing.VehicleStatus.VehicleStatus;
+import com.example.justinkwik.hipcar.Main.Reservation.ParseClassesReservation.Response.SuccessResponse;
+import com.example.justinkwik.hipcar.Main.Reservation.ParseClassesReservation.VehicleStatus.VehicleStatus;
 import com.example.justinkwik.hipcar.R;
 import com.github.jjobes.slidedatetimepicker.SlideDateTimeListener;
 import com.github.jjobes.slidedatetimepicker.SlideDateTimePicker;
@@ -57,13 +56,13 @@ import com.google.gson.Gson;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
-import org.joda.time.format.DateTimeFormatter;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -79,7 +78,10 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
     private final String generateVoucherLink = "https://artemis-api-dev.hipcar.com/reservation/:id/generate-voucher";
     private final String vehicleActionLink = "https://artemis-api-dev.hipcar.com/vehicle/:id/";
     private final String dateDisplayFormat = "dd/MM/yyyy hh:mm a";
-    private final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    private final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy hh:mm a");
+    private final Calendar calendar = Calendar.getInstance();
+    //TODO need to switch this to local time zone, not asia/bangkok.
+    private final DateTimeZone dateTimeZone = DateTimeZone.forTimeZone(TimeZone.getTimeZone("Asia/Bangkok"));
     private int red;
     private int black;
     private int navBarGrey;
@@ -274,10 +276,18 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
             @Override
             public void onDateTimeSet(Date date) {
 
-                DateTime dateTime = new DateTime(date);
-                String ISOString = dateTime.toDateTimeISO().toString();
-                dateTimeISO = ISOString; //TODO: the date time iso has -4:00 offset when needs to be +7:00 offset.
-                checkInOutDateTextView.setText(dateTime.toString(dateDisplayFormat));
+                //Need this one for the textview that we set for the user to see, this is because we just want
+                //to use whatever offset comes with selecting the date, doesn't matter.
+                DateTime dateTimeWithoutZone = new DateTime(date);
+
+                //Then we need this one for the ISOString, because we want to retain the time an the date that the user
+                //picked but with the timezone of Asia/Bangkok.
+                DateTime dateTimeWithZone = new DateTime(date)
+                        .withZoneRetainFields(dateTimeZone);
+
+                String ISOString = dateTimeWithZone.toDateTimeISO().toString();
+                dateTimeISO = ISOString;
+                checkInOutDateTextView.setText(dateTimeWithoutZone.toString(dateDisplayFormat));
 
             }
         };
@@ -359,7 +369,6 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
 
             showCheckInOutPopUpWindowAndSetClickListeners(requestLink, actionButtonText);
 
-            //TODO: need to do popup asking for milage and date, the request is a put.
             return;
 
         } else if(actionButtonText.contains("Voucher")) {
@@ -446,10 +455,6 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
     }
 
     private void showVoucherPopupWindowAndSetClickListeners(final String actionUrl) {
-
-        //TODO: need to make sure that the link for the generate voucher, that the id part changes when we select another
-        //item from the recycler view.
-        Log.e("Url: ", actionUrl);
 
         voucherPopUpWindow = new PopupWindow(voucherPopUpContainer, voucherCheckInOutPopUpWindowMeasuredView.getWidth(),
                 voucherCheckInOutPopUpWindowMeasuredView.getHeight(), true);
@@ -632,19 +637,15 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
 
     }
 
-    private void showCheckInOutPopUpWindowAndSetClickListeners (String actionUrl, String title) {
+    private void showCheckInOutPopUpWindowAndSetClickListeners (final String actionUrl, String title) {
 
-        //TODO: need to make a viewActionPopUp container that is inflated in the oncreate.
-        //Need to make an empty view for the size that we want the voucher view to be. Make it invisible remember.
         checkInOutPopUpWindow = new PopupWindow(checkInOutPopUpContainer, voucherCheckInOutPopUpWindowMeasuredView.getWidth(),
                 voucherCheckInOutPopUpWindowMeasuredView.getHeight(), true);
 
         checkInOutPopUpWindow.setAnimationStyle(R.style.PopUpWindowAnimation);
 
-        //Show it in the center of the popupwindow, not the frame layout.
         checkInOutPopUpWindow.showAtLocation(onGoingReservationFrameLayout, Gravity.CENTER, 0, 0);
 
-        //Different android versions have different view hierarchie's need to split the code for dimming background.
         if (android.os.Build.VERSION.SDK_INT > 22) {
             View popUpDimView = (View) checkInOutPopUpContainer.getParent();
             WindowManager.LayoutParams layoutParams = (WindowManager.LayoutParams) popUpDimView.getLayoutParams();
@@ -661,8 +662,7 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
         checkInOutTitleTextView.setText("Reservation " + title);
         checkInOutTextView.setText(title + " Date");
 
-        //TODO: need to change to localdate because depends on where they rented from.
-        currentDateTime = new DateTime(DateTimeZone.forTimeZone(TimeZone.getTimeZone("Asia/Bangkok")));
+        currentDateTime = new DateTime(dateTimeZone);
         checkInOutDateTextView.setText(currentDateTime.toString(dateDisplayFormat));
         dateTimeISO = currentDateTime.toDateTimeISO().toString();
 
@@ -731,8 +731,6 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
             @Override
             public void onClick(View v) {
 
-                Log.e("Date: ", dateTimeISO);
-
                 String mileageAmountEntry = checkInOutMileageEditText.getText().toString();
 
                 if (mileageAmountEntry.equals("") || mileageAmountEntry.equals("0")) {
@@ -745,6 +743,62 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
 
                 }
 
+                final JSONObject checkInOutBody = new JSONObject();
+
+                try {
+
+                    checkInOutBody.put("actual_pickup_date", dateTimeISO);
+                    checkInOutBody.put("pickup_km", Float.valueOf(mileageAmountEntry));
+
+                } catch (JSONException e) {
+
+                    e.printStackTrace();
+
+                }
+
+                //TODO: Check if the response goes through and check that the edit text accepts numbers and decimals.
+
+                StringRequest checkInOutRequest = new StringRequest(Request.Method.PUT, actionUrl, new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+
+                        String responseString = gson.fromJson(response, SuccessResponse.class).getMessage();
+
+                        SuperToast superToast = SuperToast.create(context, responseString, Style.DURATION_SHORT,
+                                Style.green()).setAnimations(Style.ANIMATIONS_POP);
+                        superToast.show();
+
+
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                    }
+                }) {
+
+                    @Override
+                    public String getBodyContentType() {
+                        return "application/json";
+                    }
+
+                    @Override
+                    public byte[] getBody() throws AuthFailureError {
+                        return checkInOutBody.toString().getBytes();
+                    }
+
+                    @Override
+                    public Map<String, String> getHeaders() throws AuthFailureError {
+                        Map<String, String> headerMap = new HashMap<String, String>();
+                        headerMap.put("token", userCredentials.getToken());
+
+                        return headerMap;
+                    }
+                };
+
+                ConnectionManager.getInstance(context).add(checkInOutRequest);
+
+
             }
         });
 
@@ -754,14 +808,20 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
 
                 try {
 
+                    //We are using the dateTextView's text (the date and time that the user sees) and parsing it
+                    //using the format all the way above to set the initial date. So now the initial date is always set
+                    //to what the user sees.
+                    //And upon opening the checkin/out popup window, the checkInOutDateTextView is set to the text of
+                    //the current date in the timezone of asia/bangkok.
                     Date intialDate = simpleDateFormat
-                            .parse(currentDateTime.toString("yyyy-MM-dd HH:mm:ss"));
+                            .parse(checkInOutDateTextView.getText().toString());
 
                     new SlideDateTimePicker.Builder(getChildFragmentManager())
                             .setListener(slideDateTimeListener)
                             .setInitialDate(intialDate)
                             .build()
                             .show();
+
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
@@ -789,7 +849,6 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
 
                 vehicleStatus = gson.fromJson(response, VehicleStatus.class);
 
-                //Problem is the this.onGoingreservation isn't updated.
                 setPopUpViewPagerAdapters();
                 dismissLoadingScreen(true);
                 enableButton(actionButton);

@@ -1,4 +1,4 @@
-package com.example.justinkwik.hipcar.Main.Reservation.ParseClassesOnGoing.VehicleStatus;
+package com.example.justinkwik.hipcar.Main.Reservation.ParseClassesReservation.VehicleStatus;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -7,7 +7,7 @@ import com.google.gson.annotations.SerializedName;
  */
 public class VehicleStatus {
 
-    public VehicleStatus(Position position, String immobilizer, String ignition, String central_lock, String bluetooth_connection, Float board_voltage, com.example.justinkwik.hipcar.Main.Reservation.ParseClassesOnGoing.VehicleStatus.rfid_tag_states rfid_tag_states, String central_lock_last_command, String alarm_input, boolean lowFuelLevelAlarm, Float mileage_since_immobilizer_unlock, Float mileage) {
+    public VehicleStatus(Position position, String immobilizer, String ignition, String central_lock, String bluetooth_connection, Float board_voltage, com.example.justinkwik.hipcar.Main.Reservation.ParseClassesReservation.VehicleStatus.rfid_tag_states rfid_tag_states, String central_lock_last_command, String alarm_input, boolean lowFuelLevelAlarm, Float mileage_since_immobilizer_unlock, Float mileage) {
         this.position = position;
         this.immobilizer = immobilizer;
         this.ignition = ignition;
@@ -82,7 +82,7 @@ public class VehicleStatus {
         return board_voltage;
     }
 
-    public com.example.justinkwik.hipcar.Main.Reservation.ParseClassesOnGoing.VehicleStatus.rfid_tag_states getRfid_tag_states() {
+    public com.example.justinkwik.hipcar.Main.Reservation.ParseClassesReservation.VehicleStatus.rfid_tag_states getRfid_tag_states() {
         return rfid_tag_states;
     }
 
@@ -130,7 +130,7 @@ public class VehicleStatus {
         this.board_voltage = board_voltage;
     }
 
-    public void setRfid_tag_states(com.example.justinkwik.hipcar.Main.Reservation.ParseClassesOnGoing.VehicleStatus.rfid_tag_states rfid_tag_states) {
+    public void setRfid_tag_states(com.example.justinkwik.hipcar.Main.Reservation.ParseClassesReservation.VehicleStatus.rfid_tag_states rfid_tag_states) {
         this.rfid_tag_states = rfid_tag_states;
     }
 

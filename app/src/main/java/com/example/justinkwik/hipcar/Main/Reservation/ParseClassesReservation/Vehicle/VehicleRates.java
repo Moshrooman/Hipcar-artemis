@@ -1,14 +1,13 @@
-package com.example.justinkwik.hipcar.Main.Reservation.ParseClassesOnGoing.Price;
+package com.example.justinkwik.hipcar.Main.Reservation.ParseClassesReservation.Vehicle;
 
-import com.example.justinkwik.hipcar.Main.Reservation.ParseClassesOnGoing.Vehicle.VehicleRatesId;
 import com.google.gson.annotations.SerializedName;
 
 /**
  * Created by Justin Kwik on 23/05/2017.
  */
-public class Rates {
+public class VehicleRates {
 
-    public Rates(int id, VehicleRatesId vehicleRatesId, int price, int km_limit, int day, int nominal) {
+    public VehicleRates(int id, VehicleRatesId vehicleRatesId, int price, int km_limit, int day, int nominal) {
         this.id = id;
         this.vehicleRatesId = vehicleRatesId;
         this.price = price;
@@ -20,7 +19,7 @@ public class Rates {
     @SerializedName("id")
     private int id;
 
-    @SerializedName("vehicleRatesId")
+    @SerializedName("vehicle")
     private VehicleRatesId vehicleRatesId;
 
     @SerializedName("price")
@@ -39,10 +38,6 @@ public class Rates {
         return id;
     }
 
-    public VehicleRatesId getVehicleRatesId() {
-        return vehicleRatesId;
-    }
-
     public int getPrice() {
         return price;
     }
@@ -59,12 +54,12 @@ public class Rates {
         return nominal;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public VehicleRatesId getVehicleRatesId() {
+        return vehicleRatesId;
     }
 
-    public void setVehicleRatesId(VehicleRatesId vehicleRatesId) {
-        this.vehicleRatesId = vehicleRatesId;
+    public void setId(int id) {
+        this.id = id;
     }
 
     public void setPrice(int price) {
@@ -81,5 +76,9 @@ public class Rates {
 
     public void setNominal(int nominal) {
         this.nominal = nominal;
+    }
+
+    public void setVehicleRatesId(VehicleRatesId vehicleRatesId) {
+        this.vehicleRatesId = vehicleRatesId;
     }
 }

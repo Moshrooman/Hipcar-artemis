@@ -1,4 +1,4 @@
-package com.example.justinkwik.hipcar.Main.Reservation.ParseClassesOnGoing.Station;
+package com.example.justinkwik.hipcar.Main.Reservation.ParseClassesReservation.Station;
 
 import com.google.gson.annotations.SerializedName;
 
