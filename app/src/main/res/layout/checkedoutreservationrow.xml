@@ -76,6 +76,7 @@
                 fontPath="fonts/Exo2-Regular.ttf"
                 android:paddingTop="14dp"
                 android:paddingBottom="14dp"
+                android:autoLink="phone"
                 />
             <TextView
                 android:layout_width="0dp"

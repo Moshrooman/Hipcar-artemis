@@ -77,20 +77,21 @@ public class CheckedoutReservationAdapter extends RecyclerView.Adapter<Checkedou
 
         setSplitTextViewFonts("ID", String.valueOf(checkedOutReservation.getId()), holder.idTextView);
         setSplitTextViewFonts("Email", checkedOutReservation.getEmail(), holder.emailTextView);
-        setSplitTextViewFonts("Duration", formatDateString(checkedOutReservation.getReturn_date(), true), holder.durationTextView);
+        setSplitTextViewFonts("Duration", formatDateString(checkedOutReservation.getActual_return_date(), true, checkedOutReservation.getPickup_date()), holder.durationTextView);
+        //TODO: need to fix duration, it isn't today - return date, it should be actual_return_date - pickup_date
         setSplitTextViewFonts("Plate Number", checkedOutReservation.getVehicle().getPlate_number(), holder.plateNumberTextView);
 
         setSplitTextViewFonts("Vehicle Model", checkedOutReservation.getVehicle().getVehicle_model().getName(),
                 holder.vehicleModelTextView);
-        setSplitTextViewFonts("Pick Up Date", formatDateString(checkedOutReservation.getPickup_date(), false),
+        setSplitTextViewFonts("Pick Up Date", formatDateString(checkedOutReservation.getPickup_date(), false, null),
                 holder.pickUpDateTextView);
-        setSplitTextViewFonts("Grace Period Expire", formatDateString(checkedOutReservation.getReturn_date(), false),
+        setSplitTextViewFonts("Grace Period Expire", formatDateString(checkedOutReservation.getReturn_date(), false, null),
                 holder.gracePeriodExpireTextView);
-        setSplitTextViewFonts("Check-In Date", formatDateString(checkedOutReservation.getActual_pickup_date(), false),
+        setSplitTextViewFonts("Check-In Date", formatDateString(checkedOutReservation.getActual_pickup_date(), false, null),
                 holder.checkInDateTextView);
 
 
-        setSplitTextViewFonts("Check-Out Date", formatDateString(checkedOutReservation.getActual_return_date(), false),
+        setSplitTextViewFonts("Check-Out Date", formatDateString(checkedOutReservation.getActual_return_date(), false, null),
                 holder.checkOutDateTextView);
         setSplitTextViewFonts("Pick-Up Station", checkedOutReservation.getPickup_station().getName(), holder.pickUpStationTextView);
         setSplitTextViewFonts("Return Station", checkedOutReservation.getReturn_station().getName(), holder.returnStationTextView);
@@ -221,7 +222,7 @@ public class CheckedoutReservationAdapter extends RecyclerView.Adapter<Checkedou
 
     }
 
-    public String formatDateString(String date, boolean duration) {
+    public String formatDateString(String date, boolean duration, String date2) {
 
         if(date.equals("-")) {
 
@@ -234,8 +235,8 @@ public class CheckedoutReservationAdapter extends RecyclerView.Adapter<Checkedou
 
         if(duration) {
 
-            //TODO: need to change this to LocalDateTime because depends on where they rented from.
-            DateTime localDateTime = new DateTime(DateTimeZone.forTimeZone(TimeZone.getTimeZone("Asia/Bangkok")));
+            //TODO: some minutes are off, and if any of the 2 parameters are - then just leave the duration field as -.
+            DateTime localDateTime = new DateTime(date2);
 
             Period differencePeriod = new Period(formatDateTime, localDateTime);
 

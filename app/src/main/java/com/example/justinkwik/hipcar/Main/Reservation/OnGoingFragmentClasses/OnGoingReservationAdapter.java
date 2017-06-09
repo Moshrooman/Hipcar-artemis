@@ -111,6 +111,7 @@ public class OnGoingReservationAdapter extends RecyclerView.Adapter<OnGoingReser
         setSplitTextViewFonts("Pick-Up Station", onGoingReservation.getPickup_station().getName(), holder.pickUpStationTextView);
         setSplitTextViewFonts("Return Station", onGoingReservation.getReturn_station().getName(), holder.returnStationTextView);
         setSplitTextViewFonts("Duration", formatDateString(onGoingReservation.getReturn_date(), true), holder.durationTextView);
+        //TODO: need to fix this duration, answer not consistent with the dev website.
 
         setExpandIndicatorClickListener(holder.lineToX, holder.xToLine, holder.onGoingReservationTableLayout,
                 holder.expandableOnGoingReservation, onGoingReservation);
