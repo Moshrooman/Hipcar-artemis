@@ -235,13 +235,19 @@ public class CheckedoutReservationAdapter extends RecyclerView.Adapter<Checkedou
 
         if(duration) {
 
+            if(date.equals("-") || date2.equals("-")) {
+
+                return "-";
+
+            }
+
             //TODO: some minutes are off, and if any of the 2 parameters are - then just leave the duration field as -.
             DateTime localDateTime = new DateTime(date2);
 
             Period differencePeriod = new Period(formatDateTime, localDateTime);
 
-            formattedString = "" + differencePeriod.getDays() + "days " + differencePeriod.getHours() + "hours " +
-                    differencePeriod.getMinutes() + "minutes";
+            formattedString = "" + Math.abs(differencePeriod.getDays()) + "days " + Math.abs(differencePeriod.getHours()) + "hours " +
+                    Math.abs(differencePeriod.getMinutes()) + "minutes";
 
         } else {
 
