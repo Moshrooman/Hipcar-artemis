@@ -21,6 +21,9 @@ import com.example.justinkwik.hipcar.R;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
+import org.joda.time.Days;
+import org.joda.time.Hours;
+import org.joda.time.Minutes;
 import org.joda.time.Period;
 
 import java.text.DecimalFormat;
@@ -242,6 +245,18 @@ public class CheckedoutReservationAdapter extends RecyclerView.Adapter<Checkedou
             }
 
             //TODO: some are 10 minutes off, something wrong with period.
+            //Replace with:
+
+//            int daysBetween = Days.daysBetween(formatDateTime, localDateTime).getDays();
+//            formattedString += formattedString + "" + daysBetween + " days ";
+//            formatDateTime = formatDateTime.plusDays(daysBetween);
+//
+//            int hoursBetween = Hours.hoursBetween(formatDateTime, localDateTime).getHours();
+//            formattedString += hoursBetween + " hours ";
+//            formatDateTime = formatDateTime.plusHours(hoursBetween);
+//
+//            int minutesBetween = Minutes.minutesBetween(formatDateTime, localDateTime).getMinutes();
+//            formattedString += minutesBetween + " minutes";
             DateTime localDateTime = new DateTime(date2);
 
             Period differencePeriod = new Period(formatDateTime, localDateTime);

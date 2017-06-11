@@ -258,13 +258,15 @@ public class OnGoingReservationAdapter extends RecyclerView.Adapter<OnGoingReser
 //            formattedString = "" + differencePeriod.getDays() + "days " + differencePeriod.getHours() + "hours " +
 //                    differencePeriod.getMinutes() + "minutes";
 
+            //Returning time but not adding the days hours and minutes.
+
             int daysBetween = Days.daysBetween(formatDateTime, localDateTime).getDays();
             formattedString += formattedString + "" + daysBetween + " days ";
-            formatDateTime.plusDays(daysBetween);
+            formatDateTime = formatDateTime.plusDays(daysBetween);
 
             int hoursBetween = Hours.hoursBetween(formatDateTime, localDateTime).getHours();
             formattedString += hoursBetween + " hours ";
-            formatDateTime.plusHours(hoursBetween);
+            formatDateTime = formatDateTime.plusHours(hoursBetween);
 
             int minutesBetween = Minutes.minutesBetween(formatDateTime, localDateTime).getMinutes();
             formattedString += minutesBetween + " minutes";

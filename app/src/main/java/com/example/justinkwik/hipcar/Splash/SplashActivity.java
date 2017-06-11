@@ -139,7 +139,7 @@ public class SplashActivity extends AppCompatActivity {
                     };
 
                     Handler mainActivityHandler = new Handler();
-                    mainActivityHandler.postDelayed(mainActivityRunnable, 200);
+                    mainActivityHandler.postDelayed(mainActivityRunnable, 100);
 
                 }
 
