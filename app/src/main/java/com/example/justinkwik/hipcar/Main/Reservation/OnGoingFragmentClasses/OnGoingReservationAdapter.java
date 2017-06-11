@@ -23,10 +23,13 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.Days;
 import org.joda.time.Hours;
+import org.joda.time.Interval;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 import org.joda.time.Minutes;
 import org.joda.time.Period;
+import org.joda.time.PeriodType;
+import org.joda.time.Seconds;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.DateTimeFormatterBuilder;
@@ -243,17 +246,29 @@ public class OnGoingReservationAdapter extends RecyclerView.Adapter<OnGoingReser
         }
 
         DateTime formatDateTime = new DateTime(date, DateTimeZone.forTimeZone(TimeZone.getTimeZone("Asia/Bangkok")));
-        String formattedString;
+        String formattedString = "";
 
         if(duration) {
 
             //TODO: need to change this to LocalDateTime because depends on where they rented from.
             DateTime localDateTime = new DateTime(DateTimeZone.forTimeZone(TimeZone.getTimeZone("Asia/Bangkok")));
 
-            Period differencePeriod = new Period(formatDateTime, localDateTime);
+//            Period differencePeriod = new Period(formatDateTime, localDateTime, PeriodType.days());
 
-            formattedString = "" + differencePeriod.getDays() + "days " + differencePeriod.getHours() + "hours " +
-                    differencePeriod.getMinutes() + "minutes";
+//            formattedString = "" + differencePeriod.getDays() + "days " + differencePeriod.getHours() + "hours " +
+//                    differencePeriod.getMinutes() + "minutes";
+
+            int daysBetween = Days.daysBetween(formatDateTime, localDateTime).getDays();
+            formattedString += formattedString + "" + daysBetween + " days ";
+            formatDateTime.plusDays(daysBetween);
+
+            int hoursBetween = Hours.hoursBetween(formatDateTime, localDateTime).getHours();
+            formattedString += hoursBetween + " hours ";
+            formatDateTime.plusHours(hoursBetween);
+
+            int minutesBetween = Minutes.minutesBetween(formatDateTime, localDateTime).getMinutes();
+            formattedString += minutesBetween + " minutes";
+
 
         } else {
 

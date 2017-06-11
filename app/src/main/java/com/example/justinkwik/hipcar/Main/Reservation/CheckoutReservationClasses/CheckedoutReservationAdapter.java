@@ -241,7 +241,7 @@ public class CheckedoutReservationAdapter extends RecyclerView.Adapter<Checkedou
 
             }
 
-            //TODO: some minutes are off, and if any of the 2 parameters are - then just leave the duration field as -.
+            //TODO: some are 10 minutes off, something wrong with period.
             DateTime localDateTime = new DateTime(date2);
 
             Period differencePeriod = new Period(formatDateTime, localDateTime);
