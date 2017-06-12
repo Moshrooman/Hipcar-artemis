@@ -80,8 +80,7 @@ public class CheckedoutReservationAdapter extends RecyclerView.Adapter<Checkedou
 
         setSplitTextViewFonts("ID", String.valueOf(checkedOutReservation.getId()), holder.idTextView);
         setSplitTextViewFonts("Email", checkedOutReservation.getEmail(), holder.emailTextView);
-        setSplitTextViewFonts("Duration", formatDateString(checkedOutReservation.getActual_return_date(), true, checkedOutReservation.getPickup_date()), holder.durationTextView);
-        //TODO: need to fix duration, it isn't today - return date, it should be actual_return_date - pickup_date
+        setSplitTextViewFonts("Duration", formatDateString(checkedOutReservation.getActual_return_date(), true, checkedOutReservation.getReturn_date()), holder.durationTextView);
         setSplitTextViewFonts("Plate Number", checkedOutReservation.getVehicle().getPlate_number(), holder.plateNumberTextView);
 
         setSplitTextViewFonts("Vehicle Model", checkedOutReservation.getVehicle().getVehicle_model().getName(),
@@ -233,8 +232,8 @@ public class CheckedoutReservationAdapter extends RecyclerView.Adapter<Checkedou
 
         }
 
-        DateTime formatDateTime = new DateTime(date, DateTimeZone.forTimeZone(TimeZone.getTimeZone("Asia/Bangkok")));
-        String formattedString;
+        DateTime actualReturnDate = new DateTime(date, DateTimeZone.forTimeZone(TimeZone.getTimeZone("Asia/Bangkok")));
+        String formattedString = "";
 
         if(duration) {
 
@@ -244,29 +243,25 @@ public class CheckedoutReservationAdapter extends RecyclerView.Adapter<Checkedou
 
             }
 
-            //TODO: some are 10 minutes off, something wrong with period.
-            //Replace with:
+            DateTime pickUpDate = new DateTime(date2, DateTimeZone.forTimeZone(TimeZone.getTimeZone("Asia/Bangkok")));
 
-//            int daysBetween = Days.daysBetween(formatDateTime, localDateTime).getDays();
-//            formattedString += formattedString + "" + daysBetween + " days ";
-//            formatDateTime = formatDateTime.plusDays(daysBetween);
-//
-//            int hoursBetween = Hours.hoursBetween(formatDateTime, localDateTime).getHours();
-//            formattedString += hoursBetween + " hours ";
-//            formatDateTime = formatDateTime.plusHours(hoursBetween);
-//
-//            int minutesBetween = Minutes.minutesBetween(formatDateTime, localDateTime).getMinutes();
-//            formattedString += minutesBetween + " minutes";
-            DateTime localDateTime = new DateTime(date2);
+            Log.e("Actual Return: ", actualReturnDate.toString());
+            Log.e("Pick Up: ", pickUpDate.toString());
 
-            Period differencePeriod = new Period(formatDateTime, localDateTime);
+            int daysBetween = Days.daysBetween(pickUpDate, actualReturnDate).getDays();
+            formattedString += formattedString + "" + daysBetween + " days ";
+            pickUpDate = pickUpDate.plusDays(daysBetween);
 
-            formattedString = "" + Math.abs(differencePeriod.getDays()) + "days " + Math.abs(differencePeriod.getHours()) + "hours " +
-                    Math.abs(differencePeriod.getMinutes()) + "minutes";
+            int hoursBetween = Hours.hoursBetween(pickUpDate, actualReturnDate).getHours();
+            formattedString += hoursBetween + " hours ";
+            pickUpDate = pickUpDate.plusHours(hoursBetween);
+
+            int minutesBetween = Minutes.minutesBetween(pickUpDate, actualReturnDate).getMinutes();
+            formattedString += minutesBetween + " minutes";
 
         } else {
 
-            formattedString = formatDateTime.toString("dd MMM yyyy HH:mm");
+            formattedString = actualReturnDate.toString("dd MMM yyyy HH:mm");
 
         }
 

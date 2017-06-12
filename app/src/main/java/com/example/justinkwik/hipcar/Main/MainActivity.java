@@ -29,6 +29,7 @@ import com.example.justinkwik.hipcar.Login.LoginActivity;
 import com.example.justinkwik.hipcar.Login.UserCredentials;
 import com.example.justinkwik.hipcar.Main.Reservation.CheckoutReservationClasses.CheckedoutReservationFragment;
 import com.example.justinkwik.hipcar.Main.Reservation.OnGoingFragmentClasses.OnGoingReservationFragment;
+import com.example.justinkwik.hipcar.Main.Vehicle.VehicleClasses.VehicleFragment;
 import com.example.justinkwik.hipcar.R;
 
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
@@ -335,7 +336,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 case 12:
                     return new PlaceHolderFragment();
                 case 14:
-                    return new PlaceHolderFragment();
+                    return new VehicleFragment();
                 case 15:
                     return new PlaceHolderFragment();
                 case 16:
@@ -429,6 +430,11 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         vehicleTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                viewPager.setCurrentItem(14);
+                expandCollapseSubMenus(vehicleSubMenuLayout);
+                mainActivityTitle.setText("Vehicle");
+                closeDrawer();
 
             }
         });

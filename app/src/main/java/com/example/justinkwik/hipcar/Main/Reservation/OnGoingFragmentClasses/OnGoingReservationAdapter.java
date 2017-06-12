@@ -245,7 +245,7 @@ public class OnGoingReservationAdapter extends RecyclerView.Adapter<OnGoingReser
 
         }
 
-        DateTime formatDateTime = new DateTime(date, DateTimeZone.forTimeZone(TimeZone.getTimeZone("Asia/Bangkok")));
+        DateTime actualReturnDate = new DateTime(date, DateTimeZone.forTimeZone(TimeZone.getTimeZone("Asia/Bangkok")));
         String formattedString = "";
 
         if(duration) {
@@ -253,28 +253,21 @@ public class OnGoingReservationAdapter extends RecyclerView.Adapter<OnGoingReser
             //TODO: need to change this to LocalDateTime because depends on where they rented from.
             DateTime localDateTime = new DateTime(DateTimeZone.forTimeZone(TimeZone.getTimeZone("Asia/Bangkok")));
 
-//            Period differencePeriod = new Period(formatDateTime, localDateTime, PeriodType.days());
-
-//            formattedString = "" + differencePeriod.getDays() + "days " + differencePeriod.getHours() + "hours " +
-//                    differencePeriod.getMinutes() + "minutes";
-
-            //Returning time but not adding the days hours and minutes.
-
-            int daysBetween = Days.daysBetween(formatDateTime, localDateTime).getDays();
+            int daysBetween = Days.daysBetween(actualReturnDate, localDateTime).getDays();
             formattedString += formattedString + "" + daysBetween + " days ";
-            formatDateTime = formatDateTime.plusDays(daysBetween);
+            actualReturnDate = actualReturnDate.plusDays(daysBetween);
 
-            int hoursBetween = Hours.hoursBetween(formatDateTime, localDateTime).getHours();
+            int hoursBetween = Hours.hoursBetween(actualReturnDate, localDateTime).getHours();
             formattedString += hoursBetween + " hours ";
-            formatDateTime = formatDateTime.plusHours(hoursBetween);
+            actualReturnDate = actualReturnDate.plusHours(hoursBetween);
 
-            int minutesBetween = Minutes.minutesBetween(formatDateTime, localDateTime).getMinutes();
+            int minutesBetween = Minutes.minutesBetween(actualReturnDate, localDateTime).getMinutes();
             formattedString += minutesBetween + " minutes";
 
 
         } else {
 
-            formattedString = formatDateTime.toString("dd MMM yyyy HH:mm");
+            formattedString = actualReturnDate.toString("dd MMM yyyy HH:mm");
 
         }
 
