@@ -11,7 +11,7 @@ import com.google.gson.annotations.SerializedName;
  */
 public class CheckedOutReservation {
 
-    public CheckedOutReservation(int id, String full_name, String email, String contact_number, String pickup_address, String pickup_date, String return_date, int total_amount, int payment_type, int payment_status, String actual_pickup_date, String actual_return_date, String i_token, String i_session_key, int owed_amount, Float pickup_km, Float return_km, int excess_km_charge, Float total_free_km, Float km_limit, Float km_nominal, boolean is_owner, String vehicle_rates, String created, String updated, String deleted, int user_id, int vehicle_id, int pickup_station_id, int return_station_id, User user, ReturnStation return_station, PickupStation pickup_station, Vehicle vehicle) {
+    public CheckedOutReservation(int id, String full_name, String email, String contact_number, String pickup_address, String pickup_date, String return_date, long total_amount, int payment_type, int payment_status, String actual_pickup_date, String actual_return_date, String i_token, String i_session_key, int owed_amount, Float pickup_km, Float return_km, int excess_km_charge, Float total_free_km, Float km_limit, Float km_nominal, boolean is_owner, String vehicle_rates, String created, String updated, String deleted, int user_id, int vehicle_id, int pickup_station_id, int return_station_id, User user, ReturnStation return_station, PickupStation pickup_station, Vehicle vehicle) {
         this.id = id;
         this.full_name = full_name;
         this.email = email;
@@ -72,7 +72,7 @@ public class CheckedOutReservation {
     private String return_date;
 
     @SerializedName("total_amount")
-    private int total_amount;
+    private long total_amount;
 
     @SerializedName("payment_type")
     private int payment_type;
@@ -186,7 +186,7 @@ public class CheckedOutReservation {
         return return_date;
     }
 
-    public int getTotal_amount() {
+    public long getTotal_amount() {
         return total_amount;
     }
 
@@ -322,7 +322,7 @@ public class CheckedOutReservation {
         this.return_date = return_date;
     }
 
-    public void setTotal_amount(int total_amount) {
+    public void setTotal_amount(long total_amount) {
         this.total_amount = total_amount;
     }
 

@@ -431,7 +431,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             @Override
             public void onClick(View v) {
 
-                viewPager.setCurrentItem(14);
+                viewPager.setCurrentItem(14, false);
                 expandCollapseSubMenus(vehicleSubMenuLayout);
                 mainActivityTitle.setText("Vehicle");
                 closeDrawer();

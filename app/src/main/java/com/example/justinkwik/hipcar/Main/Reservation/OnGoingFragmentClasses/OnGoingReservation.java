@@ -13,7 +13,7 @@ import com.google.gson.annotations.SerializedName;
  */
 public class OnGoingReservation {
 
-    public OnGoingReservation(int id, String full_name, String email, String contact_number, String pickup_address, String pickup_date, String return_date, int total_amount, int payment_status, String actual_pickup_date, String actual_return_date, String i_token, String i_session_key, int owed_amount, Float pickup_km, Float return_km, int excess_km_charge, Float total_free_km, Float km_limit, Float km_nominal, boolean is_owner, VehicleRates[] vehicle_rates, String created, String updated, String deleted, int user_id, int vehicle_id, int pickup_station_id, int return_station_id, User user, ReturnStation return_station, PickupStation pickup_station, Vehicle vehicle, int total_nominal, int total_basic_price, Float total_used_km, int total_excess_km_charge, int total_price, Prices[] prices) {
+    public OnGoingReservation(int id, String full_name, String email, String contact_number, String pickup_address, String pickup_date, String return_date, int total_amount, int payment_status, String actual_pickup_date, String actual_return_date, String i_token, String i_session_key, int owed_amount, Float pickup_km, Float return_km, int excess_km_charge, Float total_free_km, Float km_limit, Float km_nominal, boolean is_owner, VehicleRates[] vehicle_rates, String created, String updated, String deleted, int user_id, int vehicle_id, int pickup_station_id, int return_station_id, User user, ReturnStation return_station, PickupStation pickup_station, Vehicle vehicle, int total_nominal, int total_basic_price, Float total_used_km, int total_excess_km_charge, long total_price, Prices[] prices) {
         this.id = id;
         this.full_name = full_name;
         this.email = email;
@@ -169,7 +169,7 @@ public class OnGoingReservation {
     private int total_excess_km_charge;
 
     @SerializedName("total_price")
-    private int total_price;
+    private long total_price;
 
     @SerializedName("prices")
     private Prices[] prices;
@@ -419,7 +419,7 @@ public class OnGoingReservation {
         return total_excess_km_charge;
     }
 
-    public int getTotal_price() {
+    public long getTotal_price() {
         return total_price;
     }
 
@@ -575,7 +575,7 @@ public class OnGoingReservation {
         this.total_excess_km_charge = total_excess_km_charge;
     }
 
-    public void setTotal_price(int total_price) {
+    public void setTotal_price(long total_price) {
         this.total_price = total_price;
     }
 

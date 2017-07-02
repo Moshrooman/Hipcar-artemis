@@ -8,6 +8,9 @@ import android.view.ViewGroup;
 
 import com.example.justinkwik.hipcar.R;
 
+//TODO: start copying everything from the ongoing classes becaue the view also brings up a popup of the map and stuff.\
+//TODO: for the api link its https://artemis-api-dev.hipcar.com/vehicle header as token, and params "scope" and enter includeModelAndMake,includeStation,includeVehicleRates
+
 public class VehicleFragment extends Fragment {
 
 
