@@ -15,9 +15,22 @@ import android.widget.TableLayout;
 import android.widget.TextView;
 
 import com.airbnb.lottie.LottieAnimationView;
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.example.justinkwik.hipcar.ConnectionManager;
 import com.example.justinkwik.hipcar.ExpandAnimation.ExpandAnimation;
+import com.example.justinkwik.hipcar.Login.LoginActivity;
+import com.example.justinkwik.hipcar.Login.UserCredentials;
+import com.example.justinkwik.hipcar.Main.Reservation.ParseClassesReservation.Response.SuccessResponse;
 import com.example.justinkwik.hipcar.Main.Vehicle.VehicleClasses.ParseClassesVehicle.Vehicle;
 import com.example.justinkwik.hipcar.R;
+import com.example.justinkwik.hipcar.Splash.SplashActivity;
+import com.github.johnpersano.supertoasts.library.Style;
+import com.github.johnpersano.supertoasts.library.SuperToast;
+import com.google.gson.Gson;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -26,6 +39,8 @@ import org.joda.time.Hours;
 import org.joda.time.Minutes;
 
 import java.text.DecimalFormat;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.TimeZone;
 
 import uk.co.chrisjenx.calligraphy.CalligraphyTypefaceSpan;
@@ -36,9 +51,11 @@ import uk.co.chrisjenx.calligraphy.TypefaceUtils;
  */
 public class VehicleAdapter extends RecyclerView.Adapter<VehicleAdapter.VehicleViewHolder> {
 
-    //TODO: still need to handle click for the activate and deactivate.
+    //TODO: need to create a confirmation pop-up screen for the activate and deactivate vehicle.
+    //TODO: need to scroll to the bottom of the drawer view when expanding vehicle.
 
-    //For StringRequests, new Intents, etc.
+    private static final String activateVehicleLink = "https://artemis-api-dev.hipcar.com/vehicle/:id/activate";
+    private static final String deactivateVehicleLink = "https://artemis-api-dev.hipcar.com/vehicle/:id/deactivate";
     private Context context;
     private Vehicle[] vehicles;
     private DecimalFormat decimalFormat;
@@ -46,6 +63,8 @@ public class VehicleAdapter extends RecyclerView.Adapter<VehicleAdapter.VehicleV
     private CalligraphyTypefaceSpan Exo2Regular;
     private VehicleStatusInterface vehicleStatusInterface;
     private static boolean expandedOne = false;
+    private UserCredentials userCredentials;
+    private Gson gson;
 
     public VehicleAdapter(Context context, Vehicle[] vehicles, VehicleStatusInterface vehicleStatusInterface) {
 
@@ -53,6 +72,8 @@ public class VehicleAdapter extends RecyclerView.Adapter<VehicleAdapter.VehicleV
         this.vehicles = vehicles;
         this.decimalFormat = new DecimalFormat();
         this.vehicleStatusInterface = vehicleStatusInterface;
+        this.userCredentials = LoginActivity.getUserCredentials();
+        this.gson = new Gson();
 
         Exo2Bold = new CalligraphyTypefaceSpan(TypefaceUtils.load(this.context.getAssets(), "fonts/Exo2-Bold.ttf"));
         Exo2Regular = new CalligraphyTypefaceSpan(TypefaceUtils.load(this.context.getAssets(), "fonts/Exo2-Regular.ttf"));
@@ -117,7 +138,7 @@ public class VehicleAdapter extends RecyclerView.Adapter<VehicleAdapter.VehicleV
         setExpandIndicatorClickListener(holder.lineToX, holder.xToLine, holder.vehiclesTableLayout,
                 holder.expandableVehicles, vehicle);
 
-        setViewActionButtonClickListener(holder.vehiclesViewActionButton, vehicle, position);
+        setViewActionButtonClickListener(holder.vehiclesViewActionButton, vehicle, position, holder.vehiclesActivateButton, holder.vehiclesDeactivateButton);
 
     }
 
@@ -236,7 +257,7 @@ public class VehicleAdapter extends RecyclerView.Adapter<VehicleAdapter.VehicleV
 
     }
 
-    private void setViewActionButtonClickListener(Button viewActionButton, final Vehicle vehicle, final int position) {
+    private void setViewActionButtonClickListener(Button viewActionButton, final Vehicle vehicle, final int position, final Button activateActionButton, final Button deactivateActionButton) {
 
         viewActionButton.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -263,6 +284,132 @@ public class VehicleAdapter extends RecyclerView.Adapter<VehicleAdapter.VehicleV
 
                 vehicleStatusInterface.showVehicleStatusPopup(vehicle, position);
 
+            }
+        });
+
+        activateActionButton.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+
+                    v.setBackgroundResource(R.drawable.greenactionviewbuttonpressed);
+
+                } else {
+
+                    v.setBackgroundResource(R.drawable.greenactionviewbutton);
+
+                }
+
+                return false;
+            }
+        });
+
+        activateActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                activateActionButton.setBackgroundResource(R.drawable.disabledactionviewbutton);
+                activateActionButton.setEnabled(false);
+                deactivateActionButton.setBackgroundResource(R.drawable.disabledactionviewbutton);
+                deactivateActionButton.setEnabled(false);
+
+                StringRequest activateVehicleStringRequest = new StringRequest(Request.Method.PUT, activateVehicleLink.replace(":id",
+                        String.valueOf(vehicle.getId())), new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        SuccessResponse responseString = gson.fromJson(response, SuccessResponse.class);
+
+                        SuperToast superToast = SuperToast.create(context, responseString.getMessage(), Style.DURATION_SHORT,
+                                Style.green()).setAnimations(Style.ANIMATIONS_POP);
+                        superToast.show();
+
+                        activateActionButton.setBackgroundResource(R.drawable.greenactionviewbutton);
+                        activateActionButton.setEnabled(true);
+                        deactivateActionButton.setBackgroundResource(R.drawable.redactionviewbutton);
+                        deactivateActionButton.setEnabled(true);
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                    }
+                }) {
+
+                    @Override
+                    public Map<String, String> getHeaders() throws AuthFailureError {
+                        Map<String, String> headerMap = new HashMap<String, String>();
+                        headerMap.put("token", userCredentials.getToken());
+
+                        return headerMap;
+                    }
+
+
+                };
+
+                ConnectionManager.getInstance(context).add(activateVehicleStringRequest);
+
+            }
+        });
+
+        deactivateActionButton.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+
+                    v.setBackgroundResource(R.drawable.redactionviewbuttonpressed);
+
+                } else {
+
+                    v.setBackgroundResource(R.drawable.redactionviewbutton);
+
+                }
+
+                return false;
+            }
+        });
+
+        deactivateActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                activateActionButton.setBackgroundResource(R.drawable.disabledactionviewbutton);
+                activateActionButton.setEnabled(false);
+                deactivateActionButton.setBackgroundResource(R.drawable.disabledactionviewbutton);
+                deactivateActionButton.setEnabled(false);
+
+                StringRequest deactivateVehicleStringRequest = new StringRequest(Request.Method.PUT, deactivateVehicleLink.replace(":id",
+                        String.valueOf(vehicle.getId())), new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        SuccessResponse responseString = gson.fromJson(response, SuccessResponse.class);
+
+                        SuperToast superToast = SuperToast.create(context, responseString.getMessage(), Style.DURATION_SHORT,
+                                Style.green()).setAnimations(Style.ANIMATIONS_POP);
+                        superToast.show();
+
+                        activateActionButton.setBackgroundResource(R.drawable.greenactionviewbutton);
+                        activateActionButton.setEnabled(true);
+                        deactivateActionButton.setBackgroundResource(R.drawable.redactionviewbutton);
+                        deactivateActionButton.setEnabled(true);
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                    }
+                }) {
+
+                    @Override
+                    public Map<String, String> getHeaders() throws AuthFailureError {
+                        Map<String, String> headerMap = new HashMap<String, String>();
+                        headerMap.put("token", userCredentials.getToken());
+
+                        return headerMap;
+                    }
+
+
+                };
+
+                ConnectionManager.getInstance(context).add(deactivateVehicleStringRequest);
             }
         });
 
