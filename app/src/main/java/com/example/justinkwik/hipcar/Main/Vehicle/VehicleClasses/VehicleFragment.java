@@ -9,6 +9,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -33,8 +34,6 @@ import com.android.volley.toolbox.StringRequest;
 import com.example.justinkwik.hipcar.ConnectionManager;
 import com.example.justinkwik.hipcar.Login.LoginActivity;
 import com.example.justinkwik.hipcar.Login.UserCredentials;
-import com.example.justinkwik.hipcar.Main.Reservation.OnGoingFragmentClasses.OnGoingReservation;
-import com.example.justinkwik.hipcar.Main.Reservation.OnGoingFragmentClasses.OnGoingReservationAdapter;
 import com.example.justinkwik.hipcar.Main.Reservation.ParseClassesReservation.Response.SuccessResponse;
 import com.example.justinkwik.hipcar.Main.Reservation.ParseClassesReservation.VehicleStatus.VehicleStatus;
 import com.example.justinkwik.hipcar.Main.Vehicle.VehicleClasses.ParseClassesVehicle.Vehicle;
@@ -51,6 +50,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import java.text.DecimalFormat;
 import java.util.HashMap;
@@ -65,7 +65,7 @@ import in.srain.cube.views.ptr.header.StoreHouseHeader;
 
 public class VehicleFragment extends Fragment implements VehicleAdapter.VehicleStatusInterface{
 
-    private final String vehicleLink = "https://artemis-api-dev.hipcar.com/vehicle";
+    private final String vehicleLink = "https://artemis-api-dev.hipcar.com/vehicle?scope=includeModelAndMake,includeStation,includeVehicleRates";
     private final String vehicleActionLink = "https://artemis-api-dev.hipcar.com/vehicle/:id/";
     private int red;
     private int black;
@@ -731,38 +731,36 @@ public class VehicleFragment extends Fragment implements VehicleAdapter.VehicleS
 
             } else {
 
-                layoutView = inflater.inflate(R.layout.fragment_information, null);
+                layoutView = inflater.inflate(R.layout.fragment_vehicle_information, null);
 
                 //Instantiate and assign all values in here so variables aren't created for both views.
                 DecimalFormat decimalFormat = new DecimalFormat();
-                TextView informationNameTextView = (TextView) layoutView.findViewById(R.id.informationNameTextView);
-                TextView informationContactNumberTextView = (TextView) layoutView.findViewById(R.id.informationContactNumberTextView);
-                TextView informationEmailTextView = (TextView) layoutView.findViewById(R.id.informationEmailTextView);
-                TextView informationDurationTextView = (TextView) layoutView.findViewById(R.id.informationDurationTextView);
-                TextView informationBalanceTextView = (TextView) layoutView.findViewById(R.id.informationBalanceTextView);
-                TextView informationPriceEstimateTextView = (TextView) layoutView.findViewById(R.id.informationPriceEstimateTextView);
-                TextView informationPlateNumberTextView = (TextView) layoutView.findViewById(R.id.informationPlateNumberTextView);
-                TextView informationImmobilizerTextView = (TextView) layoutView.findViewById(R.id.informationImmobilizerTextView);
-                TextView informationIgnitionTextView = (TextView) layoutView.findViewById(R.id.informationIgnitionTextView);
-                TextView informationCentralLockTextView = (TextView) layoutView.findViewById(R.id.informationCentralLockTextView);
-                TextView informationMileageTextView = (TextView) layoutView.findViewById(R.id.informationMileageTextView);
-                TextView informationSpeedTextView = (TextView) layoutView.findViewById(R.id.informationSpeedTextView);
+                TextView vehiclesInformationPlateNumberTextView = (TextView) layoutView.findViewById(R.id.vehiclesInformationPlateNumberTextView);
+                TextView vehiclesInformationVehicleModelTextView = (TextView) layoutView.findViewById(R.id.vehiclesInformationVehicleModelTextView);
+                TextView vehiclesInformationStationTextView = (TextView) layoutView.findViewById(R.id.vehiclesInformationStationTextView);
+                TextView vehiclesInformationCapacityTextView = (TextView) layoutView.findViewById(R.id.vehiclesInformationCapacityTextView);
+                TextView vehiclesInformationColorTextView = (TextView) layoutView.findViewById(R.id.vehiclesInformationColorTextView);
+                TextView vehiclesInformationYearTextView = (TextView) layoutView.findViewById(R.id.vehiclesInformationYearTextView);
+                TextView vehiclesInformationExcessKmChargeTextView = (TextView) layoutView.findViewById(R.id.vehiclesInformationExcessKmChargeTextView);
+                TextView vehiclesInformationRegistrationExpireTextView = (TextView) layoutView.findViewById(R.id.vehiclesInformationRegistrationExpireTextView);
+                TextView vehiclesInformationImmobilizerTextView = (TextView) layoutView.findViewById(R.id.vehiclesInformationImmobilizerTextView);
+                TextView vehiclesInformationIgnitionTextView = (TextView) layoutView.findViewById(R.id.vehiclesInformationIgnitionTextView);
+                TextView vehiclesInformationCentralLockTextView = (TextView) layoutView.findViewById(R.id.vehiclesInformationCentralLockTextView);
+                TextView vehiclesInformationMileageTextView = (TextView) layoutView.findViewById(R.id.vehiclesInformationMileageTextView);
 
-                informationNameTextView.setText(vehicle.getFull_name());
-                informationContactNumberTextView.setText(vehicle.getContact_number());
-                informationEmailTextView.setText(vehicle.getEmail());
-                informationDurationTextView.setText(new OnGoingReservationAdapter().formatDateString(
-                        vehicle.getReturn_date(), true));
-                informationBalanceTextView.setText("Rp. " +
-                        String.valueOf(decimalFormat.format(vehicle.getUser().getBalance())));
-                informationPriceEstimateTextView.setText("Rp. " +
-                        String.valueOf(decimalFormat.format(vehicle.getTotal_price())));
-                informationPlateNumberTextView.setText(vehicle.getVehicle().getPlate_number());
-                informationImmobilizerTextView.setText(vehicleStatus.getImmobilizer());
-                informationIgnitionTextView.setText(vehicleStatus.getIgnition());
-                informationCentralLockTextView.setText(vehicleStatus.getCentral_lock());
-                informationMileageTextView.setText(String.valueOf(vehicleStatus.getMileage()));
-                informationSpeedTextView.setText(String.valueOf(vehicleStatus.getPosition().getSpeed_over_ground()));
+
+                vehiclesInformationPlateNumberTextView.setText(vehicle.getPlate_number());
+                vehiclesInformationVehicleModelTextView.setText(vehicle.getVehicle_model().getName());
+                vehiclesInformationStationTextView.setText(vehicle.getStation().getName());
+                vehiclesInformationCapacityTextView.setText(vehicle.getCapacity());
+                vehiclesInformationColorTextView.setText(vehicle.getColor());
+                vehiclesInformationYearTextView.setText(vehicle.getYear());
+                vehiclesInformationExcessKmChargeTextView.setText(vehicle.getExcess_km_charge());
+                vehiclesInformationRegistrationExpireTextView.setText(vehicle.getRegistration_expire());
+                vehiclesInformationImmobilizerTextView.setText(vehicleStatus.getImmobilizer());
+                vehiclesInformationIgnitionTextView.setText(vehicleStatus.getIgnition());
+                vehiclesInformationCentralLockTextView.setText(vehicleStatus.getCentral_lock());
+                vehiclesInformationMileageTextView.setText(String.valueOf(vehicleStatus.getMileage()));
 
             }
 

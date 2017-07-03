@@ -1,5 +1,6 @@
 package com.example.justinkwik.hipcar.ExpandAnimation;
 
+import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.Transformation;
@@ -33,6 +34,13 @@ public class ExpandAnimation extends Animation {
         mMarginEnd = (mMarginStart == 0 ? (0- view.getHeight()) : 0);
 
         view.setVisibility(View.VISIBLE);
+
+    }
+
+    public void setUpCollapseSubMenus(boolean collapseOrExpand) {
+
+        mIsVisibleAfter = collapseOrExpand;
+
     }
 
     @Override

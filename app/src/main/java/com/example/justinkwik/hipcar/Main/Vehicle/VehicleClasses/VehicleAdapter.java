@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -44,6 +45,7 @@ public class VehicleAdapter extends RecyclerView.Adapter<VehicleAdapter.VehicleV
     private CalligraphyTypefaceSpan Exo2Bold;
     private CalligraphyTypefaceSpan Exo2Regular;
     private VehicleStatusInterface vehicleStatusInterface;
+    private static boolean expandedOne = false;
 
     public VehicleAdapter(Context context, Vehicle[] vehicles, VehicleStatusInterface vehicleStatusInterface) {
 
@@ -70,11 +72,39 @@ public class VehicleAdapter extends RecyclerView.Adapter<VehicleAdapter.VehicleV
     @Override
     public void onBindViewHolder(final VehicleViewHolder holder, int position) {
 
-        com.example.justinkwik.hipcar.Main.Vehicle.VehicleClasses.ParseClassesVehicle.Vehicle vehicle = vehicles[position];
+        Vehicle vehicle = vehicles[position];
 
-        holder.vehiclesIdTextView.setText(vehicle.getId());
+        ViewGroup.MarginLayoutParams mp = (ViewGroup.MarginLayoutParams) holder.expandableVehicles.getLayoutParams();
+
+        Log.e(String.valueOf(position), String.valueOf(holder.lineToX.getVisibility() == View.VISIBLE));
+
+        if (vehicle.getExpanded() == false && mp.bottomMargin == 0) {
+
+            holder.lineToX.setVisibility(View.VISIBLE);
+            holder.xToLine.setVisibility(View.INVISIBLE);
+
+            ExpandAnimation collapseAnimation = new ExpandAnimation(holder.expandableVehicles, 0);
+            collapseAnimation.setUpCollapseSubMenus(true);
+            holder.expandableVehicles.startAnimation(collapseAnimation);
+
+            mp.setMargins(0, 0, 0, -holder.expandableVehicles.getHeight());
+
+        } else if (vehicle.getExpanded() == true && mp.bottomMargin != 0) {
+
+            holder.lineToX.setVisibility(View.INVISIBLE);
+            holder.xToLine.setVisibility(View.VISIBLE);
+
+            ExpandAnimation collapseAnimation = new ExpandAnimation(holder.expandableVehicles, 0);
+            collapseAnimation.setUpCollapseSubMenus(false);
+            holder.expandableVehicles.startAnimation(collapseAnimation);
+
+            mp.setMargins(0, 0, 0, 0);
+
+        }
+
+        holder.vehiclesIdTextView.setText(String.valueOf(vehicle.getId()));
         holder.vehiclesPlateNumberTextView.setText(vehicle.getPlate_number());
-        holder.vehiclesStationTextView.setText(vehicle.getStation());
+        holder.vehiclesStationTextView.setText(vehicle.getStation().getName());
         holder.vehiclesVehicleModelTextView.setText(vehicle.getVehicle_model().getName());
 
         setSplitTextViewFonts("Capacity", String.valueOf(vehicle.getCapacity()), holder.vehiclesCapacityTextView);
@@ -177,6 +207,8 @@ public class VehicleAdapter extends RecyclerView.Adapter<VehicleAdapter.VehicleV
 
                 expandCollapseSubMenus(expandableVehicles);
 
+                expandedOne = true;
+
             }
         });
 
@@ -199,45 +231,8 @@ public class VehicleAdapter extends RecyclerView.Adapter<VehicleAdapter.VehicleV
     private void expandCollapseSubMenus(View view) {
 
         ExpandAnimation expandAnimation = new ExpandAnimation(view, 390);
+
         view.startAnimation(expandAnimation);
-
-    }
-
-    public String formatDateString(String date, boolean duration) {
-
-        if(date.equals("-")) {
-
-            return date;
-
-        }
-
-        DateTime actualReturnDate = new DateTime(date, DateTimeZone.forTimeZone(TimeZone.getTimeZone("Asia/Bangkok")));
-        String formattedString = "";
-
-        if(duration) {
-
-            //TODO: need to change this to LocalDateTime because depends on where they rented from.
-            DateTime localDateTime = new DateTime(DateTimeZone.forTimeZone(TimeZone.getTimeZone("Asia/Bangkok")));
-
-            int daysBetween = Days.daysBetween(actualReturnDate, localDateTime).getDays();
-            formattedString += formattedString + "" + daysBetween + " days ";
-            actualReturnDate = actualReturnDate.plusDays(daysBetween);
-
-            int hoursBetween = Hours.hoursBetween(actualReturnDate, localDateTime).getHours();
-            formattedString += hoursBetween + " hours ";
-            actualReturnDate = actualReturnDate.plusHours(hoursBetween);
-
-            int minutesBetween = Minutes.minutesBetween(actualReturnDate, localDateTime).getMinutes();
-            formattedString += minutesBetween + " minutes";
-
-
-        } else {
-
-            formattedString = actualReturnDate.toString("dd MMM yyyy HH:mm");
-
-        }
-
-        return formattedString;
 
     }
 

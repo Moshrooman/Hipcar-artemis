@@ -1,5 +1,6 @@
 package com.example.justinkwik.hipcar.Main.Vehicle.VehicleClasses.ParseClassesVehicle;
 
+import com.example.justinkwik.hipcar.Main.Reservation.ParseClassesReservation.Station.PickupStation;
 import com.example.justinkwik.hipcar.Main.Reservation.ParseClassesReservation.Vehicle.VehicleModel;
 import com.example.justinkwik.hipcar.Main.Reservation.ParseClassesReservation.Vehicle.VehicleRates;
 import com.google.gson.annotations.SerializedName;
@@ -9,7 +10,7 @@ import com.google.gson.annotations.SerializedName;
  */
 public class Vehicle {
 
-    public Vehicle(int id, String plate_number, String color, int year, int capacity, boolean is_active, String transmission, String qnr, int excess_km_charge, String registration_expire, String created, String updated, String deleted, int partner_id, int station_id, int model_id, VehicleModel vehicle_model, VehicleRates vehicle_rates, String station) {
+    public Vehicle(int id, String plate_number, String color, int year, int capacity, boolean is_active, String transmission, String qnr, int excess_km_charge, String registration_expire, String created, String updated, String deleted, int partner_id, int station_id, int model_id, VehicleModel vehicle_model, VehicleRates[] vehicle_rates, PickupStation station) {
         this.id = id;
         this.plate_number = plate_number;
         this.color = color;
@@ -82,10 +83,10 @@ public class Vehicle {
     private int model_id;
 
     @SerializedName("vehicle_rates")
-    private VehicleRates vehicle_rates;
+    private VehicleRates[] vehicle_rates;
 
     @SerializedName("station")
-    private String station;
+    private PickupStation station;
 
     @SerializedName("vehicle_model")
     private VehicleModel vehicle_model;
@@ -117,6 +118,7 @@ public class Vehicle {
     }
 
     public int getYear() {
+
         return year;
     }
 
@@ -129,7 +131,21 @@ public class Vehicle {
     }
 
     public String getTransmission() {
-        return transmission;
+
+        if(transmission == null) {
+
+            return "-";
+
+        } else if (transmission.equals("0")) {
+
+            return "Automatic";
+
+        } else {
+
+            return "Manual";
+
+        }
+
     }
 
     public String getQnr() {
@@ -148,6 +164,13 @@ public class Vehicle {
     }
 
     public String getRegistration_expire() {
+
+        if(registration_expire == null) {
+
+            return "-";
+
+        }
+
         return registration_expire;
     }
 
@@ -184,11 +207,16 @@ public class Vehicle {
         return deleted;
     }
 
-    public VehicleRates getVehicle_rates() {
+    public VehicleRates[] getVehicle_rates() {
         return vehicle_rates;
     }
 
-    public String getStation() {
+    public PickupStation getStation() {
+
+        if(station == null) {
+            return new PickupStation(0, "-", "-", "-", "-", false, "-", "-", "-");
+        }
+
         return station;
     }
 
@@ -282,11 +310,11 @@ public class Vehicle {
         this.vehicle_model = vehicle_model;
     }
 
-    public void setVehicle_rates(VehicleRates vehicle_rates) {
+    public void setVehicle_rates(VehicleRates[] vehicle_rates) {
         this.vehicle_rates = vehicle_rates;
     }
 
-    public void setStation(String station) {
+    public void setStation(PickupStation station) {
         this.station = station;
     }
 

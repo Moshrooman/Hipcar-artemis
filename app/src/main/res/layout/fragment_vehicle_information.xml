@@ -1,0 +1,322 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="335dp"
+    android:paddingLeft="20dp"
+    android:paddingStart="20dp"
+    android:paddingRight="20dp"
+    android:paddingEnd="20dp"
+    >
+
+    <TableLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:shrinkColumns="*"
+        android:stretchColumns="1"
+        android:layout_gravity="center"
+        >
+
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="27.5dp"
+                android:textSize="15dp"
+                android:gravity="left|center_vertical"
+                android:text="Plate Number: "
+                fontPath="fonts/Exo2-Bold.ttf"
+                />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="27.5dp"
+                android:textSize="15dp"
+                android:gravity="right|center_vertical"
+                fontPath="fonts/Exo2-Regular.ttf"
+                android:id="@+id/vehiclesInformationPlateNumberTextView"
+                />
+
+        </TableRow>
+
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="27.5dp"
+                android:textSize="15dp"
+                android:gravity="left|center_vertical"
+                android:text="Vehicle Model: "
+                fontPath="fonts/Exo2-Bold.ttf"
+                />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="27.5dp"
+                android:textSize="15dp"
+                android:gravity="right|center_vertical"
+                fontPath="fonts/Exo2-Regular.ttf"
+                android:id="@+id/vehiclesInformationVehicleModelTextView"
+                />
+
+        </TableRow>
+
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="27.5dp"
+                android:textSize="15dp"
+                android:gravity="left|center_vertical"
+                android:text="Station: "
+                fontPath="fonts/Exo2-Bold.ttf"
+                />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="27.5dp"
+                android:textSize="15dp"
+                android:gravity="right|center_vertical"
+                fontPath="fonts/Exo2-Regular.ttf"
+                android:id="@+id/vehiclesInformationStationTextView"
+                />
+
+        </TableRow>
+
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="27.5dp"
+                android:textSize="15dp"
+                android:gravity="left|center_vertical"
+                android:text="Capacity: "
+                fontPath="fonts/Exo2-Bold.ttf"
+                />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="27.5dp"
+                android:textSize="15dp"
+                android:gravity="right|center_vertical"
+                fontPath="fonts/Exo2-Regular.ttf"
+                android:id="@+id/vehiclesInformationCapacityTextView"
+                />
+
+        </TableRow>
+
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="27.5dp"
+                android:textSize="15dp"
+                android:gravity="left|center_vertical"
+                android:text="Color: "
+                fontPath="fonts/Exo2-Bold.ttf"
+                />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="27.5dp"
+                android:textSize="15dp"
+                android:gravity="right|center_vertical"
+                fontPath="fonts/Exo2-Regular.ttf"
+                android:id="@+id/vehiclesInformationColorTextView"
+                />
+
+        </TableRow>
+
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="27.5dp"
+                android:textSize="15dp"
+                android:gravity="left|center_vertical"
+                android:text="Year: "
+                fontPath="fonts/Exo2-Bold.ttf"
+                />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="27.5dp"
+                android:textSize="15dp"
+                android:gravity="right|center_vertical"
+                fontPath="fonts/Exo2-Regular.ttf"
+                android:id="@+id/vehiclesInformationYearTextView"
+                />
+
+        </TableRow>
+
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="27.5dp"
+                android:textSize="15dp"
+                android:gravity="left|center_vertical"
+                android:text="Excess Km Charge: "
+                fontPath="fonts/Exo2-Bold.ttf"
+                />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="27.5dp"
+                android:textSize="15dp"
+                android:gravity="right|center_vertical"
+                fontPath="fonts/Exo2-Regular.ttf"
+                android:id="@+id/vehiclesInformationExcessKmChargeTextView"
+                />
+
+        </TableRow>
+
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="27.5dp"
+                android:textSize="15dp"
+                android:gravity="left|center_vertical"
+                android:text="Registration Expire: "
+                fontPath="fonts/Exo2-Bold.ttf"
+                />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="27.5dp"
+                android:textSize="15dp"
+                android:gravity="right|center_vertical"
+                fontPath="fonts/Exo2-Regular.ttf"
+                android:id="@+id/vehiclesInformationRegistrationExpireTextView"
+                />
+
+        </TableRow>
+
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="27.5dp"
+                android:textSize="15dp"
+                android:gravity="left|center_vertical"
+                android:text="Immobilizer: "
+                fontPath="fonts/Exo2-Bold.ttf"
+                />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="27.5dp"
+                android:textSize="15dp"
+                android:gravity="right|center_vertical"
+                fontPath="fonts/Exo2-Regular.ttf"
+                android:id="@+id/vehiclesInformationImmobilizerTextView"
+                />
+
+        </TableRow>
+
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="27.5dp"
+                android:textSize="15dp"
+                android:gravity="left|center_vertical"
+                android:text="Ignition: "
+                fontPath="fonts/Exo2-Bold.ttf"
+                />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="27.5dp"
+                android:textSize="15dp"
+                android:gravity="right|center_vertical"
+                fontPath="fonts/Exo2-Regular.ttf"
+                android:id="@+id/vehiclesInformationIgnitionTextView"
+                />
+
+        </TableRow>
+
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="27.5dp"
+                android:textSize="15dp"
+                android:gravity="left|center_vertical"
+                android:text="Central Lock: "
+                fontPath="fonts/Exo2-Bold.ttf"
+                />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="27.5dp"
+                android:textSize="15dp"
+                android:gravity="right|center_vertical"
+                fontPath="fonts/Exo2-Regular.ttf"
+                android:id="@+id/vehiclesInformationCentralLockTextView"
+                />
+
+        </TableRow>
+
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="27.5dp"
+                android:textSize="15dp"
+                android:gravity="left|center_vertical"
+                android:text="Mileage: "
+                fontPath="fonts/Exo2-Bold.ttf"
+                />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="27.5dp"
+                android:textSize="15dp"
+                android:gravity="right|center_vertical"
+                fontPath="fonts/Exo2-Regular.ttf"
+                android:id="@+id/vehiclesInformationMileageTextView"
+                />
+
+        </TableRow>
+
+    </TableLayout>
+
+</FrameLayout>
