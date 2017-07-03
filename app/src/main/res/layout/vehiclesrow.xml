@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <TableLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:shrinkColumns="*"
+        android:stretchColumns="*"
+        android:background="@drawable/ongoingreservationborder"
+        android:id="@+id/vehiclesTableLayout"
+        android:clickable="true"
+        >
+
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            >
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.05"
+                android:layout_gravity="center"
+                >
+
+                <com.airbnb.lottie.LottieAnimationView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:id="@+id/lineToX"
+                    app:lottie_fileName="Lottie/linetox.json"
+                    app:lottie_autoPlay="false"
+                    android:clickable="false"
+                    />
+
+                <com.airbnb.lottie.LottieAnimationView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:id="@+id/xToLine"
+                    app:lottie_fileName="Lottie/xtoline.json"
+                    app:lottie_autoPlay="false"
+                    android:clickable="false"
+                    android:visibility="invisible"
+                    />
+
+            </RelativeLayout>
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/vehiclesIdTextVIew"
+                android:textSize="12dp"
+                android:textColor="@color/black"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:layout_weight="0.2375"
+                fontPath="fonts/Exo2-Regular.ttf"
+                android:paddingTop="14dp"
+                android:paddingBottom="14dp"
+                />
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:id="@+id/vehiclesPlateNumberTextView"
+                android:textSize="12dp"
+                android:textColor="@color/black"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:minLines="2"
+                android:layout_weight="0.2375"
+                fontPath="fonts/Exo2-Regular.ttf"
+                android:paddingTop="14dp"
+                android:paddingBottom="14dp"
+                />
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:id="@+id/vehiclesStationTextView"
+                android:textSize="12dp"
+                android:textColor="@color/black"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:minLines="2"
+                android:layout_weight="0.2375"
+                fontPath="fonts/Exo2-Regular.ttf"
+                android:paddingTop="14dp"
+                android:paddingBottom="14dp"
+                />
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:id="@+id/vehiclesVehicleModelTextView"
+                android:textSize="12dp"
+                android:textColor="@color/black"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:minLines="2"
+                android:layout_weight="0.2375"
+                fontPath="fonts/Exo2-Regular.ttf"
+                android:paddingTop="14dp"
+                android:paddingBottom="14dp"
+                />
+
+        </TableRow>
+
+    </TableLayout>
+
+    <!-- Start of expandable layout -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/expandableVehicles"
+        android:background="@drawable/ongoingreservationborder"
+        android:visibility="gone"
+        android:layout_marginBottom="-150dp"
+        >
+
+        <TableLayout
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:shrinkColumns="*"
+            android:stretchColumns="*"
+            android:clickable="true"
+            >
+
+            <TableRow
+                android:layout_width="fill_parent"
+                android:layout_height="50dp"
+                >
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:id="@+id/vehiclesCapacityTextView"
+                    android:textSize="10dp"
+                    android:textColor="@color/black"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:layout_weight="0.25"
+                    fontPath="fonts/Exo2-Regular.ttf"
+                    android:paddingTop="14dp"
+                    android:paddingBottom="14dp"
+                    />
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:id="@+id/vehiclesTransmissionTextView"
+                    android:textSize="10dp"
+                    android:textColor="@color/black"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:minLines="2"
+                    android:layout_weight="0.25"
+                    fontPath="fonts/Exo2-Regular.ttf"
+                    android:paddingTop="14dp"
+                    android:paddingBottom="14dp"
+                    />
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:id="@+id/vehiclesExcessKmCharge"
+                    android:textSize="10dp"
+                    android:textColor="@color/black"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:minLines="2"
+                    android:layout_weight="0.25"
+                    fontPath="fonts/Exo2-Regular.ttf"
+                    android:paddingTop="14dp"
+                    android:paddingBottom="14dp"
+                    />
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:id="@+id/vehiclesYearTextView"
+                    android:textSize="10dp"
+                    android:textColor="@color/black"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:minLines="2"
+                    android:layout_weight="0.25"
+                    fontPath="fonts/Exo2-Regular.ttf"
+                    android:paddingTop="14dp"
+                    android:paddingBottom="14dp"
+                    />
+
+            </TableRow>
+
+            <TableRow
+                android:layout_width="fill_parent"
+                android:layout_height="50dp"
+                >
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:id="@+id/vehiclesColorTextView"
+                    android:textSize="10dp"
+                    android:textColor="@color/black"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:layout_weight="0.25"
+                    fontPath="fonts/Exo2-Regular.ttf"
+                    android:paddingTop="14dp"
+                    android:paddingBottom="14dp"
+                    />
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:id="@+id/vehiclesStatusTextView"
+                    android:textSize="10dp"
+                    android:textColor="@color/black"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:minLines="2"
+                    android:layout_weight="0.25"
+                    fontPath="fonts/Exo2-Regular.ttf"
+                    android:paddingTop="14dp"
+                    android:paddingBottom="14dp"
+                    />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:layout_weight="0.5"
+                    fontPath="fonts/Exo2-Regular.ttf"
+                    />
+
+            </TableRow>
+
+            <TableRow
+                android:layout_width="fill_parent"
+                android:layout_height="50dp"
+                >
+
+                <Button
+                    android:layout_width="0dp"
+                    android:layout_height="fill_parent"
+                    android:layout_weight="0.33"
+                    android:layout_marginRight="5dp"
+                    android:layout_marginEnd="5dp"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginStart="5dp"
+                    android:background="@drawable/blueactionviewbutton"
+                    android:textColor="@color/white"
+                    android:text="View"
+                    android:id="@+id/vehiclesViewActionButton"
+                    />
+
+                <Button
+                    android:layout_width="0dp"
+                    android:layout_height="fill_parent"
+                    android:layout_weight="0.33"
+                    android:layout_marginRight="5dp"
+                    android:layout_marginEnd="5dp"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginStart="5dp"
+                    android:background="@drawable/greenactionviewbutton"
+                    android:textColor="@color/white"
+                    android:text="Activate"
+                    android:id="@+id/vehiclesActivateButton"
+                    />
+
+                <Button
+                    android:layout_width="0dp"
+                    android:layout_height="fill_parent"
+                    android:layout_weight="0.33"
+                    android:layout_marginRight="5dp"
+                    android:layout_marginEnd="5dp"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginStart="5dp"
+                    android:background="@drawable/redactionviewbutton"
+                    android:textColor="@color/white"
+                    android:text="Deactivate"
+                    android:id="@+id/vehiclesDeactivateButton"
+                    />
+
+            </TableRow>
+
+        </TableLayout>
+
+    </LinearLayout>
+    <!-- End of expandable layout -->
+
+</LinearLayout>
