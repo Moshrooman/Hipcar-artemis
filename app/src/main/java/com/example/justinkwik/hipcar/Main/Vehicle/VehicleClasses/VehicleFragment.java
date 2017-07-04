@@ -25,8 +25,10 @@ import android.widget.TextView;
 
 import com.airbnb.lottie.LottieAnimationView;
 import com.android.volley.AuthFailureError;
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.Response;
+import com.android.volley.RetryPolicy;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.example.justinkwik.hipcar.ConnectionManager;
@@ -69,10 +71,12 @@ import in.srain.cube.views.ptr.header.StoreHouseHeader;
 //2. as for the actual googlemap and the vehiclestatus textviews, we need to assign those to private variables
 //then in the vehicle status string request in the on response we call a method that will assign all the textviews with values.
 //3. Then we need to only disable the get status button when the shit is loading.
-//4. Set the restart on the string requests to infinite.
+//4. Set the restart on the string requests to 20 seconds. Need to search for all ConnectionManager and add the line above it.
+//      make sure to enable the buttons and dismiss the loading screens when the error comes, also to toast a message.
 
 //TODO: for this only
 //1. Need to make the recycler view shorter and add the "Add new vehicle" button.
+//2. Need to fix the registration expire format date time its off by 12 hours.
 
 public class VehicleFragment extends Fragment implements VehicleAdapter.VehicleStatusInterface{
 
@@ -433,6 +437,8 @@ public class VehicleFragment extends Fragment implements VehicleAdapter.VehicleS
             }
         };
 
+        vehicleStatusRequest.setRetryPolicy(new DefaultRetryPolicy(20000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
         ConnectionManager.getInstance(context).add(vehicleStatusRequest);
 
     }
@@ -507,6 +513,10 @@ public class VehicleFragment extends Fragment implements VehicleAdapter.VehicleS
             @Override
             public void onErrorResponse(VolleyError error) {
 
+                SuperToast superToast = SuperToast.create(context, "Error Making Request!", Style.DURATION_SHORT,
+                        Style.red()).setAnimations(Style.ANIMATIONS_POP);
+                superToast.show();
+
             }
         }) {
 
@@ -518,6 +528,8 @@ public class VehicleFragment extends Fragment implements VehicleAdapter.VehicleS
                 return headerMap;
             }
         };
+
+        vehiclesRequest.setRetryPolicy(new DefaultRetryPolicy(20000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 
         ConnectionManager.getInstance(context).add(vehiclesRequest);
 
@@ -550,6 +562,10 @@ public class VehicleFragment extends Fragment implements VehicleAdapter.VehicleS
             @Override
             public void onErrorResponse(VolleyError error) {
 
+                SuperToast superToast = SuperToast.create(context, "Error Making Request!", Style.DURATION_SHORT,
+                        Style.red()).setAnimations(Style.ANIMATIONS_POP);
+                superToast.show();
+
             }
         }) {
 
@@ -561,6 +577,8 @@ public class VehicleFragment extends Fragment implements VehicleAdapter.VehicleS
                 return headerMap;
             }
         };
+
+        vehicleStatusRequest.setRetryPolicy(new DefaultRetryPolicy(20000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 
         ConnectionManager.getInstance(context).add(vehicleStatusRequest);
 
