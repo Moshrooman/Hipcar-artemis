@@ -7,7 +7,7 @@ import com.google.gson.annotations.SerializedName;
  */
 public class Position {
 
-    public Position(String timestamp, Float lon, Float lat, int quality, int satellites_in_use, String hdop, int speed_over_ground) {
+    public Position(String timestamp, Float lon, Float lat, int quality, int satellites_in_use, String hdop, Float speed_over_ground) {
         this.timestamp = timestamp;
         this.lon = lon;
         this.lat = lat;
@@ -36,7 +36,7 @@ public class Position {
     private String hdop;
 
     @SerializedName("speed_over_ground")
-    private int speed_over_ground;
+    private Float speed_over_ground;
 
     public String getTimestamp() {
         return timestamp;
@@ -62,7 +62,7 @@ public class Position {
         return hdop;
     }
 
-    public int getSpeed_over_ground() {
+    public Float getSpeed_over_ground() {
         return speed_over_ground;
     }
 
@@ -90,7 +90,7 @@ public class Position {
         this.hdop = hdop;
     }
 
-    public void setSpeed_over_ground(int speed_over_ground) {
+    public void setSpeed_over_ground(Float speed_over_ground) {
         this.speed_over_ground = speed_over_ground;
     }
 }

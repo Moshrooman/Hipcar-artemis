@@ -9,7 +9,6 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -22,7 +21,6 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.airbnb.lottie.LottieAnimationView;
@@ -34,6 +32,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.example.justinkwik.hipcar.ConnectionManager;
 import com.example.justinkwik.hipcar.Login.LoginActivity;
 import com.example.justinkwik.hipcar.Login.UserCredentials;
+import com.example.justinkwik.hipcar.Main.Reservation.OnGoingFragmentClasses.OnGoingReservationAdapter;
 import com.example.justinkwik.hipcar.Main.Reservation.ParseClassesReservation.Response.SuccessResponse;
 import com.example.justinkwik.hipcar.Main.Reservation.ParseClassesReservation.VehicleStatus.VehicleStatus;
 import com.example.justinkwik.hipcar.Main.Vehicle.VehicleClasses.ParseClassesVehicle.Vehicle;
@@ -50,23 +49,37 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TimeZone;
 
 import in.srain.cube.views.ptr.PtrDefaultHandler;
 import in.srain.cube.views.ptr.PtrFrameLayout;
 import in.srain.cube.views.ptr.header.StoreHouseHeader;
 
-//TODO: start copying everything from the ongoing classes becaue the view also brings up a popup of the map and stuff.\
-//TODO: for the api link its https://artemis-api-dev.hipcar.com/vehicle header as token, and params "scope" and enter includeModelAndMake,includeStation,includeVehicleRates
+//TODO: for vehicle fragment, ongoingreservation, we need to make it so that we can click everything but get status while location is loading
+//1. load the viewpager instantly when clicking view, and load all of the textviews that don't require vehicle status
+//2. as for the actual googlemap and the vehiclestatus textviews, we need to assign those to private variables
+//then in the vehicle status string request in the on response we call a method that will assign all the textviews with values.
+//3. Then we need to only disable the get status button when the shit is loading.
+//4. Set the restart on the string requests to infinite.
+
+//TODO: for this only
+//1. Need to make the recycler view shorter and add the "Add new vehicle" button.
 
 public class VehicleFragment extends Fragment implements VehicleAdapter.VehicleStatusInterface{
 
     private final String vehicleLink = "https://artemis-api-dev.hipcar.com/vehicle?scope=includeModelAndMake,includeStation,includeVehicleRates";
     private final String vehicleActionLink = "https://artemis-api-dev.hipcar.com/vehicle/:id/";
+    private static final String activateVehicleLink = "https://artemis-api-dev.hipcar.com/vehicle/:id/activate";
+    private static final String deactivateVehicleLink = "https://artemis-api-dev.hipcar.com/vehicle/:id/deactivate";
     private int red;
     private int black;
     private int navBarGrey;
@@ -85,15 +98,13 @@ public class VehicleFragment extends Fragment implements VehicleAdapter.VehicleS
     private Vehicle vehicle;
     private View popUpWindowMeasuredView;
     private FrameLayout vehicleFrameLayout;
-    private PopupWindow viewActionPopUpWindow;
-    private ViewGroup viewActionPopUpContainer;
+    private PopupWindow vehicleViewPopUpWindow;
+    private ViewGroup vehicleViewPopUpContainer;
     private LayoutInflater layoutInflater;
     private WindowManager windowManager;
     private TextView exitTextView;
-    private RelativeLayout popUpRelativeLayout;
     //Viewpagers for the popupwindow.
     private ViewPager googleMapAndInfoViewPager;
-    private ScrollView buttonScrollView;
     private int googleMapAndInfoPosition;
     private Bundle savedInstanceState;
     private BitmapDescriptor carIcon;
@@ -110,6 +121,18 @@ public class VehicleFragment extends Fragment implements VehicleAdapter.VehicleS
     private Button[] popUpActionButtonArray;
     private int recyclerViewPosition;
     private static int disabledPosition;
+
+    /*
+    Start of activate/deactivate popup window variables
+     */
+
+    private PopupWindow activateDeactivatePopUpWindow;
+    private View activateDeactivateMeasurePopUpWindow;
+    private ViewGroup activateDeactivatePopUpContainer;
+    private TextView activateDeactivateTitleTextView;
+    private TextView activateDeactivateConfirmationTextView;
+    private Button activateDeactivateCancelButton;
+    private Button activateDeactivateOkButton;
 
     public VehicleFragment() {
         // Required empty public constructor
@@ -160,27 +183,64 @@ public class VehicleFragment extends Fragment implements VehicleAdapter.VehicleS
         vehicleLoadingLottieView = (LottieAnimationView) rootView.findViewById(R.id.vehicleLoadingLottieView);
 
         pullToRefreshLayout = (PtrFrameLayout) rootView.findViewById(R.id.pullToRefreshLayout);
+        activateDeactivateMeasurePopUpWindow = rootView.findViewById(R.id.activateDeactivateMeasurePopUpWindow);
+
+        activateDeactivatePopUpContainer = (ViewGroup) layoutInflater.inflate(R.layout.activatedeactivatepopup, null);
+        activateDeactivateTitleTextView = (TextView) activateDeactivatePopUpContainer.findViewById(R.id.activateDeactivateTitleTextView);
+        activateDeactivateConfirmationTextView = (TextView) activateDeactivatePopUpContainer.findViewById(R.id.activateDeactivateConfirmationTextView);
+        activateDeactivateCancelButton = (Button) activateDeactivatePopUpContainer.findViewById(R.id.activateDeactivateCancelButton);
+        activateDeactivateOkButton = (Button) activateDeactivatePopUpContainer.findViewById(R.id.activateDeactivateOkButton);
+
+        activateDeactivateCancelButton.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+
+                    activateDeactivateCancelButton.setBackgroundResource(R.drawable.redactionviewbuttonpressed);
+
+                } else {
+
+                    activateDeactivateCancelButton.setBackgroundResource(R.drawable.redactionviewbutton);
+
+                }
+
+                return false;
+            }
+        });
+
+        activateDeactivateOkButton.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+
+                    activateDeactivateOkButton.setBackgroundResource(R.drawable.blueactionviewbuttonpressed);
+
+                } else {
+
+                    activateDeactivateOkButton.setBackgroundResource(R.drawable.blueactionviewbutton);
+
+                }
+
+                return false;
+            }
+        });
 
         initializePullToRefreshLayout();
 
         showLoadingScreen(false);
 
         //Below start of assigning variables for popup view.
-        viewActionPopUpContainer = (ViewGroup) layoutInflater.inflate(R.layout.viewactionpopup, null);
-        popUpRelativeLayout = (RelativeLayout) viewActionPopUpContainer.findViewById(R.id.popUpRelativeLayout);
-        buttonScrollView = (ScrollView) viewActionPopUpContainer.findViewById(R.id.buttonScrollView);
-        googleMapAndInfoViewPager = (ViewPager) viewActionPopUpContainer.findViewById(R.id.googleMapAndInfoViewPager);
-        popUpGreyScreenLoading = (RelativeLayout) viewActionPopUpContainer.findViewById(R.id.popUpGreyScreenLoading);
-        popUpLoadingLottieView = (LottieAnimationView) viewActionPopUpContainer.findViewById(R.id.popUpLoadingLottieView);
+        vehicleViewPopUpContainer = (ViewGroup) layoutInflater.inflate(R.layout.vehicleviewpopup, null);
+        googleMapAndInfoViewPager = (ViewPager) vehicleViewPopUpContainer.findViewById(R.id.googleMapAndInfoViewPager);
+        popUpGreyScreenLoading = (RelativeLayout) vehicleViewPopUpContainer.findViewById(R.id.popUpGreyScreenLoading);
+        popUpLoadingLottieView = (LottieAnimationView) vehicleViewPopUpContainer.findViewById(R.id.popUpLoadingLottieView);
         popUpActionButtonArray = new Button[]{
-                (Button) viewActionPopUpContainer.findViewById(R.id.unlockEngineButton),
-                (Button) viewActionPopUpContainer.findViewById(R.id.lockEngineButton),
-                (Button) viewActionPopUpContainer.findViewById(R.id.unlockDoorButton),
-                (Button) viewActionPopUpContainer.findViewById(R.id.lockDoorButton),
-                (Button) viewActionPopUpContainer.findViewById(R.id.getStatusButton),
-                (Button) viewActionPopUpContainer.findViewById(R.id.generateVoucherButton),
-                (Button) viewActionPopUpContainer.findViewById(R.id.checkInButton),
-                (Button) viewActionPopUpContainer.findViewById(R.id.checkOutButton),
+                (Button) vehicleViewPopUpContainer.findViewById(R.id.unlockEngineButton),
+                (Button) vehicleViewPopUpContainer.findViewById(R.id.lockEngineButton),
+                (Button) vehicleViewPopUpContainer.findViewById(R.id.unlockDoorButton),
+                (Button) vehicleViewPopUpContainer.findViewById(R.id.lockDoorButton),
+                (Button) vehicleViewPopUpContainer.findViewById(R.id.resetModemButton),
+                (Button) vehicleViewPopUpContainer.findViewById(R.id.getStatusButton),
         };
 
         setpopUpActionButtonClickListeners();
@@ -218,47 +278,23 @@ public class VehicleFragment extends Fragment implements VehicleAdapter.VehicleS
 
             final int finalI = i;
 
-            if(popUpActionButtonArray[i].getText().toString().contains("Check")) {
+            popUpActionButtonArray[i].setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
 
-                popUpActionButtonArray[i].setOnTouchListener(new View.OnTouchListener() {
-                    @Override
-                    public boolean onTouch(View v, MotionEvent event) {
+                    if (event.getAction() == MotionEvent.ACTION_DOWN) {
 
-                        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                        popUpActionButtonArray[finalI].setBackgroundResource(R.drawable.blueactionviewbuttonpressed);
 
-                            popUpActionButtonArray[finalI].setBackgroundResource(R.drawable.redactionviewbuttonpressed);
+                    } else {
 
-                        } else {
+                        popUpActionButtonArray[finalI].setBackgroundResource(R.drawable.blueactionviewbutton);
 
-                            popUpActionButtonArray[finalI].setBackgroundResource(R.drawable.redactionviewbutton);
-
-                        }
-
-                        return false;
                     }
-                });
 
-            } else {
-
-                popUpActionButtonArray[i].setOnTouchListener(new View.OnTouchListener() {
-                    @Override
-                    public boolean onTouch(View v, MotionEvent event) {
-
-                        if (event.getAction() == MotionEvent.ACTION_DOWN) {
-
-                            popUpActionButtonArray[finalI].setBackgroundResource(R.drawable.blueactionviewbuttonpressed);
-
-                        } else {
-
-                            popUpActionButtonArray[finalI].setBackgroundResource(R.drawable.blueactionviewbutton);
-
-                        }
-
-                        return false;
-                    }
-                });
-
-            }
+                    return false;
+                }
+            });
 
             popUpActionButtonArray[i].setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -289,11 +325,17 @@ public class VehicleFragment extends Fragment implements VehicleAdapter.VehicleS
 
             return;
 
-        } else {
+        } else if(actionButtonText.contains("Lock")) {
 
             requestLink = vehicleActionLink
                     .replace(":id", String.valueOf(vehicle.getId()))
                     .concat(actionButton.getText().toString().toLowerCase().replace(" ", "-"));
+
+        } else {
+
+            requestLink = vehicleActionLink
+                    .replace(":id", String.valueOf(vehicle.getId()))
+                    .concat("modem-reset");
 
         }
 
@@ -301,9 +343,13 @@ public class VehicleFragment extends Fragment implements VehicleAdapter.VehicleS
 
             disabledPosition = position - 1;
 
-        } else {
+        } else if (position == 0 || position == 4){
 
             disabledPosition = position + 1;
+
+        } else {
+
+            disabledPosition = position;
 
         }
 
@@ -333,6 +379,9 @@ public class VehicleFragment extends Fragment implements VehicleAdapter.VehicleS
                 SuperToast superToast = SuperToast.create(context, "Error Making Request!", Style.DURATION_SHORT,
                         Style.red()).setAnimations(Style.ANIMATIONS_POP);
                 superToast.show();
+
+                enableButton(actionButton);
+                enableButton(popUpActionButtonArray[disabledPosition]);
 
             }
         }) {
@@ -517,6 +566,89 @@ public class VehicleFragment extends Fragment implements VehicleAdapter.VehicleS
 
     }
 
+    @Override
+    public void activateDeactivateConfirmationPopup(final Vehicle vehicle, boolean activate, final Button activateActionButton, final Button deactivateActionButton) {
+
+        final String vehicleLink;
+
+        if (activate) {
+            activateDeactivateTitleTextView.setText("Activate Vehicle");
+            activateDeactivateConfirmationTextView.setText("Are you sure you want to activate this vehicle?");
+            vehicleLink = activateVehicleLink.replace(":id", String.valueOf(vehicle.getId()));
+        } else {
+            activateDeactivateTitleTextView.setText("Deactivate Vehicle");
+            activateDeactivateConfirmationTextView.setText("Are you sure you want to Deactivate this vehicle?");
+            vehicleLink = deactivateVehicleLink.replace(":id", String.valueOf(vehicle.getId()));
+        }
+
+        activateDeactivateOkButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                activateDeactivatePopUpWindow.dismiss();
+
+                activateActionButton.setBackgroundResource(R.drawable.disabledactionviewbutton);
+                activateActionButton.setEnabled(false);
+                deactivateActionButton.setBackgroundResource(R.drawable.disabledactionviewbutton);
+                deactivateActionButton.setEnabled(false);
+
+                StringRequest activateVehicleStringRequest = new StringRequest(Request.Method.PUT, vehicleLink, new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        SuccessResponse responseString = gson.fromJson(response, SuccessResponse.class);
+
+                        SuperToast superToast = SuperToast.create(context, responseString.getMessage(), Style.DURATION_SHORT,
+                                Style.green()).setAnimations(Style.ANIMATIONS_POP);
+                        superToast.show();
+
+                        activateActionButton.setBackgroundResource(R.drawable.greenactionviewbutton);
+                        activateActionButton.setEnabled(true);
+                        deactivateActionButton.setBackgroundResource(R.drawable.redactionviewbutton);
+                        deactivateActionButton.setEnabled(true);
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                    }
+                }) {
+
+                    @Override
+                    public Map<String, String> getHeaders() throws AuthFailureError {
+                        Map<String, String> headerMap = new HashMap<String, String>();
+                        headerMap.put("token", userCredentials.getToken());
+
+                        return headerMap;
+                    }
+
+
+                };
+
+                ConnectionManager.getInstance(context).add(activateVehicleStringRequest);
+
+            }
+        });
+
+        activateDeactivateCancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                activateDeactivatePopUpWindow.dismiss();
+            }
+        });
+
+        activateDeactivatePopUpWindow = new PopupWindow(activateDeactivatePopUpContainer, activateDeactivateMeasurePopUpWindow.getWidth(),
+                activateDeactivateMeasurePopUpWindow.getHeight(), true);
+
+        activateDeactivatePopUpWindow.setAnimationStyle(R.style.PopUpWindowAnimation);
+
+        activateDeactivatePopUpWindow.showAtLocation(vehicleFrameLayout, Gravity.CENTER, 0, 0);
+
+        dimBackground(activateDeactivatePopUpContainer);
+
+
+
+    }
+
     private void setPopUpViewPagerAdapters() {
 
         googleMapAndInfoViewPager.setAdapter(new GoogleMapInfoAdapter(layoutInflater, vehicle, vehicleStatus));
@@ -530,31 +662,20 @@ public class VehicleFragment extends Fragment implements VehicleAdapter.VehicleS
         //Set the infoview pager to the first item every time opened. So first thing they see is map.
         googleMapAndInfoViewPager.setCurrentItem(0, false);
 
-        viewActionPopUpWindow = new PopupWindow(viewActionPopUpContainer, popUpWindowMeasuredView.getWidth(),
+        vehicleViewPopUpWindow = new PopupWindow(vehicleViewPopUpContainer, popUpWindowMeasuredView.getWidth(),
                 popUpWindowMeasuredView.getHeight(), true);
 
-        viewActionPopUpWindow.setAnimationStyle(R.style.PopUpWindowAnimation);
+        vehicleViewPopUpWindow.setAnimationStyle(R.style.PopUpWindowAnimation);
 
-        viewActionPopUpWindow.showAtLocation(vehicleFrameLayout, Gravity.CENTER, 0, 0);
+        vehicleViewPopUpWindow.showAtLocation(vehicleFrameLayout, Gravity.CENTER, 0, 0);
 
         showLoadingScreen(true);
         disablePopUpButtons();
 
         //Different android versions have different view hierarchie's need to split the code for dimming background.
-        if (android.os.Build.VERSION.SDK_INT > 22) {
-            View popUpDimView = (View) viewActionPopUpContainer.getParent();
-            WindowManager.LayoutParams layoutParams = (WindowManager.LayoutParams) popUpDimView.getLayoutParams();
-            layoutParams.flags = WindowManager.LayoutParams.FLAG_DIM_BEHIND;
-            layoutParams.dimAmount = 0.7f;
-            windowManager.updateViewLayout(popUpDimView, layoutParams);
-        } else {
-            WindowManager.LayoutParams layoutParams = (WindowManager.LayoutParams) viewActionPopUpContainer.getLayoutParams();
-            layoutParams.flags = WindowManager.LayoutParams.FLAG_DIM_BEHIND;
-            layoutParams.dimAmount = 0.7f;
-            windowManager.updateViewLayout(viewActionPopUpContainer, layoutParams);
-        }
+        dimBackground(vehicleViewPopUpContainer);
 
-        exitTextView = (TextView) viewActionPopUpContainer.findViewById(R.id.exitTextView);
+        exitTextView = (TextView) vehicleViewPopUpContainer.findViewById(R.id.exitTextView);
 
         exitTextView.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -577,9 +698,27 @@ public class VehicleFragment extends Fragment implements VehicleAdapter.VehicleS
         exitTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                viewActionPopUpWindow.dismiss();
+                vehicleViewPopUpWindow.dismiss();
             }
         });
+
+    }
+
+    private void dimBackground(ViewGroup viewGroup) {
+
+        //Different android versions have different view hierarchie's need to split the code for dimming background.
+        if (android.os.Build.VERSION.SDK_INT > 22) {
+            View popUpDimView = (View) viewGroup.getParent();
+            WindowManager.LayoutParams layoutParams = (WindowManager.LayoutParams) popUpDimView.getLayoutParams();
+            layoutParams.flags = WindowManager.LayoutParams.FLAG_DIM_BEHIND;
+            layoutParams.dimAmount = 0.7f;
+            windowManager.updateViewLayout(popUpDimView, layoutParams);
+        } else {
+            WindowManager.LayoutParams layoutParams = (WindowManager.LayoutParams) viewGroup.getLayoutParams();
+            layoutParams.flags = WindowManager.LayoutParams.FLAG_DIM_BEHIND;
+            layoutParams.dimAmount = 0.7f;
+            windowManager.updateViewLayout(viewGroup, layoutParams);
+        }
 
     }
 
@@ -661,15 +800,7 @@ public class VehicleFragment extends Fragment implements VehicleAdapter.VehicleS
 
     private void enableButton(Button popUpActionButton) {
 
-        if (popUpActionButton.getText().toString().contains("Check")) {
-
-            popUpActionButton.setBackgroundResource(R.drawable.redactionviewbutton);
-
-        } else {
-
-            popUpActionButton.setBackgroundResource(R.drawable.blueactionviewbutton);
-
-        }
+        popUpActionButton.setBackgroundResource(R.drawable.blueactionviewbutton);
 
         popUpActionButton.setEnabled(true);
 
@@ -752,11 +883,13 @@ public class VehicleFragment extends Fragment implements VehicleAdapter.VehicleS
                 vehiclesInformationPlateNumberTextView.setText(vehicle.getPlate_number());
                 vehiclesInformationVehicleModelTextView.setText(vehicle.getVehicle_model().getName());
                 vehiclesInformationStationTextView.setText(vehicle.getStation().getName());
-                vehiclesInformationCapacityTextView.setText(vehicle.getCapacity());
+                vehiclesInformationCapacityTextView.setText(String.valueOf(vehicle.getCapacity()));
                 vehiclesInformationColorTextView.setText(vehicle.getColor());
-                vehiclesInformationYearTextView.setText(vehicle.getYear());
-                vehiclesInformationExcessKmChargeTextView.setText(vehicle.getExcess_km_charge());
-                vehiclesInformationRegistrationExpireTextView.setText(vehicle.getRegistration_expire());
+                vehiclesInformationYearTextView.setText(String.valueOf(vehicle.getYear()));
+                vehiclesInformationExcessKmChargeTextView.setText(String.valueOf(vehicle.getExcess_km_charge()));
+
+                vehiclesInformationRegistrationExpireTextView.setText(new DateTime(vehicle.getRegistration_expire()).withZoneRetainFields(DateTimeZone.forTimeZone(TimeZone.getTimeZone("Asia/Bangkok"))).toString("dd-MMM-yyyy HH:mm"));
+
                 vehiclesInformationImmobilizerTextView.setText(vehicleStatus.getImmobilizer());
                 vehiclesInformationIgnitionTextView.setText(vehicleStatus.getIgnition());
                 vehiclesInformationCentralLockTextView.setText(vehicleStatus.getCentral_lock());

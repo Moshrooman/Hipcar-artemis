@@ -15,25 +15,13 @@ import android.widget.TextView;
 
 import com.airbnb.lottie.LottieAnimationView;
 import com.airbnb.lottie.LottieComposition;
-import com.android.volley.AuthFailureError;
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-import com.example.justinkwik.hipcar.ConnectionManager;
 import com.example.justinkwik.hipcar.ExpandAnimation.ExpandAnimation;
 import com.example.justinkwik.hipcar.Login.LoginActivity;
 import com.example.justinkwik.hipcar.Login.UserCredentials;
-import com.example.justinkwik.hipcar.Main.Reservation.ParseClassesReservation.Response.SuccessResponse;
 import com.example.justinkwik.hipcar.Main.Vehicle.VehicleClasses.ParseClassesVehicle.Vehicle;
 import com.example.justinkwik.hipcar.R;
 import com.example.justinkwik.hipcar.Splash.SplashActivity;
-import com.github.johnpersano.supertoasts.library.Style;
-import com.github.johnpersano.supertoasts.library.SuperToast;
 import com.google.gson.Gson;
-
-import java.util.HashMap;
-import java.util.Map;
 
 import uk.co.chrisjenx.calligraphy.CalligraphyTypefaceSpan;
 import uk.co.chrisjenx.calligraphy.TypefaceUtils;
@@ -43,12 +31,6 @@ import uk.co.chrisjenx.calligraphy.TypefaceUtils;
  */
 public class VehicleAdapter extends RecyclerView.Adapter<VehicleAdapter.VehicleViewHolder> {
 
-    //TODO: need to create a confirmation pop-up screen for the activate and deactivate vehicle.
-    //TODO: need to scroll to the bottom of the drawer view when expanding vehicle.
-    //TODO: need to create the view for the popup view and take care of the google maps view and the information page as well as the buttons.
-
-    private static final String activateVehicleLink = "https://artemis-api-dev.hipcar.com/vehicle/:id/activate";
-    private static final String deactivateVehicleLink = "https://artemis-api-dev.hipcar.com/vehicle/:id/deactivate";
     private Context context;
     private Vehicle[] vehicles;
     private CalligraphyTypefaceSpan Exo2Bold;
@@ -293,45 +275,7 @@ public class VehicleAdapter extends RecyclerView.Adapter<VehicleAdapter.VehicleV
             @Override
             public void onClick(View v) {
 
-                activateActionButton.setBackgroundResource(R.drawable.disabledactionviewbutton);
-                activateActionButton.setEnabled(false);
-                deactivateActionButton.setBackgroundResource(R.drawable.disabledactionviewbutton);
-                deactivateActionButton.setEnabled(false);
-
-                StringRequest activateVehicleStringRequest = new StringRequest(Request.Method.PUT, activateVehicleLink.replace(":id",
-                        String.valueOf(vehicle.getId())), new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        SuccessResponse responseString = gson.fromJson(response, SuccessResponse.class);
-
-                        SuperToast superToast = SuperToast.create(context, responseString.getMessage(), Style.DURATION_SHORT,
-                                Style.green()).setAnimations(Style.ANIMATIONS_POP);
-                        superToast.show();
-
-                        activateActionButton.setBackgroundResource(R.drawable.greenactionviewbutton);
-                        activateActionButton.setEnabled(true);
-                        deactivateActionButton.setBackgroundResource(R.drawable.redactionviewbutton);
-                        deactivateActionButton.setEnabled(true);
-                    }
-                }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-
-                    }
-                }) {
-
-                    @Override
-                    public Map<String, String> getHeaders() throws AuthFailureError {
-                        Map<String, String> headerMap = new HashMap<String, String>();
-                        headerMap.put("token", userCredentials.getToken());
-
-                        return headerMap;
-                    }
-
-
-                };
-
-                ConnectionManager.getInstance(context).add(activateVehicleStringRequest);
+                vehicleStatusInterface.activateDeactivateConfirmationPopup(vehicle, true, activateActionButton, deactivateActionButton);
 
             }
         });
@@ -356,45 +300,9 @@ public class VehicleAdapter extends RecyclerView.Adapter<VehicleAdapter.VehicleV
         deactivateActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                activateActionButton.setBackgroundResource(R.drawable.disabledactionviewbutton);
-                activateActionButton.setEnabled(false);
-                deactivateActionButton.setBackgroundResource(R.drawable.disabledactionviewbutton);
-                deactivateActionButton.setEnabled(false);
 
-                StringRequest deactivateVehicleStringRequest = new StringRequest(Request.Method.PUT, deactivateVehicleLink.replace(":id",
-                        String.valueOf(vehicle.getId())), new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        SuccessResponse responseString = gson.fromJson(response, SuccessResponse.class);
+                vehicleStatusInterface.activateDeactivateConfirmationPopup(vehicle, false, activateActionButton, deactivateActionButton);
 
-                        SuperToast superToast = SuperToast.create(context, responseString.getMessage(), Style.DURATION_SHORT,
-                                Style.green()).setAnimations(Style.ANIMATIONS_POP);
-                        superToast.show();
-
-                        activateActionButton.setBackgroundResource(R.drawable.greenactionviewbutton);
-                        activateActionButton.setEnabled(true);
-                        deactivateActionButton.setBackgroundResource(R.drawable.redactionviewbutton);
-                        deactivateActionButton.setEnabled(true);
-                    }
-                }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-
-                    }
-                }) {
-
-                    @Override
-                    public Map<String, String> getHeaders() throws AuthFailureError {
-                        Map<String, String> headerMap = new HashMap<String, String>();
-                        headerMap.put("token", userCredentials.getToken());
-
-                        return headerMap;
-                    }
-
-
-                };
-
-                ConnectionManager.getInstance(context).add(deactivateVehicleStringRequest);
             }
         });
 
@@ -403,6 +311,7 @@ public class VehicleAdapter extends RecyclerView.Adapter<VehicleAdapter.VehicleV
     public interface VehicleStatusInterface {
 
         public void showVehicleStatusPopup(Vehicle vehicle, int position);
+        public void activateDeactivateConfirmationPopup(Vehicle vehicle, boolean activate, Button activateButton, Button deactivateButton);
 
     }
 

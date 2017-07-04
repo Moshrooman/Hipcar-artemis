@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.ExpandableListView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -138,14 +139,12 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         viewPager.setCurrentItem(1, false);
 
         //TODO: RESERVATION IMPLEMENTATION
-        //Add an arrow to the reservation tab for sub menu's to indicate collapse and expand.
+        //Add an arrow to the reservation (and all expandable tabs?) tab for sub menu's to indicate collapse and expand.
         //Add a search bar to both tabs or filter?
-        //Finish the layout for the row, make borders for each row
         //get progress of string request in onGoingReservationFragment and checkedout fragment somehow and create progress bar.
         //IF THE STRINGREQUEST COMES BACK EMPTY, THEN DISPLAY TEXTVIEWS SAYING NO ONGOING OR NO CHECKED OUT.
         //Give indicator to swipe from google maps to information fragment
         //handle back button in mainactivity so that if a boolean is true, to dismiss the pop-up in the ongoingreservationfragment.
-        //Make the phone number clickable so that they can instantly call.
         //Set re-do for string request timeout.
         //When clicking the phone number in the checkout reseration it switches to a random number.
 
@@ -158,6 +157,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         //TODO: FOR VEHICLE TAB
         //Add an arrow to signal expand/collapse and implement
+        //need to scroll to the bottom of the drawer view when expanding vehicle.
 
         //TODO: MISCELLANEOUS
         //give an option to skip splash screen in beginning
