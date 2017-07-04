@@ -32,7 +32,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:id="@+id/lineToX"
-                    app:lottie_fileName="Lottie/linetox.json"
                     app:lottie_autoPlay="false"
                     android:clickable="false"
                     />
@@ -41,7 +40,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:id="@+id/xToLine"
-                    app:lottie_fileName="Lottie/xtoline.json"
                     app:lottie_autoPlay="false"
                     android:clickable="false"
                     android:visibility="invisible"

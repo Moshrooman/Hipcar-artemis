@@ -29,6 +29,8 @@ public class SplashActivity extends AppCompatActivity {
     private final SharedPreferences sharedPreferences = HipCarApplication.getSharedPreferences();
     private TextView[] lettersTextViewArray;
     private LottieComposition hamburgerArrowComposition;
+    public static LottieComposition xToLineComposition;
+    public static LottieComposition lineToXComposition;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -115,31 +117,67 @@ public class SplashActivity extends AppCompatActivity {
                 @Override
                 public void onAnimationEnd(Animation animation) {
 
-                    Runnable mainActivityRunnable = new Runnable() {
-                        @Override
-                        public void run() {
+//                    Runnable mainActivityRunnable = new Runnable() {
+//                        @Override
+//                        public void run() {
+//
+//                            if (sharedPreferences.getBoolean("loggedin", false)) {
+//
+//                                Intent mainActivityIntent = new Intent(SplashActivity.this, MainActivity.class);
+//                                startActivity(mainActivityIntent);
+//                                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+//                                finish();
+//
+//                            } else {
+//
+//                                Intent loginIntent = new Intent(SplashActivity.this, LoginActivity.class);
+//                                startActivity(loginIntent);
+//                                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+//                                finish();
+//
+//                            }
+//
+//                        }
+//                    };
+//
+//                    Handler mainActivityHandler = new Handler();
+//                    mainActivityHandler.postDelayed(mainActivityRunnable, 100);
 
-                            if (sharedPreferences.getBoolean("loggedin", false)) {
+                    LottieComposition.Factory.fromAssetFileName(getApplicationContext(), "Lottie/linetox.json",
+                            new OnCompositionLoadedListener() {
+                                @Override
+                                public void onCompositionLoaded(LottieComposition composition) {
 
-                                Intent mainActivityIntent = new Intent(SplashActivity.this, MainActivity.class);
-                                startActivity(mainActivityIntent);
-                                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-                                finish();
+                                    lineToXComposition = composition;
 
-                            } else {
+                                    LottieComposition.Factory.fromAssetFileName(getApplicationContext(), "Lottie/xtoline.json",
+                                            new OnCompositionLoadedListener() {
+                                                @Override
+                                                public void onCompositionLoaded(LottieComposition composition) {
 
-                                Intent loginIntent = new Intent(SplashActivity.this, LoginActivity.class);
-                                startActivity(loginIntent);
-                                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-                                finish();
+                                                    xToLineComposition = composition;
 
-                            }
+                                                    if (sharedPreferences.getBoolean("loggedin", false)) {
 
-                        }
-                    };
+                                                        Intent mainActivityIntent = new Intent(SplashActivity.this, MainActivity.class);
+                                                        startActivity(mainActivityIntent);
+                                                        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+                                                        finish();
 
-                    Handler mainActivityHandler = new Handler();
-                    mainActivityHandler.postDelayed(mainActivityRunnable, 100);
+                                                    } else {
+
+                                                        Intent loginIntent = new Intent(SplashActivity.this, LoginActivity.class);
+                                                        startActivity(loginIntent);
+                                                        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+                                                        finish();
+
+                                                    }
+
+                                                }
+                                            });
+
+                                }
+                            });
 
                 }
 
@@ -150,6 +188,18 @@ public class SplashActivity extends AppCompatActivity {
             });
 
         }
+
+    }
+
+    public static LottieComposition getLineToXComposition() {
+
+        return lineToXComposition;
+
+    }
+
+    public static LottieComposition getxToLineComposition() {
+
+        return xToLineComposition;
 
     }
 

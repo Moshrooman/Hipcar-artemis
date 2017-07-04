@@ -147,6 +147,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         //handle back button in mainactivity so that if a boolean is true, to dismiss the pop-up in the ongoingreservationfragment.
         //Make the phone number clickable so that they can instantly call.
         //Set re-do for string request timeout.
+        //When clicking the phone number in the checkout reseration it switches to a random number.
 
         //TODO: LOG OUT AND CHANGE PASSWORD
         //for logging out delete the credentials and set loggedin boolean to false (both in sharedPreference)

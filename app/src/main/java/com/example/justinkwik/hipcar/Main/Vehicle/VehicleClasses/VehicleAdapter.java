@@ -5,6 +5,7 @@ import android.support.v7.widget.RecyclerView;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.util.Log;
+import android.util.MonthDisplayHelper;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -15,6 +16,8 @@ import android.widget.TableLayout;
 import android.widget.TextView;
 
 import com.airbnb.lottie.LottieAnimationView;
+import com.airbnb.lottie.LottieComposition;
+import com.airbnb.lottie.OnCompositionLoadedListener;
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -53,27 +56,29 @@ public class VehicleAdapter extends RecyclerView.Adapter<VehicleAdapter.VehicleV
 
     //TODO: need to create a confirmation pop-up screen for the activate and deactivate vehicle.
     //TODO: need to scroll to the bottom of the drawer view when expanding vehicle.
+    //TODO: need to create the view for the popup view and take care of the google maps view and the information page as well as the buttons.
 
     private static final String activateVehicleLink = "https://artemis-api-dev.hipcar.com/vehicle/:id/activate";
     private static final String deactivateVehicleLink = "https://artemis-api-dev.hipcar.com/vehicle/:id/deactivate";
     private Context context;
     private Vehicle[] vehicles;
-    private DecimalFormat decimalFormat;
     private CalligraphyTypefaceSpan Exo2Bold;
     private CalligraphyTypefaceSpan Exo2Regular;
     private VehicleStatusInterface vehicleStatusInterface;
-    private static boolean expandedOne = false;
     private UserCredentials userCredentials;
     private Gson gson;
+    private LottieComposition lineToXComposition;
+    private LottieComposition xToLineComposition;
 
     public VehicleAdapter(Context context, Vehicle[] vehicles, VehicleStatusInterface vehicleStatusInterface) {
 
         this.context = context;
         this.vehicles = vehicles;
-        this.decimalFormat = new DecimalFormat();
         this.vehicleStatusInterface = vehicleStatusInterface;
         this.userCredentials = LoginActivity.getUserCredentials();
         this.gson = new Gson();
+        this.lineToXComposition = SplashActivity.getLineToXComposition();
+        this.xToLineComposition = SplashActivity.getxToLineComposition();
 
         Exo2Bold = new CalligraphyTypefaceSpan(TypefaceUtils.load(this.context.getAssets(), "fonts/Exo2-Bold.ttf"));
         Exo2Regular = new CalligraphyTypefaceSpan(TypefaceUtils.load(this.context.getAssets(), "fonts/Exo2-Regular.ttf"));
@@ -96,8 +101,6 @@ public class VehicleAdapter extends RecyclerView.Adapter<VehicleAdapter.VehicleV
         Vehicle vehicle = vehicles[position];
 
         ViewGroup.MarginLayoutParams mp = (ViewGroup.MarginLayoutParams) holder.expandableVehicles.getLayoutParams();
-
-        Log.e(String.valueOf(position), String.valueOf(holder.lineToX.getVisibility() == View.VISIBLE));
 
         if (vehicle.getExpanded() == false && mp.bottomMargin == 0) {
 
@@ -203,6 +206,9 @@ public class VehicleAdapter extends RecyclerView.Adapter<VehicleAdapter.VehicleV
                                                  TableLayout vehiclesTableLayout, final LinearLayout expandableVehicles,
                                                  final Vehicle vehicle) {
 
+        lineToX.setComposition(lineToXComposition);
+        xToLine.setComposition(xToLineComposition);
+
         vehiclesTableLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -227,8 +233,6 @@ public class VehicleAdapter extends RecyclerView.Adapter<VehicleAdapter.VehicleV
                 }
 
                 expandCollapseSubMenus(expandableVehicles);
-
-                expandedOne = true;
 
             }
         });

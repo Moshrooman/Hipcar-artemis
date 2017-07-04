@@ -16,8 +16,10 @@ import android.widget.TableLayout;
 import android.widget.TextView;
 
 import com.airbnb.lottie.LottieAnimationView;
+import com.airbnb.lottie.LottieComposition;
 import com.example.justinkwik.hipcar.ExpandAnimation.ExpandAnimation;
 import com.example.justinkwik.hipcar.R;
+import com.example.justinkwik.hipcar.Splash.SplashActivity;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -56,6 +58,8 @@ public class OnGoingReservationAdapter extends RecyclerView.Adapter<OnGoingReser
     private CalligraphyTypefaceSpan Exo2Bold;
     private CalligraphyTypefaceSpan Exo2Regular;
     private VehicleStatusInterface vehicleStatusInterface;
+    private LottieComposition lineToXComposition;
+    private LottieComposition xToLineComposition;
 
     //Empty construtor to allow access to the formatDateString method.
     public OnGoingReservationAdapter() {
@@ -68,6 +72,8 @@ public class OnGoingReservationAdapter extends RecyclerView.Adapter<OnGoingReser
         this.onGoingReservations = onGoingReservations;
         this.decimalFormat = new DecimalFormat();
         this.vehicleStatusInterface = vehicleStatusInterface;
+        this.lineToXComposition = SplashActivity.getLineToXComposition();
+        this.xToLineComposition = SplashActivity.getxToLineComposition();
 
         Exo2Bold = new CalligraphyTypefaceSpan(TypefaceUtils.load(this.context.getAssets(), "fonts/Exo2-Bold.ttf"));
         Exo2Regular = new CalligraphyTypefaceSpan(TypefaceUtils.load(this.context.getAssets(), "fonts/Exo2-Regular.ttf"));
@@ -88,6 +94,32 @@ public class OnGoingReservationAdapter extends RecyclerView.Adapter<OnGoingReser
     public void onBindViewHolder(final OnGoingReservationViewHolder holder, int position) {
 
         OnGoingReservation onGoingReservation = onGoingReservations[position];
+
+//        ViewGroup.MarginLayoutParams mp = (ViewGroup.MarginLayoutParams) holder.expandableOnGoingReservation.getLayoutParams();
+//
+//        if (onGoingReservation.getExpanded() == false && mp.bottomMargin == 0) {
+//
+//            holder.lineToX.setVisibility(View.VISIBLE);
+//            holder.xToLine.setVisibility(View.INVISIBLE);
+//
+//            ExpandAnimation collapseAnimation = new ExpandAnimation(holder.expandableOnGoingReservation, 0);
+//            collapseAnimation.setUpCollapseSubMenus(true);
+//            holder.expandableOnGoingReservation.startAnimation(collapseAnimation);
+//
+//            mp.setMargins(0, 0, 0, -holder.expandableOnGoingReservation.getHeight());
+//
+//        } else if (onGoingReservation.getExpanded() == true && mp.bottomMargin != 0) {
+//
+//            holder.lineToX.setVisibility(View.INVISIBLE);
+//            holder.xToLine.setVisibility(View.VISIBLE);
+//
+//            ExpandAnimation collapseAnimation = new ExpandAnimation(holder.expandableOnGoingReservation, 0);
+//            collapseAnimation.setUpCollapseSubMenus(false);
+//            holder.expandableOnGoingReservation.startAnimation(collapseAnimation);
+//
+//            mp.setMargins(0, 0, 0, 0);
+//
+//        }
 
         holder.fullNameTextView.setText(onGoingReservation.getFull_name());
         holder.balanceTextView.setText("Rp. " +
@@ -185,6 +217,9 @@ public class OnGoingReservationAdapter extends RecyclerView.Adapter<OnGoingReser
     private void setExpandIndicatorClickListener(final LottieAnimationView lineToX, final LottieAnimationView xToLine,
                                                  TableLayout onGoingReservationTableLayout, final LinearLayout expandableOnGoingReservation,
                                                  final OnGoingReservation onGoingReservation) {
+
+        lineToX.setComposition(lineToXComposition);
+        xToLine.setComposition(xToLineComposition);
 
         onGoingReservationTableLayout.setOnClickListener(new View.OnClickListener() {
             @Override
