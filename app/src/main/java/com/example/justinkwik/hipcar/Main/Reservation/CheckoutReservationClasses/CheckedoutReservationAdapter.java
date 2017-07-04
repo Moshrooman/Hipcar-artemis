@@ -15,16 +15,16 @@ import android.widget.TableLayout;
 import android.widget.TextView;
 
 import com.airbnb.lottie.LottieAnimationView;
+import com.airbnb.lottie.LottieComposition;
 import com.example.justinkwik.hipcar.ExpandAnimation.ExpandAnimation;
-import com.example.justinkwik.hipcar.Main.Reservation.OnGoingFragmentClasses.OnGoingReservation;
 import com.example.justinkwik.hipcar.R;
+import com.example.justinkwik.hipcar.Splash.SplashActivity;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.Days;
 import org.joda.time.Hours;
 import org.joda.time.Minutes;
-import org.joda.time.Period;
 
 import java.text.DecimalFormat;
 import java.util.TimeZone;
@@ -44,12 +44,16 @@ public class CheckedoutReservationAdapter extends RecyclerView.Adapter<Checkedou
     private CalligraphyTypefaceSpan Exo2Bold;
     private CalligraphyTypefaceSpan Exo2Regular;
     private GenerateClickedInterface generateClickedInterface;
+    private LottieComposition xToLineComposition;
+    private LottieComposition lineToXComposition;
 
     public CheckedoutReservationAdapter(Context context, CheckedOutReservation[] checkedOutReservations, GenerateClickedInterface generateClickedInterface) {
         this.context = context;
         this.checkedOutReservations = checkedOutReservations;
         this.decimalFormat = new DecimalFormat();
         this.generateClickedInterface = generateClickedInterface;
+        this.xToLineComposition = SplashActivity.getxToLineComposition();
+        this.lineToXComposition = SplashActivity.getLineToXComposition();
 
         Exo2Bold = new CalligraphyTypefaceSpan(TypefaceUtils.load(this.context.getAssets(), "fonts/Exo2-Bold.ttf"));
         Exo2Regular = new CalligraphyTypefaceSpan(TypefaceUtils.load(this.context.getAssets(), "fonts/Exo2-Regular.ttf"));
@@ -98,10 +102,36 @@ public class CheckedoutReservationAdapter extends RecyclerView.Adapter<Checkedou
         setSplitTextViewFonts("Pick-Up Station", checkedOutReservation.getPickup_station().getName(), holder.pickUpStationTextView);
         setSplitTextViewFonts("Return Station", checkedOutReservation.getReturn_station().getName(), holder.returnStationTextView);
 
-        setExpandIndicatorClickListener(holder.lineToX, holder.xToLine, holder.checkedOutReservationTableLayout,
+        setExpandIndicatorClickListener(holder.expandIndicatorLottieView, holder.checkedOutReservationTableLayout,
                 holder.expandableCheckedOutReservation, checkedOutReservation);
 
         setViewActionButtonClickListener(holder.generateButton, checkedOutReservation);
+
+        ViewGroup.MarginLayoutParams mp = (ViewGroup.MarginLayoutParams) holder.expandableCheckedOutReservation.getLayoutParams();
+
+        if (!checkedOutReservation.getExpanded() && mp.bottomMargin == 0) {
+
+            ExpandAnimation collapseAnimation = new ExpandAnimation(holder.expandableCheckedOutReservation, 0);
+            collapseAnimation.setUpCollapseSubMenus(true);
+            holder.expandableCheckedOutReservation.startAnimation(collapseAnimation);
+
+            mp.setMargins(0, 0, 0, -holder.expandableCheckedOutReservation.getHeight());
+
+            holder.expandIndicatorLottieView.setComposition(lineToXComposition);
+            holder.expandIndicatorLottieView.setProgress(0);
+
+        } else if (checkedOutReservation.getExpanded() && mp.bottomMargin != 0) {
+
+            ExpandAnimation collapseAnimation = new ExpandAnimation(holder.expandableCheckedOutReservation, 0);
+            collapseAnimation.setUpCollapseSubMenus(false);
+            holder.expandableCheckedOutReservation.startAnimation(collapseAnimation);
+
+            mp.setMargins(0, 0, 0, 0);
+
+            holder.expandIndicatorLottieView.setComposition(xToLineComposition);
+            holder.expandIndicatorLottieView.setProgress(0);
+
+        }
 
     }
 
@@ -113,8 +143,7 @@ public class CheckedoutReservationAdapter extends RecyclerView.Adapter<Checkedou
     public class CheckoutReservationViewHolder extends RecyclerView.ViewHolder {
 
         private TableLayout checkedOutReservationTableLayout;
-        private LottieAnimationView lineToX;
-        private LottieAnimationView xToLine;
+        private LottieAnimationView expandIndicatorLottieView;
 
         private TextView fullNameTextView;
         private TextView contactNumberTextView;
@@ -149,8 +178,7 @@ public class CheckedoutReservationAdapter extends RecyclerView.Adapter<Checkedou
             balanceTextView = (TextView) itemView.findViewById(R.id.balanceTextView);
 
             plateNumberTextView = (TextView) itemView.findViewById(R.id.plateNumberTextView);
-            lineToX = (LottieAnimationView) itemView.findViewById(R.id.lineToX);
-            xToLine = (LottieAnimationView) itemView.findViewById(R.id.xToLine);
+            expandIndicatorLottieView = (LottieAnimationView) itemView.findViewById(R.id.expandIndicatorLottieView);
 
             expandableCheckedOutReservation = (LinearLayout) itemView.findViewById(R.id.expandableCheckedOutReservation);
             idTextView = (TextView) itemView.findViewById(R.id.idTextView);
@@ -169,9 +197,11 @@ public class CheckedoutReservationAdapter extends RecyclerView.Adapter<Checkedou
         }
     }
 
-    private void setExpandIndicatorClickListener(final LottieAnimationView lineToX, final LottieAnimationView xToLine,
+    private void setExpandIndicatorClickListener(final LottieAnimationView expandIndicatorLottieView,
                                                  TableLayout checkedOutReservationTableLayout, final LinearLayout expandableCheckedOutReservation,
                                                  final CheckedOutReservation checkedOutReservation) {
+
+        expandIndicatorLottieView.setComposition(lineToXComposition);
 
         checkedOutReservationTableLayout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -179,21 +209,16 @@ public class CheckedoutReservationAdapter extends RecyclerView.Adapter<Checkedou
 
                 if (!checkedOutReservation.getExpanded()) {
 
-                    lineToX.setVisibility(View.VISIBLE);
-
-                    xToLine.setVisibility(View.INVISIBLE);
-
-                    lineToX.playAnimation();
-
+                    expandIndicatorLottieView.setComposition(lineToXComposition);
+                    expandIndicatorLottieView.playAnimation();
                     checkedOutReservation.setExpanded(true);
 
                 } else {
 
-                    xToLine.setVisibility(View.VISIBLE);
-                    lineToX.setVisibility(View.INVISIBLE);
-                    xToLine.playAnimation();
-
+                    expandIndicatorLottieView.setComposition(xToLineComposition);
+                    expandIndicatorLottieView.playAnimation();
                     checkedOutReservation.setExpanded(false);
+
                 }
 
                 expandCollapseSubMenus(expandableCheckedOutReservation);
@@ -244,9 +269,6 @@ public class CheckedoutReservationAdapter extends RecyclerView.Adapter<Checkedou
             }
 
             DateTime pickUpDate = new DateTime(date2, DateTimeZone.forTimeZone(TimeZone.getTimeZone("Asia/Bangkok")));
-
-            Log.e("Actual Return: ", actualReturnDate.toString());
-            Log.e("Pick Up: ", pickUpDate.toString());
 
             int daysBetween = Days.daysBetween(pickUpDate, actualReturnDate).getDays();
             formattedString += formattedString + "" + daysBetween + " days ";

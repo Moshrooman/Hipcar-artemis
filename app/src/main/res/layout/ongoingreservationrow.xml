@@ -31,18 +31,10 @@
                 <com.airbnb.lottie.LottieAnimationView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:id="@+id/lineToX"
+                    android:id="@+id/expandIndicatorLottieView"
                     app:lottie_autoPlay="false"
                     android:clickable="false"
-                    />
-
-                <com.airbnb.lottie.LottieAnimationView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:id="@+id/xToLine"
-                    app:lottie_autoPlay="false"
-                    android:clickable="false"
-                    android:visibility="invisible"
+                    app:lottie_loop="false"
                     />
 
             </RelativeLayout>

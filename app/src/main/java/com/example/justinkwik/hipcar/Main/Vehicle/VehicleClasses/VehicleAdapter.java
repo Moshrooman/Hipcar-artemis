@@ -4,8 +4,6 @@ import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
-import android.util.Log;
-import android.util.MonthDisplayHelper;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -17,7 +15,6 @@ import android.widget.TextView;
 
 import com.airbnb.lottie.LottieAnimationView;
 import com.airbnb.lottie.LottieComposition;
-import com.airbnb.lottie.OnCompositionLoadedListener;
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -35,16 +32,8 @@ import com.github.johnpersano.supertoasts.library.Style;
 import com.github.johnpersano.supertoasts.library.SuperToast;
 import com.google.gson.Gson;
 
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
-import org.joda.time.Days;
-import org.joda.time.Hours;
-import org.joda.time.Minutes;
-
-import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.TimeZone;
 
 import uk.co.chrisjenx.calligraphy.CalligraphyTypefaceSpan;
 import uk.co.chrisjenx.calligraphy.TypefaceUtils;
@@ -100,32 +89,6 @@ public class VehicleAdapter extends RecyclerView.Adapter<VehicleAdapter.VehicleV
 
         Vehicle vehicle = vehicles[position];
 
-        ViewGroup.MarginLayoutParams mp = (ViewGroup.MarginLayoutParams) holder.expandableVehicles.getLayoutParams();
-
-        if (vehicle.getExpanded() == false && mp.bottomMargin == 0) {
-
-            holder.lineToX.setVisibility(View.VISIBLE);
-            holder.xToLine.setVisibility(View.INVISIBLE);
-
-            ExpandAnimation collapseAnimation = new ExpandAnimation(holder.expandableVehicles, 0);
-            collapseAnimation.setUpCollapseSubMenus(true);
-            holder.expandableVehicles.startAnimation(collapseAnimation);
-
-            mp.setMargins(0, 0, 0, -holder.expandableVehicles.getHeight());
-
-        } else if (vehicle.getExpanded() == true && mp.bottomMargin != 0) {
-
-            holder.lineToX.setVisibility(View.INVISIBLE);
-            holder.xToLine.setVisibility(View.VISIBLE);
-
-            ExpandAnimation collapseAnimation = new ExpandAnimation(holder.expandableVehicles, 0);
-            collapseAnimation.setUpCollapseSubMenus(false);
-            holder.expandableVehicles.startAnimation(collapseAnimation);
-
-            mp.setMargins(0, 0, 0, 0);
-
-        }
-
         holder.vehiclesIdTextView.setText(String.valueOf(vehicle.getId()));
         holder.vehiclesPlateNumberTextView.setText(vehicle.getPlate_number());
         holder.vehiclesStationTextView.setText(vehicle.getStation().getName());
@@ -138,10 +101,36 @@ public class VehicleAdapter extends RecyclerView.Adapter<VehicleAdapter.VehicleV
         setSplitTextViewFonts("Color", vehicle.getColor(), holder.vehiclesColorTextView);
         setSplitTextViewFonts("Status", String.valueOf(vehicle.is_active()), holder.vehiclesStatusTextView);
 
-        setExpandIndicatorClickListener(holder.lineToX, holder.xToLine, holder.vehiclesTableLayout,
+        setExpandIndicatorClickListener(holder.expandIndicatorLottieView, holder.vehiclesTableLayout,
                 holder.expandableVehicles, vehicle);
 
         setViewActionButtonClickListener(holder.vehiclesViewActionButton, vehicle, position, holder.vehiclesActivateButton, holder.vehiclesDeactivateButton);
+
+        ViewGroup.MarginLayoutParams mp = (ViewGroup.MarginLayoutParams) holder.expandableVehicles.getLayoutParams();
+
+        if (!vehicle.getExpanded() && mp.bottomMargin == 0) {
+
+            ExpandAnimation collapseAnimation = new ExpandAnimation(holder.expandableVehicles, 0);
+            collapseAnimation.setUpCollapseSubMenus(true);
+            holder.expandableVehicles.startAnimation(collapseAnimation);
+
+            mp.setMargins(0, 0, 0, -holder.expandableVehicles.getHeight());
+
+            holder.expandIndicatorLottieView.setComposition(lineToXComposition);
+            holder.expandIndicatorLottieView.setProgress(0);
+
+        } else if (vehicle.getExpanded() && mp.bottomMargin != 0) {
+
+            ExpandAnimation collapseAnimation = new ExpandAnimation(holder.expandableVehicles, 0);
+            collapseAnimation.setUpCollapseSubMenus(false);
+            holder.expandableVehicles.startAnimation(collapseAnimation);
+
+            mp.setMargins(0, 0, 0, 0);
+
+            holder.expandIndicatorLottieView.setComposition(xToLineComposition);
+            holder.expandIndicatorLottieView.setProgress(0);
+
+        }
 
     }
 
@@ -153,8 +142,7 @@ public class VehicleAdapter extends RecyclerView.Adapter<VehicleAdapter.VehicleV
     public class VehicleViewHolder extends RecyclerView.ViewHolder {
 
         private TableLayout vehiclesTableLayout;
-        private LottieAnimationView lineToX;
-        private LottieAnimationView xToLine;
+        private LottieAnimationView expandIndicatorLottieView;
         private TextView vehiclesIdTextView;
         private TextView vehiclesPlateNumberTextView;
         private TextView vehiclesStationTextView;
@@ -178,8 +166,7 @@ public class VehicleAdapter extends RecyclerView.Adapter<VehicleAdapter.VehicleV
             super(itemView);
 
             vehiclesTableLayout = (TableLayout) itemView.findViewById(R.id.vehiclesTableLayout);
-            lineToX = (LottieAnimationView) itemView.findViewById(R.id.lineToX);
-            xToLine = (LottieAnimationView) itemView.findViewById(R.id.xToLine);
+            expandIndicatorLottieView = (LottieAnimationView) itemView.findViewById(R.id.expandIndicatorLottieView);
             vehiclesIdTextView = (TextView) itemView.findViewById(R.id.vehiclesIdTextVIew);
             vehiclesPlateNumberTextView = (TextView) itemView.findViewById(R.id.vehiclesPlateNumberTextView);
             vehiclesStationTextView = (TextView) itemView.findViewById(R.id.vehiclesStationTextView);
@@ -202,12 +189,11 @@ public class VehicleAdapter extends RecyclerView.Adapter<VehicleAdapter.VehicleV
         }
     }
 
-    private void setExpandIndicatorClickListener(final LottieAnimationView lineToX, final LottieAnimationView xToLine,
+    private void setExpandIndicatorClickListener(final LottieAnimationView expandIndicatorLottieView,
                                                  TableLayout vehiclesTableLayout, final LinearLayout expandableVehicles,
                                                  final Vehicle vehicle) {
 
-        lineToX.setComposition(lineToXComposition);
-        xToLine.setComposition(xToLineComposition);
+        expandIndicatorLottieView.setComposition(lineToXComposition);
 
         vehiclesTableLayout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -215,21 +201,16 @@ public class VehicleAdapter extends RecyclerView.Adapter<VehicleAdapter.VehicleV
 
                 if (!vehicle.getExpanded()) {
 
-                    lineToX.setVisibility(View.VISIBLE);
-
-                    xToLine.setVisibility(View.INVISIBLE);
-
-                    lineToX.playAnimation();
-
+                    expandIndicatorLottieView.setComposition(lineToXComposition);
+                    expandIndicatorLottieView.playAnimation();
                     vehicle.setExpanded(true);
 
                 } else {
 
-                    xToLine.setVisibility(View.VISIBLE);
-                    lineToX.setVisibility(View.INVISIBLE);
-                    xToLine.playAnimation();
-
+                    expandIndicatorLottieView.setComposition(xToLineComposition);
+                    expandIndicatorLottieView.playAnimation();
                     vehicle.setExpanded(false);
+
                 }
 
                 expandCollapseSubMenus(expandableVehicles);

@@ -4,14 +4,12 @@ import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.PopupWindow;
 import android.widget.TableLayout;
 import android.widget.TextView;
 
@@ -25,22 +23,9 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.Days;
 import org.joda.time.Hours;
-import org.joda.time.Interval;
-import org.joda.time.LocalDate;
-import org.joda.time.LocalDateTime;
 import org.joda.time.Minutes;
-import org.joda.time.Period;
-import org.joda.time.PeriodType;
-import org.joda.time.Seconds;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
-import org.joda.time.format.DateTimeFormatterBuilder;
-import org.joda.time.format.DateTimePrinter;
 
 import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
 import java.util.TimeZone;
 
 import uk.co.chrisjenx.calligraphy.CalligraphyTypefaceSpan;
@@ -95,32 +80,6 @@ public class OnGoingReservationAdapter extends RecyclerView.Adapter<OnGoingReser
 
         OnGoingReservation onGoingReservation = onGoingReservations[position];
 
-//        ViewGroup.MarginLayoutParams mp = (ViewGroup.MarginLayoutParams) holder.expandableOnGoingReservation.getLayoutParams();
-//
-//        if (onGoingReservation.getExpanded() == false && mp.bottomMargin == 0) {
-//
-//            holder.lineToX.setVisibility(View.VISIBLE);
-//            holder.xToLine.setVisibility(View.INVISIBLE);
-//
-//            ExpandAnimation collapseAnimation = new ExpandAnimation(holder.expandableOnGoingReservation, 0);
-//            collapseAnimation.setUpCollapseSubMenus(true);
-//            holder.expandableOnGoingReservation.startAnimation(collapseAnimation);
-//
-//            mp.setMargins(0, 0, 0, -holder.expandableOnGoingReservation.getHeight());
-//
-//        } else if (onGoingReservation.getExpanded() == true && mp.bottomMargin != 0) {
-//
-//            holder.lineToX.setVisibility(View.INVISIBLE);
-//            holder.xToLine.setVisibility(View.VISIBLE);
-//
-//            ExpandAnimation collapseAnimation = new ExpandAnimation(holder.expandableOnGoingReservation, 0);
-//            collapseAnimation.setUpCollapseSubMenus(false);
-//            holder.expandableOnGoingReservation.startAnimation(collapseAnimation);
-//
-//            mp.setMargins(0, 0, 0, 0);
-//
-//        }
-
         holder.fullNameTextView.setText(onGoingReservation.getFull_name());
         holder.balanceTextView.setText("Rp. " +
                 String.valueOf(decimalFormat.format(onGoingReservation.getUser().getBalance())));
@@ -148,10 +107,36 @@ public class OnGoingReservationAdapter extends RecyclerView.Adapter<OnGoingReser
         setSplitTextViewFonts("Duration", formatDateString(onGoingReservation.getReturn_date(), true), holder.durationTextView);
         //TODO: need to fix this duration, answer not consistent with the dev website.
 
-        setExpandIndicatorClickListener(holder.lineToX, holder.xToLine, holder.onGoingReservationTableLayout,
+        setExpandIndicatorClickListener(holder.expandIndicatorLottieView, holder.onGoingReservationTableLayout,
                 holder.expandableOnGoingReservation, onGoingReservation);
 
         setViewActionButtonClickListener(holder.viewActionButton, onGoingReservation, position);
+
+        ViewGroup.MarginLayoutParams mp = (ViewGroup.MarginLayoutParams) holder.expandableOnGoingReservation.getLayoutParams();
+
+        if (!onGoingReservation.getExpanded() && mp.bottomMargin == 0) {
+
+            ExpandAnimation collapseAnimation = new ExpandAnimation(holder.expandableOnGoingReservation, 0);
+            collapseAnimation.setUpCollapseSubMenus(true);
+            holder.expandableOnGoingReservation.startAnimation(collapseAnimation);
+
+            mp.setMargins(0, 0, 0, -holder.expandableOnGoingReservation.getHeight());
+
+            holder.expandIndicatorLottieView.setComposition(lineToXComposition);
+            holder.expandIndicatorLottieView.setProgress(0);
+
+        } else if (onGoingReservation.getExpanded() && mp.bottomMargin != 0) {
+
+            ExpandAnimation collapseAnimation = new ExpandAnimation(holder.expandableOnGoingReservation, 0);
+            collapseAnimation.setUpCollapseSubMenus(false);
+            holder.expandableOnGoingReservation.startAnimation(collapseAnimation);
+
+            mp.setMargins(0, 0, 0, 0);
+
+            holder.expandIndicatorLottieView.setComposition(xToLineComposition);
+            holder.expandIndicatorLottieView.setProgress(0);
+
+        }
 
     }
 
@@ -167,8 +152,7 @@ public class OnGoingReservationAdapter extends RecyclerView.Adapter<OnGoingReser
         private TextView priceEstimatesTextView;
         private TextView plateNumberTextView;
         private TableLayout onGoingReservationTableLayout;
-        private LottieAnimationView lineToX;
-        private LottieAnimationView xToLine;
+        private LottieAnimationView expandIndicatorLottieView;
 
         private LinearLayout expandableOnGoingReservation;
         private TextView idTextView;
@@ -193,8 +177,7 @@ public class OnGoingReservationAdapter extends RecyclerView.Adapter<OnGoingReser
             priceEstimatesTextView = (TextView) itemView.findViewById(R.id.priceEstimatesTextView);
             plateNumberTextView = (TextView) itemView.findViewById(R.id.plateNumberTextView);
             onGoingReservationTableLayout = (TableLayout) itemView.findViewById(R.id.onGoingReservationTableLayout);
-            lineToX = (LottieAnimationView) itemView.findViewById(R.id.lineToX);
-            xToLine = (LottieAnimationView) itemView.findViewById(R.id.xToLine);
+            expandIndicatorLottieView = (LottieAnimationView) itemView.findViewById(R.id.expandIndicatorLottieView);
 
             expandableOnGoingReservation = (LinearLayout) itemView.findViewById(R.id.expandableOnGoingReservation);
             idTextView = (TextView) itemView.findViewById(R.id.idTextView);
@@ -214,12 +197,11 @@ public class OnGoingReservationAdapter extends RecyclerView.Adapter<OnGoingReser
         }
     }
 
-    private void setExpandIndicatorClickListener(final LottieAnimationView lineToX, final LottieAnimationView xToLine,
+    private void setExpandIndicatorClickListener(final LottieAnimationView expandIndicatorLottieView,
                                                  TableLayout onGoingReservationTableLayout, final LinearLayout expandableOnGoingReservation,
                                                  final OnGoingReservation onGoingReservation) {
 
-        lineToX.setComposition(lineToXComposition);
-        xToLine.setComposition(xToLineComposition);
+        expandIndicatorLottieView.setComposition(lineToXComposition);
 
         onGoingReservationTableLayout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -227,21 +209,16 @@ public class OnGoingReservationAdapter extends RecyclerView.Adapter<OnGoingReser
 
                 if (!onGoingReservation.getExpanded()) {
 
-                    lineToX.setVisibility(View.VISIBLE);
-
-                    xToLine.setVisibility(View.INVISIBLE);
-
-                    lineToX.playAnimation();
-
+                    expandIndicatorLottieView.setComposition(lineToXComposition);
+                    expandIndicatorLottieView.playAnimation();
                     onGoingReservation.setExpanded(true);
 
                 } else {
 
-                    xToLine.setVisibility(View.VISIBLE);
-                    lineToX.setVisibility(View.INVISIBLE);
-                    xToLine.playAnimation();
-
+                    expandIndicatorLottieView.setComposition(xToLineComposition);
+                    expandIndicatorLottieView.playAnimation();
                     onGoingReservation.setExpanded(false);
+
                 }
 
                 expandCollapseSubMenus(expandableOnGoingReservation);
