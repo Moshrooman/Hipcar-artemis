@@ -898,8 +898,12 @@ public class VehicleFragment extends Fragment implements VehicleAdapter.VehicleS
                 vehiclesInformationColorTextView.setText(vehicle.getColor());
                 vehiclesInformationYearTextView.setText(String.valueOf(vehicle.getYear()));
                 vehiclesInformationExcessKmChargeTextView.setText(String.valueOf(vehicle.getExcess_km_charge()));
-                vehiclesInformationRegistrationExpireTextView.setText(new DateTime(vehicle.getRegistration_expire()).withZoneRetainFields(DateTimeZone.forTimeZone(TimeZone.getTimeZone("Asia/Bangkok"))).toString("dd-MMM-yyyy HH:mm"));
 
+                if (vehicle.getRegistration_expire().equals("-")) {
+                    vehiclesInformationRegistrationExpireTextView.setText("-");
+                } else {
+                    vehiclesInformationRegistrationExpireTextView.setText(new DateTime(vehicle.getRegistration_expire()).withZoneRetainFields(DateTimeZone.forTimeZone(TimeZone.getTimeZone("Asia/Bangkok"))).toString("dd-MMM-yyyy HH:mm"));
+                }
                 setVehicleInformationLoadingTextViews();
             }
 
