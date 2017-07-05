@@ -138,8 +138,7 @@ public class OnGoingReservationAdapter extends RecyclerView.Adapter<OnGoingReser
 
         }
 
-        holder.expandIndicatorLottieView.setSpeed(0);
-        holder.expandIndicatorLottieView.playAnimation();
+        holder.expandIndicatorLottieView.setProgress(0);
 
     }
 
@@ -213,14 +212,12 @@ public class OnGoingReservationAdapter extends RecyclerView.Adapter<OnGoingReser
                 if (!onGoingReservation.getExpanded()) {
 
                     expandIndicatorLottieView.setComposition(lineToXComposition);
-                    expandIndicatorLottieView.setSpeed(1);
                     expandIndicatorLottieView.playAnimation();
                     onGoingReservation.setExpanded(true);
 
                 } else {
 
                     expandIndicatorLottieView.setComposition(xToLineComposition);
-                    expandIndicatorLottieView.setSpeed(1);
                     expandIndicatorLottieView.playAnimation();
                     onGoingReservation.setExpanded(false);
 

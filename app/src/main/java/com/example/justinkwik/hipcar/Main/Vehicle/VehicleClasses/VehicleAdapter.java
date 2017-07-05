@@ -118,8 +118,7 @@ public class VehicleAdapter extends RecyclerView.Adapter<VehicleAdapter.VehicleV
 
         }
 
-        holder.expandIndicatorLottieView.setSpeed(0);
-        holder.expandIndicatorLottieView.playAnimation();
+        holder.expandIndicatorLottieView.setProgress(0);
 
     }
 
@@ -191,14 +190,12 @@ public class VehicleAdapter extends RecyclerView.Adapter<VehicleAdapter.VehicleV
                 if (!vehicle.getExpanded()) {
 
                     expandIndicatorLottieView.setComposition(lineToXComposition);
-                    expandIndicatorLottieView.setSpeed(1);
                     expandIndicatorLottieView.playAnimation();
                     vehicle.setExpanded(true);
 
                 } else {
 
                     expandIndicatorLottieView.setComposition(xToLineComposition);
-                    expandIndicatorLottieView.setSpeed(1);
                     expandIndicatorLottieView.playAnimation();
                     vehicle.setExpanded(false);
 
