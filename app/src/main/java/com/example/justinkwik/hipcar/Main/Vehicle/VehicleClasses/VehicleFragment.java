@@ -1,6 +1,7 @@
 package com.example.justinkwik.hipcar.Main.Vehicle.VehicleClasses;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
@@ -9,6 +10,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -28,13 +30,11 @@ import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.Response;
-import com.android.volley.RetryPolicy;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.example.justinkwik.hipcar.ConnectionManager;
 import com.example.justinkwik.hipcar.Login.LoginActivity;
 import com.example.justinkwik.hipcar.Login.UserCredentials;
-import com.example.justinkwik.hipcar.Main.Reservation.OnGoingFragmentClasses.OnGoingReservationAdapter;
 import com.example.justinkwik.hipcar.Main.Reservation.ParseClassesReservation.Response.SuccessResponse;
 import com.example.justinkwik.hipcar.Main.Reservation.ParseClassesReservation.VehicleStatus.VehicleStatus;
 import com.example.justinkwik.hipcar.Main.Vehicle.VehicleClasses.ParseClassesVehicle.Vehicle;
@@ -54,10 +54,7 @@ import com.google.gson.Gson;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 
-import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TimeZone;
@@ -137,6 +134,16 @@ public class VehicleFragment extends Fragment implements VehicleAdapter.VehicleS
     private TextView activateDeactivateConfirmationTextView;
     private Button activateDeactivateCancelButton;
     private Button activateDeactivateOkButton;
+    private GoogleMapInfoAdapter googleMapInfoAdapter;
+    private Button getStatusButton;
+
+    MapView hipCarMapView;
+    TextView vehiclesInformationImmobilizerTextView;
+    TextView vehiclesInformationIgnitionTextView;
+    TextView vehiclesInformationCentralLockTextView;
+    TextView vehiclesInformationMileageTextView;
+
+    ColorStateList defaultTextViewColor;
 
     public VehicleFragment() {
         // Required empty public constructor
@@ -236,8 +243,6 @@ public class VehicleFragment extends Fragment implements VehicleAdapter.VehicleS
         //Below start of assigning variables for popup view.
         vehicleViewPopUpContainer = (ViewGroup) layoutInflater.inflate(R.layout.vehicleviewpopup, null);
         googleMapAndInfoViewPager = (ViewPager) vehicleViewPopUpContainer.findViewById(R.id.googleMapAndInfoViewPager);
-        popUpGreyScreenLoading = (RelativeLayout) vehicleViewPopUpContainer.findViewById(R.id.popUpGreyScreenLoading);
-        popUpLoadingLottieView = (LottieAnimationView) vehicleViewPopUpContainer.findViewById(R.id.popUpLoadingLottieView);
         popUpActionButtonArray = new Button[]{
                 (Button) vehicleViewPopUpContainer.findViewById(R.id.unlockEngineButton),
                 (Button) vehicleViewPopUpContainer.findViewById(R.id.lockEngineButton),
@@ -246,6 +251,7 @@ public class VehicleFragment extends Fragment implements VehicleAdapter.VehicleS
                 (Button) vehicleViewPopUpContainer.findViewById(R.id.resetModemButton),
                 (Button) vehicleViewPopUpContainer.findViewById(R.id.getStatusButton),
         };
+        getStatusButton = (Button) vehicleViewPopUpContainer.findViewById(R.id.getStatusButton);
 
         setpopUpActionButtonClickListeners();
 
@@ -329,7 +335,7 @@ public class VehicleFragment extends Fragment implements VehicleAdapter.VehicleS
 
             return;
 
-        } else if(actionButtonText.contains("Lock")) {
+        } else if(actionButtonText.toLowerCase().contains("lock")) {
 
             requestLink = vehicleActionLink
                     .replace(":id", String.valueOf(vehicle.getId()))
@@ -340,6 +346,8 @@ public class VehicleFragment extends Fragment implements VehicleAdapter.VehicleS
             requestLink = vehicleActionLink
                     .replace(":id", String.valueOf(vehicle.getId()))
                     .concat("modem-reset");
+
+            //TODO: the reset modem comes back with error code but the modem actually still resets.
 
         }
 
@@ -359,6 +367,8 @@ public class VehicleFragment extends Fragment implements VehicleAdapter.VehicleS
 
         disableButton(actionButton);
         disableButton(popUpActionButtonArray[disabledPosition]);
+
+        Log.e("Link: ", requestLink);
 
         StringRequest buttonActionRequest = new StringRequest(Request.Method.PUT, requestLink, new Response.Listener<String>() {
             @Override
@@ -417,6 +427,7 @@ public class VehicleFragment extends Fragment implements VehicleAdapter.VehicleS
                 vehicleStatus = gson.fromJson(response, VehicleStatus.class);
 
                 setPopUpViewPagerAdapters();
+                googleMapInfoAdapter.setVehicleStatusFields(vehicleStatus);
                 dismissLoadingScreen(true);
                 enableButton(actionButton);
 
@@ -424,6 +435,13 @@ public class VehicleFragment extends Fragment implements VehicleAdapter.VehicleS
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+
+                SuperToast superToast = SuperToast.create(context, "Error Making Request!", Style.DURATION_SHORT,
+                        Style.red()).setAnimations(Style.ANIMATIONS_POP);
+                superToast.show();
+
+                dismissLoadingScreen(true);
+                enableButton(actionButton);
 
             }
         }) {
@@ -437,7 +455,7 @@ public class VehicleFragment extends Fragment implements VehicleAdapter.VehicleS
             }
         };
 
-        vehicleStatusRequest.setRetryPolicy(new DefaultRetryPolicy(20000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        //TODO: vehicleStatusRequest.setRetryPolicy(new DefaultRetryPolicy(20000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 
         ConnectionManager.getInstance(context).add(vehicleStatusRequest);
 
@@ -479,6 +497,7 @@ public class VehicleFragment extends Fragment implements VehicleAdapter.VehicleS
         if (popUpRefresh) {
 
             showLoadingScreen(true);
+            setVehicleInformationLoadingTextViews();
 
         }
 
@@ -517,6 +536,16 @@ public class VehicleFragment extends Fragment implements VehicleAdapter.VehicleS
                         Style.red()).setAnimations(Style.ANIMATIONS_POP);
                 superToast.show();
 
+                if(!pulledToRefresh && !popUpRefresh) {
+
+                    dismissLoadingScreen(false);
+
+                }
+
+                pullToRefreshLayout.refreshComplete();
+                pulledToRefresh = false;
+                firstTimeClickedTab = false;
+
             }
         }) {
 
@@ -529,7 +558,7 @@ public class VehicleFragment extends Fragment implements VehicleAdapter.VehicleS
             }
         };
 
-        vehiclesRequest.setRetryPolicy(new DefaultRetryPolicy(20000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        //TODO: vehiclesRequest.setRetryPolicy(new DefaultRetryPolicy(20000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 
         ConnectionManager.getInstance(context).add(vehiclesRequest);
 
@@ -538,11 +567,12 @@ public class VehicleFragment extends Fragment implements VehicleAdapter.VehicleS
     @Override
     public void showVehicleStatusPopup(final Vehicle vehicle, int position) {
 
-        //We want to display the popup immediately while we let the information load in the background
-        showPopUpAndSetExitClickListener();
-
         this.vehicle = vehicle;
         this.recyclerViewPosition = position;
+
+        setPopUpViewPagerAdapters();
+        //We want to display the popup immediately while we let the information load in the background
+        showPopUpAndSetExitClickListener();
 
         String modifiedVehicleStatusLink = vehicleActionLink.replace(":id", String.valueOf(vehicle.getId()))
                 .concat("status");
@@ -553,9 +583,9 @@ public class VehicleFragment extends Fragment implements VehicleAdapter.VehicleS
 
                 vehicleStatus = gson.fromJson(response, VehicleStatus.class);
 
-                setPopUpViewPagerAdapters();
+                googleMapInfoAdapter.setVehicleStatusFields(vehicleStatus);
                 dismissLoadingScreen(true);
-                enablePopUpButtons();
+                enableButton(getStatusButton);
 
             }
         }, new Response.ErrorListener() {
@@ -565,6 +595,9 @@ public class VehicleFragment extends Fragment implements VehicleAdapter.VehicleS
                 SuperToast superToast = SuperToast.create(context, "Error Making Request!", Style.DURATION_SHORT,
                         Style.red()).setAnimations(Style.ANIMATIONS_POP);
                 superToast.show();
+
+                dismissLoadingScreen(true);
+                enableButton(getStatusButton);
 
             }
         }) {
@@ -578,7 +611,7 @@ public class VehicleFragment extends Fragment implements VehicleAdapter.VehicleS
             }
         };
 
-        vehicleStatusRequest.setRetryPolicy(new DefaultRetryPolicy(20000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        //TODO: vehicleStatusRequest.setRetryPolicy(new DefaultRetryPolicy(20000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 
         ConnectionManager.getInstance(context).add(vehicleStatusRequest);
 
@@ -628,6 +661,15 @@ public class VehicleFragment extends Fragment implements VehicleAdapter.VehicleS
                     @Override
                     public void onErrorResponse(VolleyError error) {
 
+                        SuperToast superToast = SuperToast.create(context, "Error Making Request!", Style.DURATION_SHORT,
+                                Style.red()).setAnimations(Style.ANIMATIONS_POP);
+                        superToast.show();
+
+                        activateActionButton.setBackgroundResource(R.drawable.greenactionviewbutton);
+                        activateActionButton.setEnabled(true);
+                        deactivateActionButton.setBackgroundResource(R.drawable.redactionviewbutton);
+                        deactivateActionButton.setEnabled(true);
+
                     }
                 }) {
 
@@ -669,7 +711,9 @@ public class VehicleFragment extends Fragment implements VehicleAdapter.VehicleS
 
     private void setPopUpViewPagerAdapters() {
 
-        googleMapAndInfoViewPager.setAdapter(new GoogleMapInfoAdapter(layoutInflater, vehicle, vehicleStatus));
+        googleMapInfoAdapter = new GoogleMapInfoAdapter(layoutInflater, vehicle);
+
+        googleMapAndInfoViewPager.setAdapter(googleMapInfoAdapter);
         googleMapAndInfoViewPager.setCurrentItem(googleMapAndInfoPosition, false);
 
     }
@@ -687,10 +731,8 @@ public class VehicleFragment extends Fragment implements VehicleAdapter.VehicleS
 
         vehicleViewPopUpWindow.showAtLocation(vehicleFrameLayout, Gravity.CENTER, 0, 0);
 
-        showLoadingScreen(true);
-        disablePopUpButtons();
+        disableButton(getStatusButton);
 
-        //Different android versions have different view hierarchie's need to split the code for dimming background.
         dimBackground(vehicleViewPopUpContainer);
 
         exitTextView = (TextView) vehicleViewPopUpContainer.findViewById(R.id.exitTextView);
@@ -775,40 +817,6 @@ public class VehicleFragment extends Fragment implements VehicleAdapter.VehicleS
         return (int)(dp * context.getResources().getDisplayMetrics().density);
     }
 
-    private void disablePopUpButtons() {
-
-        for (int i = 0; i < popUpActionButtonArray.length; i++) {
-
-            popUpActionButtonArray[i].setBackgroundResource(R.drawable.disabledactionviewbutton);
-            popUpActionButtonArray[i].setEnabled(false);
-
-        }
-
-    }
-
-    private void enablePopUpButtons() {
-
-        for (int i = 0; i < popUpActionButtonArray.length; i++) {
-
-            Button popUpActionButton = popUpActionButtonArray[i];
-
-            if (popUpActionButton.getText().toString().contains("Check")) {
-
-                popUpActionButtonArray[i].setBackgroundResource(R.drawable.redactionviewbutton);
-
-            } else {
-
-                popUpActionButtonArray[i].setBackgroundResource(R.drawable.blueactionviewbutton);
-
-            }
-
-
-            popUpActionButtonArray[i].setEnabled(true);
-
-        }
-
-    }
-
     private void disableButton(Button popUpActionButton) {
 
         popUpActionButton.setBackgroundResource(R.drawable.disabledactionviewbutton);
@@ -828,13 +836,11 @@ public class VehicleFragment extends Fragment implements VehicleAdapter.VehicleS
 
         private LayoutInflater inflater;
         private Vehicle vehicle;
-        private VehicleStatus vehicleStatus;
 
-        public GoogleMapInfoAdapter(LayoutInflater inflater, Vehicle vehicle, VehicleStatus vehicleStatus) {
+        public GoogleMapInfoAdapter(LayoutInflater inflater, Vehicle vehicle) {
 
             this.inflater = inflater;
             this.vehicle = vehicle;
-            this.vehicleStatus = vehicleStatus;
 
         }
 
@@ -852,38 +858,20 @@ public class VehicleFragment extends Fragment implements VehicleAdapter.VehicleS
 
                 layoutView = inflater.inflate(R.layout.fragment_map, null);
 
-                final MapView hipCarMapView = (MapView) layoutView.findViewById(R.id.hipCarMapView);
+                hipCarMapView = (MapView) layoutView.findViewById(R.id.hipCarMapView);
+                popUpGreyScreenLoading = (RelativeLayout) layoutView.findViewById(R.id.popUpGreyScreenLoading);
+                popUpLoadingLottieView = (LottieAnimationView) layoutView.findViewById(R.id.popUpLoadingLottieView);
+
+                showLoadingScreen(true);
 
                 hipCarMapView.onCreate(savedInstanceState);
-
-                hipCarMapView.getMapAsync(new OnMapReadyCallback() {
-                    @Override
-                    public void onMapReady(GoogleMap googleMap) {
-
-                        LatLng carCoordinates = new LatLng(vehicleStatus.getPosition().getLat(), vehicleStatus.getPosition().getLon());
-
-                        googleMap.getUiSettings().setMapToolbarEnabled(true);
-                        googleMap.getUiSettings().setZoomControlsEnabled(true);
-
-                        googleMap.addMarker(new MarkerOptions()
-                                .position(carCoordinates)
-                                .title("Car Location")
-                                .icon(carIcon));
-
-                        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(carCoordinates, 18));
-
-                        hipCarMapView.onResume();
-
-                    }
-                });
-
+                hipCarMapView.onResume();
 
             } else {
 
                 layoutView = inflater.inflate(R.layout.fragment_vehicle_information, null);
 
                 //Instantiate and assign all values in here so variables aren't created for both views.
-                DecimalFormat decimalFormat = new DecimalFormat();
                 TextView vehiclesInformationPlateNumberTextView = (TextView) layoutView.findViewById(R.id.vehiclesInformationPlateNumberTextView);
                 TextView vehiclesInformationVehicleModelTextView = (TextView) layoutView.findViewById(R.id.vehiclesInformationVehicleModelTextView);
                 TextView vehiclesInformationStationTextView = (TextView) layoutView.findViewById(R.id.vehiclesInformationStationTextView);
@@ -892,10 +880,11 @@ public class VehicleFragment extends Fragment implements VehicleAdapter.VehicleS
                 TextView vehiclesInformationYearTextView = (TextView) layoutView.findViewById(R.id.vehiclesInformationYearTextView);
                 TextView vehiclesInformationExcessKmChargeTextView = (TextView) layoutView.findViewById(R.id.vehiclesInformationExcessKmChargeTextView);
                 TextView vehiclesInformationRegistrationExpireTextView = (TextView) layoutView.findViewById(R.id.vehiclesInformationRegistrationExpireTextView);
-                TextView vehiclesInformationImmobilizerTextView = (TextView) layoutView.findViewById(R.id.vehiclesInformationImmobilizerTextView);
-                TextView vehiclesInformationIgnitionTextView = (TextView) layoutView.findViewById(R.id.vehiclesInformationIgnitionTextView);
-                TextView vehiclesInformationCentralLockTextView = (TextView) layoutView.findViewById(R.id.vehiclesInformationCentralLockTextView);
-                TextView vehiclesInformationMileageTextView = (TextView) layoutView.findViewById(R.id.vehiclesInformationMileageTextView);
+
+                vehiclesInformationImmobilizerTextView = (TextView) layoutView.findViewById(R.id.vehiclesInformationImmobilizerTextView);
+                vehiclesInformationIgnitionTextView = (TextView) layoutView.findViewById(R.id.vehiclesInformationIgnitionTextView);
+                vehiclesInformationCentralLockTextView = (TextView) layoutView.findViewById(R.id.vehiclesInformationCentralLockTextView);
+                vehiclesInformationMileageTextView = (TextView) layoutView.findViewById(R.id.vehiclesInformationMileageTextView);
 
 
                 vehiclesInformationPlateNumberTextView.setText(vehicle.getPlate_number());
@@ -905,20 +894,53 @@ public class VehicleFragment extends Fragment implements VehicleAdapter.VehicleS
                 vehiclesInformationColorTextView.setText(vehicle.getColor());
                 vehiclesInformationYearTextView.setText(String.valueOf(vehicle.getYear()));
                 vehiclesInformationExcessKmChargeTextView.setText(String.valueOf(vehicle.getExcess_km_charge()));
-
                 vehiclesInformationRegistrationExpireTextView.setText(new DateTime(vehicle.getRegistration_expire()).withZoneRetainFields(DateTimeZone.forTimeZone(TimeZone.getTimeZone("Asia/Bangkok"))).toString("dd-MMM-yyyy HH:mm"));
 
-                vehiclesInformationImmobilizerTextView.setText(vehicleStatus.getImmobilizer());
-                vehiclesInformationIgnitionTextView.setText(vehicleStatus.getIgnition());
-                vehiclesInformationCentralLockTextView.setText(vehicleStatus.getCentral_lock());
-                vehiclesInformationMileageTextView.setText(String.valueOf(vehicleStatus.getMileage()));
-
+                setVehicleInformationLoadingTextViews();
             }
 
 
             container.addView(layoutView);
 
             return layoutView;
+
+        }
+
+        private void setVehicleStatusFields(final VehicleStatus vehicleStatus) {
+
+            //Information Work
+            vehiclesInformationImmobilizerTextView.setText(vehicleStatus.getImmobilizer());
+            vehiclesInformationIgnitionTextView.setText(vehicleStatus.getIgnition());
+            vehiclesInformationCentralLockTextView.setText(vehicleStatus.getCentral_lock());
+            vehiclesInformationMileageTextView.setText(String.valueOf(vehicleStatus.getMileage()));
+
+            setVehicleInformationLoadingTextViewsColorDefault();
+
+            //Google map work
+            hipCarMapView.onCreate(savedInstanceState);
+
+            hipCarMapView.getMapAsync(new OnMapReadyCallback() {
+                @Override
+                public void onMapReady(GoogleMap googleMap) {
+
+                    dismissLoadingScreen(true);
+
+                    LatLng carCoordinates = new LatLng(vehicleStatus.getPosition().getLat(), vehicleStatus.getPosition().getLon());
+
+                    googleMap.getUiSettings().setMapToolbarEnabled(true);
+                    googleMap.getUiSettings().setZoomControlsEnabled(true);
+
+                    googleMap.addMarker(new MarkerOptions()
+                            .position(carCoordinates)
+                            .title("Car Location")
+                            .icon(carIcon));
+
+                    googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(carCoordinates, 18));
+
+                    hipCarMapView.onResume();
+
+                }
+            });
 
         }
 
@@ -931,6 +953,31 @@ public class VehicleFragment extends Fragment implements VehicleAdapter.VehicleS
         public boolean isViewFromObject(View view, Object object) {
             return view == object;
         }
+
+    }
+
+    private void setVehicleInformationLoadingTextViews() {
+
+        vehiclesInformationImmobilizerTextView.setText("Loading...");
+        vehiclesInformationIgnitionTextView.setText("Loading...");
+        vehiclesInformationCentralLockTextView.setText("Loading...");
+        vehiclesInformationMileageTextView.setText("Loading...");
+
+        defaultTextViewColor = vehiclesInformationImmobilizerTextView.getTextColors();
+
+        vehiclesInformationImmobilizerTextView.setTextColor(ContextCompat.getColor(context, R.color.red));
+        vehiclesInformationIgnitionTextView.setTextColor(ContextCompat.getColor(context, R.color.red));
+        vehiclesInformationCentralLockTextView.setTextColor(ContextCompat.getColor(context, R.color.red));
+        vehiclesInformationMileageTextView.setTextColor(ContextCompat.getColor(context, R.color.red));
+
+    }
+
+    private void setVehicleInformationLoadingTextViewsColorDefault() {
+
+        vehiclesInformationImmobilizerTextView.setTextColor(defaultTextViewColor);
+        vehiclesInformationIgnitionTextView.setTextColor(defaultTextViewColor);
+        vehiclesInformationCentralLockTextView.setTextColor(defaultTextViewColor);
+        vehiclesInformationMileageTextView.setTextColor(defaultTextViewColor);
 
     }
 
