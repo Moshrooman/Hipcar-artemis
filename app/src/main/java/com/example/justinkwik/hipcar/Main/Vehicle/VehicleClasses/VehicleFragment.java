@@ -134,6 +134,8 @@ public class VehicleFragment extends Fragment implements VehicleAdapter.VehicleS
     private TextView activateDeactivateConfirmationTextView;
     private Button activateDeactivateCancelButton;
     private Button activateDeactivateOkButton;
+
+    //TODO: added these global variables.
     private GoogleMapInfoAdapter googleMapInfoAdapter;
     private Button getStatusButton;
 
@@ -251,6 +253,7 @@ public class VehicleFragment extends Fragment implements VehicleAdapter.VehicleS
                 (Button) vehicleViewPopUpContainer.findViewById(R.id.resetModemButton),
                 (Button) vehicleViewPopUpContainer.findViewById(R.id.getStatusButton),
         };
+        //TODO: gave status reference here.
         getStatusButton = (Button) vehicleViewPopUpContainer.findViewById(R.id.getStatusButton);
 
         setpopUpActionButtonClickListeners();
@@ -351,6 +354,7 @@ public class VehicleFragment extends Fragment implements VehicleAdapter.VehicleS
 
         }
 
+        //TODO: fixed this.
         if (position == 1 || position == 3) {
 
             disabledPosition = position - 1;
@@ -430,6 +434,7 @@ public class VehicleFragment extends Fragment implements VehicleAdapter.VehicleS
 
                 vehicleStatus = gson.fromJson(response, VehicleStatus.class);
 
+                //TODO: called to set the vehicle status fields here.
                 setPopUpViewPagerAdapters();
                 googleMapInfoAdapter.setVehicleStatusFields(vehicleStatus);
                 dismissLoadingScreen(true);
@@ -500,6 +505,7 @@ public class VehicleFragment extends Fragment implements VehicleAdapter.VehicleS
 
         if (popUpRefresh) {
 
+            //TODO: called to load the text views.
             showLoadingScreen(true);
             setVehicleInformationLoadingTextViews();
 
@@ -587,6 +593,7 @@ public class VehicleFragment extends Fragment implements VehicleAdapter.VehicleS
 
                 vehicleStatus = gson.fromJson(response, VehicleStatus.class);
 
+                //TODO: set status fields here.
                 googleMapInfoAdapter.setVehicleStatusFields(vehicleStatus);
                 dismissLoadingScreen(true);
                 enableButton(getStatusButton);
@@ -715,6 +722,7 @@ public class VehicleFragment extends Fragment implements VehicleAdapter.VehicleS
 
     private void setPopUpViewPagerAdapters() {
 
+        //TODO: here i just set it first without the loading text views.
         googleMapInfoAdapter = new GoogleMapInfoAdapter(layoutInflater, vehicle);
 
         googleMapAndInfoViewPager.setAdapter(googleMapInfoAdapter);
@@ -735,8 +743,10 @@ public class VehicleFragment extends Fragment implements VehicleAdapter.VehicleS
 
         vehicleViewPopUpWindow.showAtLocation(vehicleFrameLayout, Gravity.CENTER, 0, 0);
 
+        //TODO: only disabled the status button (which is why we gave reference above) and took away method disable and enable all buttons.
         disableButton(getStatusButton);
 
+        //TODO: created dimbackground method.
         dimBackground(vehicleViewPopUpContainer);
 
         exitTextView = (TextView) vehicleViewPopUpContainer.findViewById(R.id.exitTextView);
@@ -786,6 +796,7 @@ public class VehicleFragment extends Fragment implements VehicleAdapter.VehicleS
 
     }
 
+    //TODO: the loading screen for the popup is moved from the popup layout to the fragment_map layout, so change those references.
     private void dismissLoadingScreen(boolean popUp) {
 
         //If it is not the popup, we handle the reservation loading screen.
@@ -860,6 +871,7 @@ public class VehicleFragment extends Fragment implements VehicleAdapter.VehicleS
 
             if(position == 0) {
 
+                //TODO: gave references here.
                 layoutView = inflater.inflate(R.layout.fragment_map, null);
 
                 hipCarMapView = (MapView) layoutView.findViewById(R.id.hipCarMapView);
@@ -868,6 +880,7 @@ public class VehicleFragment extends Fragment implements VehicleAdapter.VehicleS
 
                 showLoadingScreen(true);
 
+                //TODO: showed the hipcar view but not loading the coordinates.
                 hipCarMapView.onCreate(savedInstanceState);
                 hipCarMapView.onResume();
 
@@ -885,11 +898,11 @@ public class VehicleFragment extends Fragment implements VehicleAdapter.VehicleS
                 TextView vehiclesInformationExcessKmChargeTextView = (TextView) layoutView.findViewById(R.id.vehiclesInformationExcessKmChargeTextView);
                 TextView vehiclesInformationRegistrationExpireTextView = (TextView) layoutView.findViewById(R.id.vehiclesInformationRegistrationExpireTextView);
 
+                //TODO: gave these reference instead to the global.
                 vehiclesInformationImmobilizerTextView = (TextView) layoutView.findViewById(R.id.vehiclesInformationImmobilizerTextView);
                 vehiclesInformationIgnitionTextView = (TextView) layoutView.findViewById(R.id.vehiclesInformationIgnitionTextView);
                 vehiclesInformationCentralLockTextView = (TextView) layoutView.findViewById(R.id.vehiclesInformationCentralLockTextView);
                 vehiclesInformationMileageTextView = (TextView) layoutView.findViewById(R.id.vehiclesInformationMileageTextView);
-
 
                 vehiclesInformationPlateNumberTextView.setText(vehicle.getPlate_number());
                 vehiclesInformationVehicleModelTextView.setText(vehicle.getVehicle_model().getName());
@@ -904,6 +917,7 @@ public class VehicleFragment extends Fragment implements VehicleAdapter.VehicleS
                 } else {
                     vehiclesInformationRegistrationExpireTextView.setText(new DateTime(vehicle.getRegistration_expire()).withZoneRetainFields(DateTimeZone.forTimeZone(TimeZone.getTimeZone("Asia/Bangkok"))).toString("dd-MMM-yyyy HH:mm"));
                 }
+                //TODO: created this method below.
                 setVehicleInformationLoadingTextViews();
             }
 
@@ -914,6 +928,7 @@ public class VehicleFragment extends Fragment implements VehicleAdapter.VehicleS
 
         }
 
+        //TODO:created this and called when the vehiclestatus loaded.
         private void setVehicleStatusFields(final VehicleStatus vehicleStatus) {
 
             //Information Work
@@ -964,6 +979,7 @@ public class VehicleFragment extends Fragment implements VehicleAdapter.VehicleS
 
     }
 
+    //TODO: created this to pull the default color, set the text to loading and set color to red.
     private void setVehicleInformationLoadingTextViews() {
 
         vehiclesInformationImmobilizerTextView.setText("Loading...");
@@ -980,6 +996,7 @@ public class VehicleFragment extends Fragment implements VehicleAdapter.VehicleS
 
     }
 
+    //TODO: created this method to show the default color.
     private void setVehicleInformationLoadingTextViewsColorDefault() {
 
         vehiclesInformationImmobilizerTextView.setTextColor(defaultTextViewColor);
