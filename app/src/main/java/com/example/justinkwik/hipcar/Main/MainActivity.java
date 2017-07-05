@@ -2,7 +2,9 @@ package com.example.justinkwik.hipcar.Main;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.database.DataSetObserver;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -15,6 +17,7 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ExpandableListView;
@@ -58,6 +61,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private TextView vehicleTextView;
     private TextView vehicleMakeTextView;
     private TextView vehicleModelTextView;
+    private MyNavBarAdapter navBarAdapter;
+    private ExpandAnimation expandAnimation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,7 +86,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         //TODO: need to figure out how much and when to set the viewPager.setOffScreenPageLimit.
 
         drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
-        drawerListView.setAdapter(new MyNavBarAdapter());
+        navBarAdapter = new MyNavBarAdapter();
+        drawerListView.setAdapter(navBarAdapter);
         drawerListView.setOnItemClickListener(this);
 
         drawerLayout.addDrawerListener(new DrawerLayout.DrawerListener() {
@@ -253,6 +259,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
             return convertView;
         }
+
     }
 
     @Override
@@ -260,7 +267,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         switch (position) {
             case 0:
-                expandCollapseSubMenus(changePassLogOutLayout);
+                expandCollapseSubMenus(changePassLogOutLayout, false);
                 break;
             case 1:
                 viewPager.setCurrentItem(3, false);
@@ -269,7 +276,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 viewPager.setCurrentItem(4, false);
                 break;
             case 3:
-                expandCollapseSubMenus(reservationSubMenuLayout);
+                expandCollapseSubMenus(reservationSubMenuLayout, false);
                 break;
             case 4:
                 viewPager.setCurrentItem(8, false);
@@ -287,7 +294,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 viewPager.setCurrentItem(12, false);
                 break;
             case 9:
-                expandCollapseSubMenus(vehicleSubMenuLayout);
+
+                expandCollapseSubMenus(vehicleSubMenuLayout, true);
+
                 break;
 
         }
@@ -399,14 +408,13 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     }
 
-    private void expandCollapseSubMenus(View view) {
+    private void expandCollapseSubMenus(View view, boolean scrollToBottom) {
 
-        ExpandAnimation expandAnimation = new ExpandAnimation(view, 390);
+        expandAnimation = new ExpandAnimation(view, 390, drawerListView, scrollToBottom);
+
         view.startAnimation(expandAnimation);
 
     }
-
-    //TODO implement these onitemclicks then getitem and onclick method.
 
     private void setOnClickListenersLogoutChangePass() {
 
@@ -433,7 +441,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             public void onClick(View v) {
 
                 viewPager.setCurrentItem(14, false);
-                expandCollapseSubMenus(vehicleSubMenuLayout);
+                expandCollapseSubMenus(vehicleSubMenuLayout, false);
                 mainActivityTitle.setText("Vehicle");
                 closeDrawer();
 
@@ -461,7 +469,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             @Override
             public void onClick(View v) {
                 viewPager.setCurrentItem(6, false); //Set to 6 starting from index 0, this submenu is position 6
-                expandCollapseSubMenus(reservationSubMenuLayout);
+                expandCollapseSubMenus(reservationSubMenuLayout, false);
                 mainActivityTitle.setText("On-Going Reservations");
                 closeDrawer();
             }
@@ -472,7 +480,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             public void onClick(View v) {
 
                 viewPager.setCurrentItem(7, false);
-                expandCollapseSubMenus(reservationSubMenuLayout);
+                expandCollapseSubMenus(reservationSubMenuLayout, false);
                 mainActivityTitle.setText("Checked-Out Reservations");
                 closeDrawer();
 

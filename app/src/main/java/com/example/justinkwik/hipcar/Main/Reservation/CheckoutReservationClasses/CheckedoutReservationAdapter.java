@@ -133,6 +133,9 @@ public class CheckedoutReservationAdapter extends RecyclerView.Adapter<Checkedou
 
         }
 
+        holder.expandIndicatorLottieView.setSpeed(0);
+        holder.expandIndicatorLottieView.playAnimation();
+
     }
 
     @Override
@@ -210,12 +213,14 @@ public class CheckedoutReservationAdapter extends RecyclerView.Adapter<Checkedou
                 if (!checkedOutReservation.getExpanded()) {
 
                     expandIndicatorLottieView.setComposition(lineToXComposition);
+                    expandIndicatorLottieView.setSpeed(1);
                     expandIndicatorLottieView.playAnimation();
                     checkedOutReservation.setExpanded(true);
 
                 } else {
 
                     expandIndicatorLottieView.setComposition(xToLineComposition);
+                    expandIndicatorLottieView.setSpeed(1);
                     expandIndicatorLottieView.playAnimation();
                     checkedOutReservation.setExpanded(false);
 

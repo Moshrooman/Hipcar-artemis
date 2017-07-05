@@ -4,12 +4,14 @@ import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TableLayout;
 import android.widget.TextView;
 
@@ -40,8 +42,9 @@ public class VehicleAdapter extends RecyclerView.Adapter<VehicleAdapter.VehicleV
     private Gson gson;
     private LottieComposition lineToXComposition;
     private LottieComposition xToLineComposition;
+    private RecyclerView recyclerView;
 
-    public VehicleAdapter(Context context, Vehicle[] vehicles, VehicleStatusInterface vehicleStatusInterface) {
+    public VehicleAdapter(Context context, Vehicle[] vehicles, VehicleStatusInterface vehicleStatusInterface, RecyclerView recyclerView) {
 
         this.context = context;
         this.vehicles = vehicles;
@@ -50,6 +53,7 @@ public class VehicleAdapter extends RecyclerView.Adapter<VehicleAdapter.VehicleV
         this.gson = new Gson();
         this.lineToXComposition = SplashActivity.getLineToXComposition();
         this.xToLineComposition = SplashActivity.getxToLineComposition();
+        this.recyclerView = recyclerView;
 
         Exo2Bold = new CalligraphyTypefaceSpan(TypefaceUtils.load(this.context.getAssets(), "fonts/Exo2-Bold.ttf"));
         Exo2Regular = new CalligraphyTypefaceSpan(TypefaceUtils.load(this.context.getAssets(), "fonts/Exo2-Regular.ttf"));
@@ -84,7 +88,7 @@ public class VehicleAdapter extends RecyclerView.Adapter<VehicleAdapter.VehicleV
         setSplitTextViewFonts("Status", String.valueOf(vehicle.is_active()), holder.vehiclesStatusTextView);
 
         setExpandIndicatorClickListener(holder.expandIndicatorLottieView, holder.vehiclesTableLayout,
-                holder.expandableVehicles, vehicle);
+                holder.expandableVehicles, vehicle, position == vehicles.length - 1);
 
         setViewActionButtonClickListener(holder.vehiclesViewActionButton, vehicle, position, holder.vehiclesActivateButton, holder.vehiclesDeactivateButton);
 
@@ -113,6 +117,9 @@ public class VehicleAdapter extends RecyclerView.Adapter<VehicleAdapter.VehicleV
             holder.expandIndicatorLottieView.setProgress(0);
 
         }
+
+        holder.expandIndicatorLottieView.setSpeed(0);
+        holder.expandIndicatorLottieView.playAnimation();
 
     }
 
@@ -172,8 +179,8 @@ public class VehicleAdapter extends RecyclerView.Adapter<VehicleAdapter.VehicleV
     }
 
     private void setExpandIndicatorClickListener(final LottieAnimationView expandIndicatorLottieView,
-                                                 TableLayout vehiclesTableLayout, final LinearLayout expandableVehicles,
-                                                 final Vehicle vehicle) {
+                                                 final TableLayout vehiclesTableLayout, final LinearLayout expandableVehicles,
+                                                 final Vehicle vehicle, final boolean lastItemScrollToBottom) {
 
         expandIndicatorLottieView.setComposition(lineToXComposition);
 
@@ -184,18 +191,20 @@ public class VehicleAdapter extends RecyclerView.Adapter<VehicleAdapter.VehicleV
                 if (!vehicle.getExpanded()) {
 
                     expandIndicatorLottieView.setComposition(lineToXComposition);
+                    expandIndicatorLottieView.setSpeed(1);
                     expandIndicatorLottieView.playAnimation();
                     vehicle.setExpanded(true);
 
                 } else {
 
                     expandIndicatorLottieView.setComposition(xToLineComposition);
+                    expandIndicatorLottieView.setSpeed(1);
                     expandIndicatorLottieView.playAnimation();
                     vehicle.setExpanded(false);
 
                 }
 
-                expandCollapseSubMenus(expandableVehicles);
+                expandCollapseSubMenus(expandableVehicles, lastItemScrollToBottom);
 
             }
         });
@@ -216,9 +225,9 @@ public class VehicleAdapter extends RecyclerView.Adapter<VehicleAdapter.VehicleV
 
     }
 
-    private void expandCollapseSubMenus(View view) {
+    private void expandCollapseSubMenus(View view, boolean scrollToBottom) {
 
-        ExpandAnimation expandAnimation = new ExpandAnimation(view, 390);
+        ExpandAnimation expandAnimation = new ExpandAnimation(view, 390, recyclerView, scrollToBottom);
 
         view.startAnimation(expandAnimation);
 

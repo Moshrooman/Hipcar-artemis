@@ -355,7 +355,7 @@ public class VehicleFragment extends Fragment implements VehicleAdapter.VehicleS
 
             disabledPosition = position - 1;
 
-        } else if (position == 0 || position == 4){
+        } else if (position == 0 || position == 2){
 
             disabledPosition = position + 1;
 
@@ -370,6 +370,7 @@ public class VehicleFragment extends Fragment implements VehicleAdapter.VehicleS
 
         Log.e("Link: ", requestLink);
 
+        final String finalRequestLink = requestLink;
         StringRequest buttonActionRequest = new StringRequest(Request.Method.PUT, requestLink, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -383,7 +384,10 @@ public class VehicleFragment extends Fragment implements VehicleAdapter.VehicleS
                         Style.green()).setAnimations(Style.ANIMATIONS_POP);
                 superToast.show();
 
-                vehiclesStringRequest(thisFragment, true, actionButton);
+                if (!finalRequestLink.contains("modem-reset")) {
+                    Log.e("True", "True 2"); //TODO: only do the vehicles String request if its not a modem reset.
+                    vehiclesStringRequest(thisFragment, true, actionButton);
+                }
 
             }
         }, new Response.ErrorListener() {
@@ -515,7 +519,7 @@ public class VehicleFragment extends Fragment implements VehicleAdapter.VehicleS
                 }
 
                 vehicleRecyclerView.setAdapter(new VehicleAdapter(getActivity(),
-                        vehicleStatuses, vehicleFragment));
+                        vehicleStatuses, vehicleFragment, vehicleRecyclerView));
 
                 if(!pulledToRefresh && !popUpRefresh) {
 
