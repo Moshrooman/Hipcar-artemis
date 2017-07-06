@@ -73,7 +73,7 @@ public class CheckedoutReservationAdapter extends RecyclerView.Adapter<Checkedou
     @Override
     public void onBindViewHolder(final CheckoutReservationViewHolder holder, int position) {
 
-        CheckedOutReservation checkedOutReservation = checkedOutReservations[position];
+        final CheckedOutReservation checkedOutReservation = checkedOutReservations[position];
 
         holder.fullNameTextView.setText(checkedOutReservation.getFull_name());
         holder.contactNumberTextView.setText(checkedOutReservation.getContact_number());
@@ -84,11 +84,20 @@ public class CheckedoutReservationAdapter extends RecyclerView.Adapter<Checkedou
 
         setSplitTextViewFonts("ID", String.valueOf(checkedOutReservation.getId()), holder.idTextView);
         setSplitTextViewFonts("Email", checkedOutReservation.getEmail(), holder.emailTextView);
-        setSplitTextViewFonts("Duration", formatDateString(checkedOutReservation.getActual_return_date(), true, checkedOutReservation.getReturn_date()), holder.durationTextView);
-        setSplitTextViewFonts("Plate Number", checkedOutReservation.getVehicle().getPlate_number(), holder.plateNumberTextView);
 
-        setSplitTextViewFonts("Vehicle Model", checkedOutReservation.getVehicle().getVehicle_model().getName(),
-                holder.vehicleModelTextView);
+        if (checkedOutReservation.getVehicle() != null) {
+            setSplitTextViewFonts("Plate Number", checkedOutReservation.getVehicle().getPlate_number(), holder.plateNumberTextView);
+
+            setSplitTextViewFonts("Vehicle Model", checkedOutReservation.getVehicle().getVehicle_model().getName(),
+                    holder.vehicleModelTextView);
+        } else {
+            setSplitTextViewFonts("Plate Number", "-", holder.plateNumberTextView);
+
+            setSplitTextViewFonts("Vehicle Model", "-",
+                    holder.vehicleModelTextView);
+        }
+
+        setSplitTextViewFonts("Duration", formatDateString(checkedOutReservation.getActual_return_date(), true, checkedOutReservation.getReturn_date()), holder.durationTextView);
         setSplitTextViewFonts("Pick Up Date", formatDateString(checkedOutReservation.getPickup_date(), false, null),
                 holder.pickUpDateTextView);
         setSplitTextViewFonts("Grace Period Expire", formatDateString(checkedOutReservation.getReturn_date(), false, null),
@@ -134,6 +143,19 @@ public class CheckedoutReservationAdapter extends RecyclerView.Adapter<Checkedou
         }
 
         holder.expandIndicatorLottieView.setProgress(0);
+
+        if (!holder.contactNumberTextView.hasOnClickListeners()) {
+
+            holder.contactNumberTextView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    holder.contactNumberTextView.setText(checkedOutReservation.getContact_number());
+
+                }
+            });
+
+        }
 
     }
 

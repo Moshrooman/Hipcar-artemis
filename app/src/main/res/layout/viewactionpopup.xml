@@ -47,26 +47,6 @@
 
     </LinearLayout>
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="335dp"
-        android:background="@color/greyScreenLoading"
-        android:alpha="0.8"
-        android:id="@+id/popUpGreyScreenLoading"
-        android:layout_below="@+id/popUpTitleLinearLayout"
-        >
-
-        <com.airbnb.lottie.LottieAnimationView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:lottie_fileName="Lottie/loading.json"
-            app:lottie_loop="true"
-            android:layout_centerInParent="true"
-            android:id="@+id/popUpLoadingLottieView"
-            />
-
-    </RelativeLayout>
-
     <android.support.v4.view.ViewPager
         android:layout_width="match_parent"
         android:layout_height="335dp"

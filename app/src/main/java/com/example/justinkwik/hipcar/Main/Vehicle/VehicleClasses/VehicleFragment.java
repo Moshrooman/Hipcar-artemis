@@ -253,7 +253,6 @@ public class VehicleFragment extends Fragment implements VehicleAdapter.VehicleS
                 (Button) vehicleViewPopUpContainer.findViewById(R.id.resetModemButton),
                 (Button) vehicleViewPopUpContainer.findViewById(R.id.getStatusButton),
         };
-        //TODO: gave status reference here.
         getStatusButton = (Button) vehicleViewPopUpContainer.findViewById(R.id.getStatusButton);
 
         setpopUpActionButtonClickListeners();
@@ -434,7 +433,6 @@ public class VehicleFragment extends Fragment implements VehicleAdapter.VehicleS
 
                 vehicleStatus = gson.fromJson(response, VehicleStatus.class);
 
-                //TODO: called to set the vehicle status fields here.
                 setPopUpViewPagerAdapters();
                 googleMapInfoAdapter.setVehicleStatusFields(vehicleStatus);
                 dismissLoadingScreen(true);
@@ -505,7 +503,6 @@ public class VehicleFragment extends Fragment implements VehicleAdapter.VehicleS
 
         if (popUpRefresh) {
 
-            //TODO: called to load the text views.
             showLoadingScreen(true);
             setVehicleInformationLoadingTextViews();
 
@@ -796,7 +793,6 @@ public class VehicleFragment extends Fragment implements VehicleAdapter.VehicleS
 
     }
 
-    //TODO: the loading screen for the popup is moved from the popup layout to the fragment_map layout, so change those references.
     private void dismissLoadingScreen(boolean popUp) {
 
         //If it is not the popup, we handle the reservation loading screen.

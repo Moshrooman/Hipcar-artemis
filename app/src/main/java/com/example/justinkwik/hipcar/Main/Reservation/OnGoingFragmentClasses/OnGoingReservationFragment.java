@@ -1,6 +1,7 @@
 package com.example.justinkwik.hipcar.Main.Reservation.OnGoingFragmentClasses;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
@@ -155,6 +156,16 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
     private DateTime currentDateTime;
     private String dateTimeISO;
 
+    private MapView hipCarMapView;
+    private Button getStatusButton;
+    private GoogleMapInfoAdapter googleMapInfoAdapter;
+    private ColorStateList defaultTextViewColor;
+    private TextView informationImmobilizerTextView;
+    private TextView informationIgnitionTextView;
+    private TextView informationCentralLockTextView;
+    private TextView informationMileageTextView;
+    private TextView informationSpeedTextView;
+
     private SlideDateTimeListener slideDateTimeListener;
 
     public OnGoingReservationFragment() {
@@ -216,8 +227,6 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
         popUpRelativeLayout = (RelativeLayout) viewActionPopUpContainer.findViewById(R.id.popUpRelativeLayout);
         buttonScrollView = (ScrollView) viewActionPopUpContainer.findViewById(R.id.buttonScrollView);
         googleMapAndInfoViewPager = (ViewPager) viewActionPopUpContainer.findViewById(R.id.googleMapAndInfoViewPager);
-        popUpGreyScreenLoading = (RelativeLayout) viewActionPopUpContainer.findViewById(R.id.popUpGreyScreenLoading);
-        popUpLoadingLottieView = (LottieAnimationView) viewActionPopUpContainer.findViewById(R.id.popUpLoadingLottieView);
         popUpActionButtonArray = new Button[]{
                 (Button) viewActionPopUpContainer.findViewById(R.id.unlockEngineButton),
                 (Button) viewActionPopUpContainer.findViewById(R.id.lockEngineButton),
@@ -228,6 +237,7 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
                 (Button) viewActionPopUpContainer.findViewById(R.id.checkInButton),
                 (Button) viewActionPopUpContainer.findViewById(R.id.checkOutButton),
         };
+        getStatusButton = (Button) viewActionPopUpContainer.findViewById(R.id.getStatusButton);
 
         setpopUpActionButtonClickListeners();
 
@@ -436,6 +446,9 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
                         Style.red()).setAnimations(Style.ANIMATIONS_POP);
                 superToast.show();
 
+                enableButton(actionButton);
+                enableButton(popUpActionButtonArray[disabledPosition]);
+
             }
         }) {
 
@@ -464,18 +477,7 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
         voucherPopUpWindow.showAtLocation(onGoingReservationFrameLayout, Gravity.CENTER, 0, 0);
 
         //Different android versions have different view hierarchie's need to split the code for dimming background.
-        if (android.os.Build.VERSION.SDK_INT > 22) {
-            View popUpDimView = (View) voucherPopUpContainer.getParent();
-            WindowManager.LayoutParams layoutParams = (WindowManager.LayoutParams) popUpDimView.getLayoutParams();
-            layoutParams.flags = WindowManager.LayoutParams.FLAG_DIM_BEHIND;
-            layoutParams.dimAmount = 0.7f;
-            windowManager.updateViewLayout(popUpDimView, layoutParams);
-        } else {
-            WindowManager.LayoutParams layoutParams = (WindowManager.LayoutParams) voucherPopUpContainer.getLayoutParams();
-            layoutParams.flags = WindowManager.LayoutParams.FLAG_DIM_BEHIND;
-            layoutParams.dimAmount = 0.7f;
-            windowManager.updateViewLayout(voucherPopUpContainer, layoutParams);
-        }
+        dimBackground(voucherPopUpContainer);
 
         voucherExitTextView = (TextView) voucherPopUpContainer.findViewById(R.id.voucherExitTextView);
 
@@ -601,6 +603,11 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
                     @Override
                     public void onErrorResponse(VolleyError error) {
 
+                        SuperToast superToast = SuperToast.create(context, "Error Making Request!", Style.DURATION_SHORT,
+                                Style.red()).setAnimations(Style.ANIMATIONS_POP);
+                        superToast.show();
+
+
                     }
                 }) {
 
@@ -646,18 +653,7 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
 
         checkInOutPopUpWindow.showAtLocation(onGoingReservationFrameLayout, Gravity.CENTER, 0, 0);
 
-        if (android.os.Build.VERSION.SDK_INT > 22) {
-            View popUpDimView = (View) checkInOutPopUpContainer.getParent();
-            WindowManager.LayoutParams layoutParams = (WindowManager.LayoutParams) popUpDimView.getLayoutParams();
-            layoutParams.flags = WindowManager.LayoutParams.FLAG_DIM_BEHIND;
-            layoutParams.dimAmount = 0.7f;
-            windowManager.updateViewLayout(popUpDimView, layoutParams);
-        } else {
-            WindowManager.LayoutParams layoutParams = (WindowManager.LayoutParams) checkInOutPopUpContainer.getLayoutParams();
-            layoutParams.flags = WindowManager.LayoutParams.FLAG_DIM_BEHIND;
-            layoutParams.dimAmount = 0.7f;
-            windowManager.updateViewLayout(checkInOutPopUpContainer, layoutParams);
-        }
+        dimBackground(checkInOutPopUpContainer);
 
         checkInOutTitleTextView.setText("Reservation " + title);
         checkInOutTextView.setText(title + " Date");
@@ -774,6 +770,10 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
                     @Override
                     public void onErrorResponse(VolleyError error) {
 
+                        SuperToast superToast = SuperToast.create(context, "Error Making Request!", Style.DURATION_SHORT,
+                                Style.red()).setAnimations(Style.ANIMATIONS_POP);
+                        superToast.show();
+
                     }
                 }) {
 
@@ -850,6 +850,7 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
                 vehicleStatus = gson.fromJson(response, VehicleStatus.class);
 
                 setPopUpViewPagerAdapters();
+                googleMapInfoAdapter.setVehicleStatusFields(vehicleStatus);
                 dismissLoadingScreen(true);
                 enableButton(actionButton);
 
@@ -910,6 +911,7 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
         if (popUpRefresh) {
 
             showLoadingScreen(true);
+            setOnGoingInformationLoadingTextViews();
 
         }
 
@@ -944,6 +946,20 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
             @Override
             public void onErrorResponse(VolleyError error) {
 
+                SuperToast superToast = SuperToast.create(context, "Error Making Request!", Style.DURATION_SHORT,
+                        Style.red()).setAnimations(Style.ANIMATIONS_POP);
+                superToast.show();
+
+                if(!pulledToRefresh && !popUpRefresh) {
+
+                    dismissLoadingScreen(false);
+
+                }
+
+                pullToRefreshLayout.refreshComplete();
+                pulledToRefresh = false;
+                firstTimeClickedTab = false;
+
             }
         }) {
 
@@ -963,11 +979,12 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
     @Override
     public void showVehicleStatusPopup(final OnGoingReservation onGoingReservation, int position) {
 
-        //We want to display the popup immediately while we let the information load in the background
-        showPopUpAndSetExitClickListener();
-
         this.onGoingReservation = onGoingReservation;
         this.recyclerViewPosition = position;
+
+        setPopUpViewPagerAdapters();
+        //We want to display the popup immediately while we let the information load in the background
+        showPopUpAndSetExitClickListener();
 
         String modifiedVehicleStatusLink = vehicleActionLink.replace(":id", String.valueOf(onGoingReservation.getVehicle_id()))
                 .concat("status");
@@ -978,15 +995,21 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
 
                 vehicleStatus = gson.fromJson(response, VehicleStatus.class);
 
-                setPopUpViewPagerAdapters();
+                googleMapInfoAdapter.setVehicleStatusFields(vehicleStatus);
                 dismissLoadingScreen(true);
-                enablePopUpButtons();
+                enableButton(getStatusButton);
 
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
 
+                SuperToast superToast = SuperToast.create(context, "Error Making Request!", Style.DURATION_SHORT,
+                        Style.red()).setAnimations(Style.ANIMATIONS_POP);
+                superToast.show();
+
+                dismissLoadingScreen(true);
+                enableButton(getStatusButton);
             }
         }) {
 
@@ -1005,7 +1028,9 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
 
     private void setPopUpViewPagerAdapters() {
 
-        googleMapAndInfoViewPager.setAdapter(new GoogleMapInfoAdapter(layoutInflater, onGoingReservation, vehicleStatus));
+        googleMapInfoAdapter = new GoogleMapInfoAdapter(layoutInflater, onGoingReservation);
+
+        googleMapAndInfoViewPager.setAdapter(googleMapInfoAdapter);
         googleMapAndInfoViewPager.setCurrentItem(googleMapAndInfoPosition, false);
 
     }
@@ -1023,22 +1048,8 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
 
         viewActionPopUpWindow.showAtLocation(onGoingReservationFrameLayout, Gravity.CENTER, 0, 0);
 
-        showLoadingScreen(true);
-        disablePopUpButtons();
-
-        //Different android versions have different view hierarchie's need to split the code for dimming background.
-        if (android.os.Build.VERSION.SDK_INT > 22) {
-            View popUpDimView = (View) viewActionPopUpContainer.getParent();
-            WindowManager.LayoutParams layoutParams = (WindowManager.LayoutParams) popUpDimView.getLayoutParams();
-            layoutParams.flags = WindowManager.LayoutParams.FLAG_DIM_BEHIND;
-            layoutParams.dimAmount = 0.7f;
-            windowManager.updateViewLayout(popUpDimView, layoutParams);
-        } else {
-            WindowManager.LayoutParams layoutParams = (WindowManager.LayoutParams) viewActionPopUpContainer.getLayoutParams();
-            layoutParams.flags = WindowManager.LayoutParams.FLAG_DIM_BEHIND;
-            layoutParams.dimAmount = 0.7f;
-            windowManager.updateViewLayout(viewActionPopUpContainer, layoutParams);
-        }
+        disableButton(getStatusButton);
+        dimBackground(viewActionPopUpContainer);
 
         exitTextView = (TextView) viewActionPopUpContainer.findViewById(R.id.exitTextView);
 
@@ -1104,40 +1115,6 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
         return (int)(dp * context.getResources().getDisplayMetrics().density);
     }
 
-    private void disablePopUpButtons() {
-
-        for (int i = 0; i < popUpActionButtonArray.length; i++) {
-
-            popUpActionButtonArray[i].setBackgroundResource(R.drawable.disabledactionviewbutton);
-            popUpActionButtonArray[i].setEnabled(false);
-
-        }
-
-    }
-
-    private void enablePopUpButtons() {
-
-        for (int i = 0; i < popUpActionButtonArray.length; i++) {
-
-            Button popUpActionButton = popUpActionButtonArray[i];
-
-            if (popUpActionButton.getText().toString().contains("Check")) {
-
-                popUpActionButtonArray[i].setBackgroundResource(R.drawable.redactionviewbutton);
-
-            } else {
-
-                popUpActionButtonArray[i].setBackgroundResource(R.drawable.blueactionviewbutton);
-
-            }
-
-
-            popUpActionButtonArray[i].setEnabled(true);
-
-        }
-
-    }
-
     private void disableButton(Button popUpActionButton) {
 
         popUpActionButton.setBackgroundResource(R.drawable.disabledactionviewbutton);
@@ -1161,17 +1138,32 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
 
     }
 
+    private void dimBackground(ViewGroup container) {
+
+        if (android.os.Build.VERSION.SDK_INT > 22) {
+            View popUpDimView = (View) container.getParent();
+            WindowManager.LayoutParams layoutParams = (WindowManager.LayoutParams) popUpDimView.getLayoutParams();
+            layoutParams.flags = WindowManager.LayoutParams.FLAG_DIM_BEHIND;
+            layoutParams.dimAmount = 0.7f;
+            windowManager.updateViewLayout(popUpDimView, layoutParams);
+        } else {
+            WindowManager.LayoutParams layoutParams = (WindowManager.LayoutParams) container.getLayoutParams();
+            layoutParams.flags = WindowManager.LayoutParams.FLAG_DIM_BEHIND;
+            layoutParams.dimAmount = 0.7f;
+            windowManager.updateViewLayout(container, layoutParams);
+        }
+
+    }
+
     public class GoogleMapInfoAdapter extends PagerAdapter {
 
         private LayoutInflater inflater;
         private OnGoingReservation onGoingReservation;
-        private VehicleStatus vehicleStatus;
 
-        public GoogleMapInfoAdapter(LayoutInflater inflater, OnGoingReservation onGoingReservation, VehicleStatus vehicleStatus) {
+        public GoogleMapInfoAdapter(LayoutInflater inflater, OnGoingReservation onGoingReservation) {
 
             this.inflater = inflater;
             this.onGoingReservation = onGoingReservation;
-            this.vehicleStatus = vehicleStatus;
 
         }
 
@@ -1189,30 +1181,14 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
 
                 layoutView = inflater.inflate(R.layout.fragment_map, null);
 
-                final MapView hipCarMapView = (MapView) layoutView.findViewById(R.id.hipCarMapView);
+                hipCarMapView = (MapView) layoutView.findViewById(R.id.hipCarMapView);
+                popUpGreyScreenLoading = (RelativeLayout) layoutView.findViewById(R.id.popUpGreyScreenLoading);
+                popUpLoadingLottieView = (LottieAnimationView) layoutView.findViewById(R.id.popUpLoadingLottieView);
+
+                showLoadingScreen(true);
 
                 hipCarMapView.onCreate(savedInstanceState);
-
-                hipCarMapView.getMapAsync(new OnMapReadyCallback() {
-                    @Override
-                    public void onMapReady(GoogleMap googleMap) {
-
-                        LatLng carCoordinates = new LatLng(vehicleStatus.getPosition().getLat(), vehicleStatus.getPosition().getLon());
-
-                        googleMap.getUiSettings().setMapToolbarEnabled(true);
-                        googleMap.getUiSettings().setZoomControlsEnabled(true);
-
-                        googleMap.addMarker(new MarkerOptions()
-                                .position(carCoordinates)
-                                .title("Car Location")
-                                .icon(carIcon));
-
-                        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(carCoordinates, 18));
-
-                        hipCarMapView.onResume();
-
-                    }
-                });
+                hipCarMapView.onResume();
 
 
             } else {
@@ -1228,11 +1204,12 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
                 TextView informationBalanceTextView = (TextView) layoutView.findViewById(R.id.informationBalanceTextView);
                 TextView informationPriceEstimateTextView = (TextView) layoutView.findViewById(R.id.informationPriceEstimateTextView);
                 TextView informationPlateNumberTextView = (TextView) layoutView.findViewById(R.id.informationPlateNumberTextView);
-                TextView informationImmobilizerTextView = (TextView) layoutView.findViewById(R.id.informationImmobilizerTextView);
-                TextView informationIgnitionTextView = (TextView) layoutView.findViewById(R.id.informationIgnitionTextView);
-                TextView informationCentralLockTextView = (TextView) layoutView.findViewById(R.id.informationCentralLockTextView);
-                TextView informationMileageTextView = (TextView) layoutView.findViewById(R.id.informationMileageTextView);
-                TextView informationSpeedTextView = (TextView) layoutView.findViewById(R.id.informationSpeedTextView);
+
+                informationImmobilizerTextView = (TextView) layoutView.findViewById(R.id.informationImmobilizerTextView);
+                informationIgnitionTextView = (TextView) layoutView.findViewById(R.id.informationIgnitionTextView);
+                informationCentralLockTextView = (TextView) layoutView.findViewById(R.id.informationCentralLockTextView);
+                informationMileageTextView = (TextView) layoutView.findViewById(R.id.informationMileageTextView);
+                informationSpeedTextView = (TextView) layoutView.findViewById(R.id.informationSpeedTextView);
 
                 informationNameTextView.setText(onGoingReservation.getFull_name());
                 informationContactNumberTextView.setText(onGoingReservation.getContact_number());
@@ -1244,11 +1221,8 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
                 informationPriceEstimateTextView.setText("Rp. " +
                         String.valueOf(decimalFormat.format(onGoingReservation.getTotal_price())));
                 informationPlateNumberTextView.setText(onGoingReservation.getVehicle().getPlate_number());
-                informationImmobilizerTextView.setText(vehicleStatus.getImmobilizer());
-                informationIgnitionTextView.setText(vehicleStatus.getIgnition());
-                informationCentralLockTextView.setText(vehicleStatus.getCentral_lock());
-                informationMileageTextView.setText(String.valueOf(vehicleStatus.getMileage()));
-                informationSpeedTextView.setText(String.valueOf(vehicleStatus.getPosition().getSpeed_over_ground()));
+
+                setOnGoingInformationLoadingTextViews();
 
             }
 
@@ -1256,6 +1230,41 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
             container.addView(layoutView);
 
             return layoutView;
+
+        }
+
+        private void setVehicleStatusFields(final VehicleStatus vehicleStatus) {
+
+            informationImmobilizerTextView.setText(vehicleStatus.getImmobilizer());
+            informationIgnitionTextView.setText(vehicleStatus.getIgnition());
+            informationCentralLockTextView.setText(vehicleStatus.getCentral_lock());
+            informationMileageTextView.setText(String.valueOf(vehicleStatus.getMileage()));
+            informationSpeedTextView.setText(String.valueOf(vehicleStatus.getPosition().getSpeed_over_ground()));
+
+            setOnGoingInformationLoadingTextViewsColorDefault();
+
+            hipCarMapView.onCreate(savedInstanceState);
+
+            hipCarMapView.getMapAsync(new OnMapReadyCallback() {
+                @Override
+                public void onMapReady(GoogleMap googleMap) {
+
+                    LatLng carCoordinates = new LatLng(vehicleStatus.getPosition().getLat(), vehicleStatus.getPosition().getLon());
+
+                    googleMap.getUiSettings().setMapToolbarEnabled(true);
+                    googleMap.getUiSettings().setZoomControlsEnabled(true);
+
+                    googleMap.addMarker(new MarkerOptions()
+                            .position(carCoordinates)
+                            .title("Car Location")
+                            .icon(carIcon));
+
+                    googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(carCoordinates, 18));
+
+                    hipCarMapView.onResume();
+
+                }
+            });
 
         }
 
@@ -1268,6 +1277,34 @@ public class OnGoingReservationFragment extends Fragment implements OnGoingReser
         public boolean isViewFromObject(View view, Object object) {
             return view == object;
         }
+
+    }
+
+    private void setOnGoingInformationLoadingTextViews() {
+
+        informationImmobilizerTextView.setText("Loading...");
+        informationIgnitionTextView.setText("Loading...");
+        informationCentralLockTextView.setText("Loading...");
+        informationMileageTextView.setText("Loading...");
+        informationSpeedTextView.setText("Loading...");
+
+        defaultTextViewColor = informationImmobilizerTextView.getTextColors();
+
+        informationImmobilizerTextView.setTextColor(ContextCompat.getColor(context, R.color.red));
+        informationIgnitionTextView.setTextColor(ContextCompat.getColor(context, R.color.red));
+        informationCentralLockTextView.setTextColor(ContextCompat.getColor(context, R.color.red));
+        informationMileageTextView.setTextColor(ContextCompat.getColor(context, R.color.red));
+        informationSpeedTextView.setTextColor(ContextCompat.getColor(context, R.color.red));
+
+    }
+
+    private void setOnGoingInformationLoadingTextViewsColorDefault() {
+
+        informationImmobilizerTextView.setTextColor(defaultTextViewColor);
+        informationIgnitionTextView.setTextColor(defaultTextViewColor);
+        informationCentralLockTextView.setTextColor(defaultTextViewColor);
+        informationMileageTextView.setTextColor(defaultTextViewColor);
+        informationSpeedTextView.setTextColor(defaultTextViewColor);
 
     }
 

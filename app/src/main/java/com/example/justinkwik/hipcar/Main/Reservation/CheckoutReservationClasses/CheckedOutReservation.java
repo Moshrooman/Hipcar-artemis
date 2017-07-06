@@ -171,6 +171,13 @@ public class CheckedOutReservation {
     }
 
     public String getContact_number() {
+
+        if (contact_number.substring(0, 1).equals("0")) {
+
+            return "+62" + contact_number.substring(1, contact_number.length());
+
+        }
+
         return contact_number;
     }
 
